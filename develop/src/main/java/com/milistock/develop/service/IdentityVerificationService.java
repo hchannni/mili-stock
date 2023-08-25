@@ -1,7 +1,7 @@
 package com.milistock.develop.service;
 
-import com.milistock.develop.domain.Member;
-import com.milistock.develop.repository.MemberRepository;
+import com.milistock.develop.domain.IdentityVerification;
+import com.milistock.develop.repository.IdentityVerificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,13 +10,13 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
-    private final MemberRepository memberRepository;
+public class IdentityVerificationService {
+    private final IdentityVerificationRepository identityVerificationRepository;
     //private final RoleRepository roleRepository;
 
     @Transactional(readOnly = true)
-    public Member findByServiceNumber(String serveiceNumber){
-        return memberRepository.findByServiceNumber(serveiceNumber).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
+    public IdentityVerification findByServiceNumber(String serviceNumber){
+        return identityVerificationRepository.findByServiceNumber(serviceNumber).orElseThrow(() -> new IllegalArgumentException("본인인증에 실패하였습니다."));
     }
 
     /*@Transactional
@@ -27,7 +27,7 @@ public class MemberService {
         return saveMember;
     }
 */
-    @Transactional(readOnly = true)
+    /*@Transactional(readOnly = true)
     public Optional<Member> getMember(Long memberId){
         return memberRepository.findById(memberId);
     }
@@ -36,5 +36,5 @@ public class MemberService {
     @Transactional(readOnly = true)
     public Optional<Member> getMember(String serveiceNumber){
         return memberRepository.findByServiceNumber(serveiceNumber);
-    }
+    }*/
 }
