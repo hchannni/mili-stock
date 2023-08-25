@@ -19,16 +19,16 @@ public class IdentityVerification {
     private Long userNumber;
 
     @Column(length = 30)
-    private String name;
+    private String name; // 이름
+
+    @Column(length = 255, unique = true)
+    private String serviceNumber; //군번
 
     @Column(length = 50)
-    private String serviceNumber;
+    private String job; // 직군(ex 현역, 군무원, 직업군인)
 
     @Column(length = 50)
-    private String job;
-
-    @Column(length = 50)
-    private String affiliation;
+    private String affiliation; // 소속(ex 육군, 해군, 공군)
 
 
 
