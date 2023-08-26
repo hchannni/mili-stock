@@ -20,8 +20,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -117,6 +115,40 @@ public class MemberController {
         return new ResponseEntity(memberSignupResponse, HttpStatus.CREATED);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity login(@RequestBody @Valid MemberLoginDto loginDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+
+        // UserId 없을 경우 Exception이 발생한다. Global Exception에 대한 처리가 필요하다.
+        Member member = memberService.findByUserId(loginDto.getUserId());
+
+        if(!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())){
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+        
+        // List<Role> ===> List<String>
+        //List<String> roles = member.getRoles().stream().map(Role::getName).collect(Collectors.toList());
+
+        // JWT토큰을 생성하였다. jwt라이브러리를 이용하여 생성.
+        String accessToken = jwtTokenizer.createAccessToken(member.getMemberId(), member.getServiceNumber(), member.getName());
+        String refreshToken = jwtTokenizer.createRefreshToken(member.getMemberId(), member.getServiceNumber(), member.getName());
+
+        // RefreshToken을 DB에 저장한다. 성능 때문에 DB가 아니라 Redis에 저장하는 것이 좋다.
+        RefreshToken refreshTokenEntity = new RefreshToken();
+        refreshTokenEntity.setValue(refreshToken);
+        refreshTokenEntity.setMemberId(member.getMemberId());
+        refreshTokenService.addRefreshToken(refreshTokenEntity);
+
+        MemberLoginResponseDto loginResponse = MemberLoginResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .memberId(member.getMemberId())
+                .name(member.getName())
+                .build();
+        return new ResponseEntity(loginResponse, HttpStatus.OK);
+    }
 
     @DeleteMapping("/logout")
     public ResponseEntity logout(@RequestBody RefreshTokenDto refreshTokenDto) {
