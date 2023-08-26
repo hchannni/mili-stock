@@ -42,7 +42,9 @@ public class ProductController {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOriginPatterns();
+                registry.addMapping("/**").allowedOriginPatterns()
+                .allowedMethods("GET", "POST", "PATCH", "PUT", "OPTIONS", "DELETE")
+                .allowCredentials(true);
             }
         };
     }

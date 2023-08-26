@@ -1,15 +1,13 @@
-jwt:
-  secretKey: 12345678901234567890123456789012
-  refreshKey: 12345678901234567890123456789012
-
-
+# jwt:
+#   secretKey: 12345678901234567890123456789012
+#   refreshKey: 12345678901234567890123456789012
 
 
 spring:
   datasource:
-    url: jdbc:mysql://database-demo.cgd52m8hcvai.ap-northeast-2.rds.amazonaws.com:3306/test?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://database1.cjhewj5vji2q.ap-northeast-2.rds.amazonaws.com:3306/milistockdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: admin
-    password: dongha1005!
+    password: xhdtlswndeo!
   jpa:
     hibernate:
       ddl-auto: update
