@@ -13,18 +13,31 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.milistock.develop.domain.Product;
+import com.milistock.develop.repository.ProductRepository;
 import com.milistock.develop.service.ProductService;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
-    @Autowired
-    private ProductService productService;
+    // @Autowired
+    // private ProductService productService;
 
-    @GetMapping
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+    private final ProductRepository productRepository;
+
+    @Autowired
+    public ProductController(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
+
+    @GetMapping("")
+    public String hello(){
+        return "Connection Successful";
+    }
+
+    // @GetMapping
+    // public List<Product> getAllProducts() {
+    //     return productRepository.findAll();
+    // }
 
     // @GetMapping("/{id}")
     // public ResponseEntity<Product> getProductById(@PathVariable Long id) {
@@ -37,15 +50,15 @@ public class ProductController {
     //     return ResponseEntity.ok(product);
     // }
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer(){
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOriginPatterns()
-                .allowedMethods("GET", "POST", "PATCH", "PUT", "OPTIONS", "DELETE")
-                .allowCredentials(true);
-            }
-        };
-    }
+    // @Bean
+    // public WebMvcConfigurer corsConfigurer(){
+    //     return new WebMvcConfigurer() {
+    //         @Override
+    //         public void addCorsMappings(CorsRegistry registry) {
+    //             registry.addMapping("/**").allowedOriginPatterns()
+    //             .allowedMethods("GET", "POST", "PATCH", "PUT", "OPTIONS", "DELETE")
+    //             .allowCredentials(true);
+    //         }
+    //     };
+    // }
 }
