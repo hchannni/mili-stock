@@ -2,8 +2,6 @@ package com.milistock.develop.dto;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 public class MemberSignupResponseDto {
     private Long memberId;
@@ -12,7 +10,7 @@ public class MemberSignupResponseDto {
     private String userId;
     private String job;
     private String affiliation;
-    private String rank;
+    private String militaryRank;
     private String birth;
     private String phoneNumber;
     private String email;
@@ -20,5 +18,4 @@ public class MemberSignupResponseDto {
     private String gender;
     private String appointment;
     private String discharge;
-    private LocalDateTime regdate;
 }

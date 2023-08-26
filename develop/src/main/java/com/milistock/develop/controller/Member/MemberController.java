@@ -4,13 +4,13 @@ import com.milistock.develop.domain.Member;
 import com.milistock.develop.domain.RefreshToken;
 import com.milistock.develop.domain.IdentityVerification;
 import com.milistock.develop.dto.*;
-import com.milistock.develop.security.jwt.util.IfLogin;
+//import com.milistock.develop.security.jwt.util.IfLogin;
 import com.milistock.develop.security.jwt.util.JwtTokenizer;
-import com.milistock.develop.security.jwt.util.LoginUserDto;
+//import com.milistock.develop.security.jwt.util.LoginUserDto;
 import com.milistock.develop.service.IdentityVerificationService;
 import com.milistock.develop.service.MemberService;
 import com.milistock.develop.service.RefreshTokenService;
-import io.jsonwebtoken.Claims;
+//import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +39,7 @@ public class MemberController {
 //        this.refreshTokenService = refreshTokenService;
 //        this.passwordEncoder = passwordEncoder;
 //    }
-    @PostMapping("/Identity")
+    @PostMapping("/identity")
     public ResponseEntity identity(@RequestBody @Valid MemberIdentityVerificationDto identityVerificationDto, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -48,18 +48,18 @@ public class MemberController {
         // ServiceNumber가 없을 경우 Exception이 발생한다. Global Exception에 대한 처리가 필요하다.
         IdentityVerification identityVerification = identityVerificationService.findByServiceNumber(identityVerificationDto.getServiceNumber());
 
-        if(identityVerificationDto.getName() != identityVerificationDto.getName()){
+        if(!identityVerificationDto.getName().equals(identityVerification.getName())){
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
-
-        if(identityVerificationDto.getAffiliation() != identityVerificationDto.getAffiliation()){
+    
+        if(!identityVerificationDto.getAffiliation().equals(identityVerification.getAffiliation())){
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
-
-        if(identityVerificationDto.getJob() != identityVerificationDto.getJob()){
+    
+        if(!identityVerificationDto.getJob().equals(identityVerification.getJob())){
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+            
         }
-
         MemberIdentityVerificationResponseDto identityVerificationResponse = MemberIdentityVerificationResponseDto.builder()
                 .userNumber(identityVerification.getUserNumber())
                 .name(identityVerification.getName())
@@ -83,7 +83,7 @@ public class MemberController {
         member.setPassword(passwordEncoder.encode(memberSignupDto.getPassword()));
         member.setJob(memberSignupDto.getJob());
         member.setAffiliation(memberSignupDto.getAffiliation());
-        member.setRank(memberSignupDto.getRank());
+        member.setMilitaryRank(memberSignupDto.getMilitaryRank());
         member.setBirth(memberSignupDto.getBirth());
         member.setPhoneNumber(memberSignupDto.getPhoneNumber());
         member.setEmail(memberSignupDto.getEmail());
@@ -95,12 +95,13 @@ public class MemberController {
         Member saveMember = memberService.addMember(member);
 
         MemberSignupResponseDto memberSignupResponse = new MemberSignupResponseDto();
+        memberSignupResponse.setMemberId(saveMember.getMemberId());
         memberSignupResponse.setServiceNumber(saveMember.getServiceNumber());
         memberSignupResponse.setName(saveMember.getName());
         memberSignupResponse.setUserId(saveMember.getUserId());
         memberSignupResponse.setJob(saveMember.getJob());
         memberSignupResponse.setAffiliation(saveMember.getAffiliation());
-        memberSignupResponse.setRank(saveMember.getRank());
+        memberSignupResponse.setMilitaryRank(saveMember.getMilitaryRank());
         memberSignupResponse.setBirth(saveMember.getBirth());
         memberSignupResponse.setPhoneNumber(saveMember.getPhoneNumber());
         memberSignupResponse.setEmail(saveMember.getEmail());
@@ -108,8 +109,6 @@ public class MemberController {
         memberSignupResponse.setGender(saveMember.getGender());
         memberSignupResponse.setAppointment(saveMember.getAppointment());
         memberSignupResponse.setDischarge(saveMember.getDischarge());
-        memberSignupResponse.setRegdate(saveMember.getRegdate());
-
 
         // 회원가입
         return new ResponseEntity(memberSignupResponse, HttpStatus.CREATED);

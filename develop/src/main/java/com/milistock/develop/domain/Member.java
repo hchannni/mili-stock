@@ -1,9 +1,13 @@
 package com.milistock.develop.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -42,7 +46,7 @@ public class Member {
     private String affiliation; // (육군,해군,공군)
 
     @Column(length = 50, nullable = false)
-    private String rank; // (일병,상병,하사,중사.대위,소령...)
+    private String militaryRank; // (일병,상병,하사,중사.대위,소령...)
 
     @Column(length = 50, nullable = false)
     private String birth; // (생년월일)
@@ -67,16 +71,8 @@ public class Member {
 
 
 
-    @CreationTimestamp // 현재시간이 저장될 때 자동으로 생성.
-    private LocalDateTime regdate;
-
-
-    @ManyToMany
-    @JoinTable(name = "member_role",
-            joinColumns = @JoinColumn(name = "member_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    //private Set<Role> roles = new HashSet<>();
+   // @CreationTimestamp // 현재시간이 저장될 때 자동으로 생성.
+    //private LocalDateTime regdate;
 
     @Override
     public String toString() {
@@ -88,7 +84,7 @@ public class Member {
                 ", password='" + password + '\'' +
                 ", job='" + job + '\'' +
                 ", affiliation='" + affiliation + '\'' +
-                ", rank='" + rank + '\'' +
+                ", militaryRank='" + militaryRank + '\'' +
                 ", birth='" + birth + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +

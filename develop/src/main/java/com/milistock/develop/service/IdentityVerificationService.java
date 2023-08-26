@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//import java.util.Optional;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,16 +25,20 @@ public class IdentityVerificationService {
         member.addRole(userRole.get());
         Member saveMember = memberRepository.save(member);
         return saveMember;
-    }
-*/
-    /*@Transactional(readOnly = true)
+
+            @Transactional(readOnly = true)
     public Optional<Member> getMember(Long memberId){
         return memberRepository.findById(memberId);
     }
-    
 
     @Transactional(readOnly = true)
-    public Optional<Member> getMember(String serveiceNumber){
-        return memberRepository.findByServiceNumber(serveiceNumber);
-    }*/
+    public Optional<Member> getMember(String email){
+        return memberRepository.findByEmail(email);
+    }
+    }
+*/
+    @Transactional(readOnly = true)
+    public Optional<IdentityVerification> getServiceNumber(String serviceNumber){
+        return identityVerificationRepository.findByServiceNumber(serviceNumber);
+    }
 }
