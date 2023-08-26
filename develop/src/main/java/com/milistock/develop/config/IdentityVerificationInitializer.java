@@ -35,8 +35,8 @@ public class IdentityVerificationInitializer {
                 choDing.setAffiliation("육군");
 
                 IdentityVerification kimTae = new IdentityVerification();
-                kimTae.setUserNumber(1L);
-                kimTae.setName("김동현");
+                kimTae.setUserNumber(4L);
+                kimTae.setName("김태연");
                 kimTae.setServiceNumber("22-70011097");
                 kimTae.setJob("병사");
                 kimTae.setAffiliation("해군");

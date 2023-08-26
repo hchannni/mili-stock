@@ -19,14 +19,14 @@ public class MemberService {
         return memberRepository.findByServiceNumber(serveiceNumber).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
     }
 
-    /*@Transactional
+    @Transactional
     public Member addMember(Member member) {
-        Optional<Role> userRole = roleRepository.findByName("ROLE_USER");
-        member.addRole(userRole.get());
+       // Optional<Role> userRole = roleRepository.findByName("ROLE_USER");
+      //  member.addRole();
         Member saveMember = memberRepository.save(member);
         return saveMember;
     }
-*/
+
     @Transactional(readOnly = true)
     public Optional<Member> getMember(Long memberId){
         return memberRepository.findById(memberId);

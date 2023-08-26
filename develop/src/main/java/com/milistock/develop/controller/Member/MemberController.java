@@ -73,4 +73,58 @@ public class MemberController {
     }
 
 
+    @PostMapping("/signup")
+    public ResponseEntity signup(@RequestBody @Valid MemberSignupDto memberSignupDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        Member member = new Member();
+        member.setServiceNumber(memberSignupDto.getServiceNumber());
+        member.setName(memberSignupDto.getName());
+        member.setUserId(memberSignupDto.getUserId());
+        member.setPassword(passwordEncoder.encode(memberSignupDto.getPassword()));
+        member.setJob(memberSignupDto.getJob());
+        member.setAffiliation(memberSignupDto.getAffiliation());
+        member.setRank(memberSignupDto.getRank());
+        member.setBirth(memberSignupDto.getBirth());
+        member.setPhoneNumber(memberSignupDto.getPhoneNumber());
+        member.setEmail(memberSignupDto.getEmail());
+        member.setChild(memberSignupDto.getChild());
+        member.setGender(memberSignupDto.getGender());
+        member.setAppointment(memberSignupDto.getAppointment());
+        member.setDischarge(memberSignupDto.getDischarge());
+
+        Member saveMember = memberService.addMember(member);
+
+        MemberSignupResponseDto memberSignupResponse = new MemberSignupResponseDto();
+        memberSignupResponse.setServiceNumber(saveMember.getServiceNumber());
+        memberSignupResponse.setName(saveMember.getName());
+        memberSignupResponse.setUserId(saveMember.getUserId());
+        memberSignupResponse.setJob(saveMember.getJob());
+        memberSignupResponse.setAffiliation(saveMember.getAffiliation());
+        memberSignupResponse.setRank(saveMember.getRank());
+        memberSignupResponse.setBirth(saveMember.getBirth());
+        memberSignupResponse.setPhoneNumber(saveMember.getPhoneNumber());
+        memberSignupResponse.setEmail(saveMember.getEmail());
+        memberSignupResponse.setChild(saveMember.getChild());
+        memberSignupResponse.setGender(saveMember.getGender());
+        memberSignupResponse.setAppointment(saveMember.getAppointment());
+        memberSignupResponse.setDischarge(saveMember.getDischarge());
+        memberSignupResponse.setRegdate(saveMember.getRegdate());
+
+
+        // 회원가입
+        return new ResponseEntity(memberSignupResponse, HttpStatus.CREATED);
+    }
+
+
+    @DeleteMapping("/logout")
+    public ResponseEntity logout(@RequestBody RefreshTokenDto refreshTokenDto) {
+        refreshTokenService.deleteRefreshToken(refreshTokenDto.getRefreshToken());
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    
+
+    
 }
