@@ -1,26 +1,25 @@
 package com.milistock.develop.controller.products;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.repository.ProductRepository;
-import com.milistock.develop.service.ProductService;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
-    // @Autowired
-    // private ProductService productService;
 
     private final ProductRepository productRepository;
 
@@ -29,36 +28,50 @@ public class ProductController {
         this.productRepository = productRepository;
     }
 
-    // @GetMapping("")
-    // public String hello(){
-    //     return "Connection Successful";
-    // }
+    @PostMapping
+    public Product createProduct(@RequestBody Product product) {
+        return productRepository.save(product);
+    }
 
     @GetMapping
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    // @GetMapping("/{id}")
-    // public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-    //     Product product = productService.getProductById(id);
-        
-    //     if (product == null) {
-    //         return ResponseEntity.notFound().build();
-    //     }
-        
-    //     return ResponseEntity.ok(product);
-    // }
+    @GetMapping("/{productNumber}")
+    public ResponseEntity<Product> getProductById(@PathVariable int productNumber) {
+        Optional<Product> product = productRepository.findById(productNumber);
 
-    // @Bean
-    // public WebMvcConfigurer corsConfigurer(){
-    //     return new WebMvcConfigurer() {
-    //         @Override
-    //         public void addCorsMappings(CorsRegistry registry) {
-    //             registry.addMapping("/**").allowedOriginPatterns()
-    //             .allowedMethods("GET", "POST", "PATCH", "PUT", "OPTIONS", "DELETE")
-    //             .allowCredentials(true);
-    //         }
-    //     };
-    // }
+        if (product.isPresent()) {
+            return ResponseEntity.ok(product.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Sends JSON of the WHOLE updated product (not just the changed part)
+    @PutMapping("/{productNumber}")
+    public ResponseEntity<Product> updateProduct(@PathVariable int productNumber, @RequestBody Product updatedProduct) {
+        Optional<Product> product = productRepository.findById(productNumber);
+
+        if (product.isPresent()) {
+            updatedProduct.setProductNumber(productNumber);
+            productRepository.save(updatedProduct);
+            return ResponseEntity.ok(updatedProduct);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{productNumber}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable int productNumber) {
+        Optional<Product> product = productRepository.findById(productNumber);
+
+        if (product.isPresent()) {
+            productRepository.delete(product.get());
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

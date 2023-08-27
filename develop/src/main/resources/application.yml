@@ -15,4 +15,8 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+      naming:
+          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     database-platform: org.hibernate.dialect.MySQL8Dialect
+
+    
