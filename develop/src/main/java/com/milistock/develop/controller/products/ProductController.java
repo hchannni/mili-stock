@@ -29,15 +29,15 @@ public class ProductController {
         this.productRepository = productRepository;
     }
 
-    @GetMapping("")
-    public String hello(){
-        return "Connection Successful";
-    }
-
-    // @GetMapping
-    // public List<Product> getAllProducts() {
-    //     return productRepository.findAll();
+    // @GetMapping("")
+    // public String hello(){
+    //     return "Connection Successful";
     // }
+
+    @GetMapping
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
 
     // @GetMapping("/{id}")
     // public ResponseEntity<Product> getProductById(@PathVariable Long id) {
