@@ -1,19 +1,14 @@
 package com.milistock.develop.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-//import java.util.HashSet;
-//import java.util.Set;
+import java.util.HashSet;
+import java.util.Set;
+
 
 @Entity // Database Table과 맵핑하는 객체.
 @Table(name="member") // Database 테이블 이름 user3 와 User라는 객체가 맵핑.
@@ -70,6 +65,12 @@ public class Member {
     private String discharge; // (전역일자)  
 
 
+    @ManyToMany
+    @JoinTable(name = "member_role",
+            joinColumns = @JoinColumn(name = "member_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
    // @CreationTimestamp // 현재시간이 저장될 때 자동으로 생성.
     //private LocalDateTime regdate;
@@ -95,8 +96,7 @@ public class Member {
                 '}';
     }
     
-/*    public void addRole(Role role) {
+    public void addRole(Role role) {
         roles.add(role);
     }
-*/
 }

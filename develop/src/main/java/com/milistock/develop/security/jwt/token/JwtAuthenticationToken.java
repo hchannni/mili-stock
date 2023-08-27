@@ -1,6 +1,5 @@
 package com.milistock.develop.security.jwt.token;
 
-
 import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,7 +18,8 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
      * @param authorities the collection of <tt>GrantedAuthority</tt>s for the principal
      *                    represented by this authentication object.
      */
-    public JwtAuthenticationToken(Collection<? extends GrantedAuthority> authorities, Object principal, Object credentials) {
+    public JwtAuthenticationToken(Collection<? extends GrantedAuthority> authorities,
+                                    Object principal, Object credentials) {
         super(authorities);
         this.principal = principal;
         this.credentials = credentials;

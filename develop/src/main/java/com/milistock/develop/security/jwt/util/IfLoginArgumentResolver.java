@@ -1,6 +1,5 @@
 package com.milistock.develop.security.jwt.util;
 
-//import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -11,13 +10,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
-//import org.springframework.web.context.request.RequestContextHolder;
-//import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-//import javax.servlet.*;
-//import javax.servlet.http.*;
+
 
 public class IfLoginArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -29,7 +25,7 @@ public class IfLoginArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         Authentication authentication = null;
         try {
             authentication = SecurityContextHolder.getContext().getAuthentication();

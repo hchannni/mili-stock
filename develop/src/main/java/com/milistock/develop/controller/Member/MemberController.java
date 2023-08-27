@@ -2,15 +2,16 @@ package com.milistock.develop.controller.Member;
 
 import com.milistock.develop.domain.Member;
 import com.milistock.develop.domain.RefreshToken;
+import com.milistock.develop.domain.Role;
 import com.milistock.develop.domain.IdentityVerification;
 import com.milistock.develop.dto.*;
-//import com.milistock.develop.security.jwt.util.IfLogin;
+import com.milistock.develop.security.jwt.util.IfLogin;
 import com.milistock.develop.security.jwt.util.JwtTokenizer;
-//import com.milistock.develop.security.jwt.util.LoginUserDto;
-import com.milistock.develop.service.IdentityVerificationService;
+import com.milistock.develop.security.jwt.util.LoginUserDto;
 import com.milistock.develop.service.MemberService;
+import com.milistock.develop.service.IdentityVerificationService;
 import com.milistock.develop.service.RefreshTokenService;
-//import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -69,7 +73,6 @@ public class MemberController {
                 .build();
         return new ResponseEntity(identityVerificationResponse, HttpStatus.OK);
     }
-
 
     @PostMapping("/signup")
     public ResponseEntity signup(@RequestBody @Valid MemberSignupDto memberSignupDto, BindingResult bindingResult) {
@@ -128,11 +131,11 @@ public class MemberController {
         }
         
         // List<Role> ===> List<String>
-        //List<String> roles = member.getRoles().stream().map(Role::getName).collect(Collectors.toList());
+        List<String> roles = member.getRoles().stream().map(Role::getName).collect(Collectors.toList());
 
         // JWT토큰을 생성하였다. jwt라이브러리를 이용하여 생성.
-        String accessToken = jwtTokenizer.createAccessToken(member.getMemberId(), member.getServiceNumber(), member.getName());
-        String refreshToken = jwtTokenizer.createRefreshToken(member.getMemberId(), member.getServiceNumber(), member.getName());
+        String accessToken = jwtTokenizer.createAccessToken(member.getMemberId(), member.getServiceNumber(), member.getName(), roles);
+        String refreshToken = jwtTokenizer.createRefreshToken(member.getMemberId(), member.getServiceNumber(), member.getName(), roles);
 
         // RefreshToken을 DB에 저장한다. 성능 때문에 DB가 아니라 Redis에 저장하는 것이 좋다.
         RefreshToken refreshTokenEntity = new RefreshToken();
@@ -151,8 +154,42 @@ public class MemberController {
 
     @DeleteMapping("/logout")
     public ResponseEntity logout(@RequestBody RefreshTokenDto refreshTokenDto) {
+        if (!refreshTokenService.isValidRefreshToken(refreshTokenDto.getRefreshToken())) {
+            return new ResponseEntity("Invalid refresh token", HttpStatus.UNAUTHORIZED);
+        }
         refreshTokenService.deleteRefreshToken(refreshTokenDto.getRefreshToken());
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+
+    @PostMapping("/refreshToken")
+    public ResponseEntity requestRefresh(@RequestBody RefreshTokenDto refreshTokenDto) {
+        RefreshToken refreshToken = refreshTokenService.findRefreshToken(refreshTokenDto.getRefreshToken()).orElseThrow(() -> new IllegalArgumentException("Refresh token not found"));
+        Claims claims = jwtTokenizer.parseRefreshToken(refreshToken.getValue());
+
+        Long memberId = Long.valueOf((Integer)claims.get("memberId"));
+
+        Member member = memberService.getMember(memberId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
+
+        List roles = (List) claims.get("roles");
+        String serviceNumber = claims.getSubject();
+
+        String accessToken = jwtTokenizer.createAccessToken(memberId, serviceNumber, member.getName(), roles);
+
+        MemberLoginResponseDto loginResponse = MemberLoginResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshTokenDto.getRefreshToken())
+                .memberId(member.getMemberId())
+                .name(member.getName())
+                .build();
+        return new ResponseEntity(loginResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity userinfo(@IfLogin LoginUserDto loginUserDto) {
+        Member member = memberService.findByUserId(loginUserDto.getServiceNumber());
+        return new ResponseEntity(member, HttpStatus.OK);
     }
 
     

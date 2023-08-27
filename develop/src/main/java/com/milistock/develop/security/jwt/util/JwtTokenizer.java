@@ -3,15 +3,13 @@ package com.milistock.develop.security.jwt.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-//import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
-//import java.util.List;
-
+import java.util.List;
 
 @Component
 public class JwtTokenizer {
@@ -30,23 +28,23 @@ public class JwtTokenizer {
     /**
      * AccessToken 생성
      */
-    public String createAccessToken(Long id, String serviceNumber, String name) {
-        return createToken(id, serviceNumber, name, ACCESS_TOKEN_EXPIRE_COUNT, accessSecret);
+    public String createAccessToken(Long id, String serviceNumber, String name, List<String> roles) {
+        return createToken(id, serviceNumber, name, roles, ACCESS_TOKEN_EXPIRE_COUNT, accessSecret);
     }
 
     /**
      * RefreshToken 생성
      */
-    public String createRefreshToken(Long id, String serviceNumber, String name) {
-        return createToken(id, serviceNumber, name, REFRESH_TOKEN_EXPIRE_COUNT, refreshSecret);
+    public String createRefreshToken(Long id, String serviceNumber, String name, List<String> roles) {
+        return createToken(id, serviceNumber, name, roles, REFRESH_TOKEN_EXPIRE_COUNT, refreshSecret);
     }
 
 
-    private String createToken(Long id, String serviceNumber, String name,
-                                Long expire, byte[] secretKey) {
+    private String createToken(Long id, String serviceNumber, String name, List<String> roles,
+                               Long expire, byte[] secretKey) {
         Claims claims = Jwts.claims().setSubject(serviceNumber);
 
-        //claims.put("roles", roles);
+        claims.put("roles", roles);
         claims.put("memberId", id);
         claims.put("name", name);
 

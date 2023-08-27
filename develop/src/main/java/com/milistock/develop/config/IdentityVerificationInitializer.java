@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class IdentityVerificationInitializer {
 
     @Bean
-    public CommandLineRunner initRoles(IdentityVerificationRepository identityVerificationRepository) {
+    public CommandLineRunner initIdentityVerification(IdentityVerificationRepository identityVerificationRepository) {
         return args -> {
             if (identityVerificationRepository.count() == 0) { // role 테이블에 데이터가 없을 경우
                 IdentityVerification dongHa = new IdentityVerification();
