@@ -33,9 +33,24 @@ public class ProductController {
         return productRepository.save(product);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<Product> getAllProducts() {
         return productRepository.findAll();
+    }
+
+    @GetMapping("/popular")
+    public List<Product> getPopularProducts() {
+        return productRepository.findByIsPopularProduct(true);
+    }
+
+    @GetMapping("/discounted")
+    public List<Product> getDiscountedProducts() {
+        return productRepository.findByIsDiscountedProduct(true);
+    }
+
+    @GetMapping("/new")
+    public List<Product> getNewProducts() {
+        return productRepository.findByIsNewProduct(true);
     }
 
     @GetMapping("/{productNumber}")
