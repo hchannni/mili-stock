@@ -25,6 +25,7 @@ public class Product {
     private int productPrice;
     private int productStock;
     private String productImageUrl;
+    private String category;
     private Boolean isDiscountedProduct;
     private Boolean isNewProduct;
     private Boolean isPopularProduct;

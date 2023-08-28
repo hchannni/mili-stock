@@ -53,6 +53,11 @@ public class ProductController {
         return productRepository.findByIsNewProduct(true);
     }
 
+    @GetMapping("/category/{category}")
+    public List<Product> getCategory(@PathVariable String category) {
+        return productRepository.findByCategory(category);
+    }
+
     @GetMapping("/{productNumber}")
     public ResponseEntity<Product> getProductById(@PathVariable int productNumber) {
         Optional<Product> product = productRepository.findById(productNumber);
