@@ -40,6 +40,18 @@ public class CartService {
         }
     }    
 
+    public Cart deleteProductFromCart(int cartId, int productNumber){
+        Optional<Cart> cartOptional = cartRepository.findById(cartId);
+        if (cartOptional.isPresent()) {
+            Cart cart = cartOptional.get();
+            Integer productNumberToRemove = cart.deleteProductNumber(productNumber);
+            if (productNumberToRemove != null){
+                return cartRepository.save(cart);
+            }
+        }
+        return null; // Cart not found        
+    }
+
     public boolean deleteCart(int cartId) {
         Optional<Cart> cartOptional = cartRepository.findById(cartId);
         if (cartOptional.isPresent()) {

@@ -98,18 +98,18 @@ public class ProductController {
         }
     }
 
-    // Allow access to ALL HTTP requests to my application (POSTMAN)
-    @Configuration
-    @EnableWebSecurity
-    public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    // // Allow access to ALL HTTP requests to my application (POSTMAN)
+    // @Configuration
+    // @EnableWebSecurity
+    // public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http
-                    .authorizeRequests()
-                    .anyRequest().permitAll()
-                    .and()
-                    .csrf().disable(); // Disable CSRF protection for simplicity
-        }
-    }
+    //     @Override
+    //     protected void configure(HttpSecurity http) throws Exception {
+    //         http
+    //                 .authorizeRequests()
+    //                 .anyRequest().permitAll()
+    //                 .and()
+    //                 .csrf().disable(); // Disable CSRF protection for simplicity
+    //     }
+    // }
 }

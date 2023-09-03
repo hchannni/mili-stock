@@ -1,6 +1,5 @@
 package com.milistock.develop.controller.products;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +51,19 @@ public class CartController {
     
     @PostMapping("/{cartId}/addProduct/{productNumber}")
     public ResponseEntity<Cart> addProductToCart(@PathVariable int cartId, @PathVariable int productNumber) {
-        Cart cart = cartService.addProductToCart(cartId, productNumber);
-        if (cart != null) {
-            return ResponseEntity.ok(cart);
+        Cart updatedCart = cartService.addProductToCart(cartId, productNumber);
+        if (updatedCart != null) {
+            return ResponseEntity.ok(updatedCart);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{cartId}/deleteProduct/{productNumber}")
+    public ResponseEntity<Cart> deleteProductFromCart(@PathVariable int cartId, @PathVariable int productNumber) {
+        Cart updatedCart = cartService.deleteProductFromCart(cartId, productNumber);
+        if (updatedCart != null) {
+            return ResponseEntity.ok(updatedCart);
         } else {
             return ResponseEntity.notFound().build();
         }
