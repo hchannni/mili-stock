@@ -7,6 +7,9 @@ import com.milistock.develop.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -37,5 +40,16 @@ public class MemberService {
     @Transactional(readOnly = true)
     public Optional<Member> getMember(String userid){
         return memberRepository.findByUserId(userid);
+    }
+
+    @Transactional(readOnly = true)
+    public String findUserIdByServiceNumber(String serviceNumber) {
+        Optional<Member> memberOptional = memberRepository.findByServiceNumber(serviceNumber);
+        if (memberOptional.isPresent()) {
+            return memberOptional.get().getUserId();
+        } else {
+            // 사용자가 없을 경우 null 또는 원하는 응답을 반환할 수 있습니다.
+            return null;
+        }
     }
 }
