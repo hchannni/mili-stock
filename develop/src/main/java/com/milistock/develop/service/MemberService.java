@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public Member findByUserId(String userid){
@@ -52,4 +54,10 @@ public class MemberService {
             return null;
         }
     }
+
+    @Transactional(readOnly = true)
+    public boolean isUserIdExists(String userId) {
+        return memberRepository.existsByUserId(userId);
+    }
+
 }

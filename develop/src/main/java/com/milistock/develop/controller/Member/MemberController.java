@@ -112,7 +112,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid MemberLoginDto loginDto, BindingResult bindingResult) {
+    public ResponseEntity<?> login(@RequestBody @Valid MemberLoginDto loginDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
@@ -147,7 +147,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/logout")
-    public ResponseEntity logout(@RequestBody RefreshTokenDto refreshTokenDto) {
+    public ResponseEntity<?> logout(@RequestBody RefreshTokenDto refreshTokenDto) {
         if (!refreshTokenService.isValidRefreshToken(refreshTokenDto.getRefreshToken())) {
             return new ResponseEntity("Invalid refresh token", HttpStatus.UNAUTHORIZED);
         }
@@ -157,7 +157,7 @@ public class MemberController {
 
 
     @PostMapping("/refreshToken")
-    public ResponseEntity requestRefresh(@RequestBody RefreshTokenDto refreshTokenDto) {
+    public ResponseEntity<?> requestRefresh(@RequestBody RefreshTokenDto refreshTokenDto) {
         RefreshToken refreshToken = refreshTokenService.findRefreshToken(refreshTokenDto.getRefreshToken()).orElseThrow(() -> new IllegalArgumentException("Refresh token not found"));
         Claims claims = jwtTokenizer.parseRefreshToken(refreshToken.getValue());
 
