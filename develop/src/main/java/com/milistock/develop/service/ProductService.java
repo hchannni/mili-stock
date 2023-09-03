@@ -22,9 +22,4 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    // public Product getProductById(Long id) {
-    //     // Implement logic to retrieve a product by ID
-    // }
-
-    // Other methods for product retrieval and management
 }

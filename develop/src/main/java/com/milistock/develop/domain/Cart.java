@@ -1,6 +1,5 @@
 package com.milistock.develop.domain;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -26,5 +25,9 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int cartId;
     private String userId;
-    private List<Integer> productNumber;
+    private List<Integer> productNumbers;
+
+    public void addProductNumber(int productNumber){
+        productNumbers.add(productNumber);
+    }
 }
