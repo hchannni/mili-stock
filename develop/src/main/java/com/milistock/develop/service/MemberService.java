@@ -60,4 +60,16 @@ public class MemberService {
         return memberRepository.existsByUserId(userId);
     }
 
+    @Transactional
+    public Member updateMemberPw(String userId, String newPassword) {
+        Member existingMember = memberRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
+
+        // 새로운 비밀번호를 인코딩하여 저장
+        existingMember.setPassword(passwordEncoder.encode(newPassword));
+
+        // 회원 정보 업데이트
+        Member saveMember = memberRepository.save(existingMember);
+        return saveMember;
+    }
+
 }

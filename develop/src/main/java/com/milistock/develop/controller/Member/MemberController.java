@@ -38,24 +38,24 @@ public class MemberController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/identity")
-    public ResponseEntity identity(@RequestBody @Valid MemberIdentityVerificationDto identityVerificationDto, BindingResult bindingResult){
+    public ResponseEntity<?> identity(@RequestBody @Valid MemberIdentityVerificationDto identityVerificationDto, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         // ServiceNumber가 없을 경우 Exception이 발생한다. Global Exception에 대한 처리가 필요하다.
         IdentityVerification identityVerification = identityVerificationService.findByServiceNumber(identityVerificationDto.getServiceNumber());
 
         if(!identityVerificationDto.getName().equals(identityVerification.getName())){
-            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     
         if(!identityVerificationDto.getAffiliation().equals(identityVerification.getAffiliation())){
-            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     
         if(!identityVerificationDto.getJob().equals(identityVerification.getJob())){
-            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             
         }
         MemberIdentityVerificationResponseDto identityVerificationResponse = MemberIdentityVerificationResponseDto.builder()
@@ -65,13 +65,29 @@ public class MemberController {
                 .job(identityVerification.getJob())
                 .affiliation(identityVerification.getAffiliation())
                 .build();
-        return new ResponseEntity(identityVerificationResponse, HttpStatus.OK);
+        return new ResponseEntity<>(identityVerificationResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/idDuplicate")
+    public ResponseEntity<?> idDuplicate(@RequestBody @Valid IdDuplicateCheckDto idDuplicateCheckDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        String userId = idDuplicateCheckDto.getUserId();
+        boolean isUserIdExists = memberService.isUserIdExists(userId);
+        
+        if (isUserIdExists) {
+            return new ResponseEntity<>("아이디가 이미 사용 중입니다.", HttpStatus.CONFLICT); // 아이디 중복 시 CONFLICT 반환
+        } else {
+            return new ResponseEntity<>(userId, HttpStatus.OK); // 아이디 사용 가능 시 OK 반환
+        }
     }
 
     @PostMapping("/signup")
-    public ResponseEntity signup(@RequestBody @Valid MemberSignupDto memberSignupDto, BindingResult bindingResult) {
+    public ResponseEntity<?> signup(@RequestBody @Valid MemberSignupDto memberSignupDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Member member = new Member();
         member.setServiceNumber(memberSignupDto.getServiceNumber());
@@ -108,20 +124,20 @@ public class MemberController {
         memberSignupResponse.setDischarge(saveMember.getDischarge());
 
         // 회원가입
-        return new ResponseEntity(memberSignupResponse, HttpStatus.CREATED);
+        return new ResponseEntity<>(memberSignupResponse, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid MemberLoginDto loginDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         // UserId 없을 경우 Exception이 발생한다. Global Exception에 대한 처리가 필요하다.
         Member member = memberService.findByUserId(loginDto.getUserId());
 
         if(!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())){
-            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         
         // List<Role> ===> List<String>
@@ -143,16 +159,16 @@ public class MemberController {
                 .memberId(member.getMemberId())
                 .name(member.getName())
                 .build();
-        return new ResponseEntity(loginResponse, HttpStatus.OK);
+        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody RefreshTokenDto refreshTokenDto) {
         if (!refreshTokenService.isValidRefreshToken(refreshTokenDto.getRefreshToken())) {
-            return new ResponseEntity("Invalid refresh token", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Invalid refresh token", HttpStatus.UNAUTHORIZED);
         }
         refreshTokenService.deleteRefreshToken(refreshTokenDto.getRefreshToken());
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
@@ -177,13 +193,13 @@ public class MemberController {
                 .memberId(member.getMemberId())
                 .name(member.getName())
                 .build();
-        return new ResponseEntity(loginResponse, HttpStatus.OK);
+        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
 
     @GetMapping("/info")
-    public ResponseEntity userinfo(@IfLogin LoginUserDto loginUserDto) {
+    public ResponseEntity<?> userinfo(@IfLogin LoginUserDto loginUserDto) {
         Member member = memberService.findByUserId(loginUserDto.getServiceNumber());
-        return new ResponseEntity(member, HttpStatus.OK);
+        return new ResponseEntity<>(member, HttpStatus.OK);
     }
 
     

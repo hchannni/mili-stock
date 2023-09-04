@@ -21,6 +21,7 @@ public class MemberLoginDto {
     private String userId;
 
     @NotEmpty
-    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*\\W).{8,20}$") // 영문, 특수문자 8자 이상 20자 이하
+    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*\\W).{8,20}$",
+    message = "비밀번호는 영문, 특수문자 8자 이상 20자 이하여야합니다.") // 영문, 특수문자 8자 이상 20자 이하
     private String password;
 }
