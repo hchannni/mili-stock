@@ -62,21 +62,27 @@ public class MemberHelpController {
     @PostMapping("/pwInquiry")
     public ResponseEntity<?> pwInquiry(@RequestBody @Valid PwInquiryDto pwInquiryDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        
+
+        String userId = pwInquiryDto.getUserId();
         String name = pwInquiryDto.getName();
         String serviceNumber = pwInquiryDto.getServiceNumber();
         String job = pwInquiryDto.getJob();
         String affiliation = pwInquiryDto.getAffiliation();
 
         IdentityVerification identityVerification = identityVerificationService.findByServiceNumber(serviceNumber);
+        String userIdForIdentity  = memberService.findUserIdByServiceNumber(serviceNumber);
 
         if (identityVerification != null &&
             name.equals(identityVerification.getName()) &&
             job.equals(identityVerification.getJob()) &&
             affiliation.equals(identityVerification.getAffiliation())){
-                return new ResponseEntity<>(HttpStatus.OK);
+                if(userId.equals(userIdForIdentity)){
+                    return new ResponseEntity<>(userId, HttpStatus.OK);
+                }else{
+                    return new ResponseEntity<>("아이디와 본인인증 정보가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED);
+                }
             }else{
                 return new ResponseEntity<>("본인인증에 실패했습니다.", HttpStatus.UNAUTHORIZED);
 

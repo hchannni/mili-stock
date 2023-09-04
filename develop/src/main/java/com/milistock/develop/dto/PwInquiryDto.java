@@ -4,6 +4,10 @@ import javax.validation.constraints.NotBlank;
 
 public class PwInquiryDto {
 
+
+    @NotBlank(message = "아이디는 필수 입력 항목입니다.")
+    private String userId;
+
     @NotBlank(message = "이름은 필수 입력 항목입니다.")
     private String name;
 
@@ -17,6 +21,14 @@ public class PwInquiryDto {
     private String affiliation;
 
     // Getter와 Setter 메서드
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getName() {
         return name;
