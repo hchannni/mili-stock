@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 @Builder    
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name="Cart")
-@Table(name = "Cart")
+@Entity(name="cart")
+@Table(name = "cart")
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
