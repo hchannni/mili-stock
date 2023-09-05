@@ -6,6 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 
@@ -23,27 +27,16 @@ import lombok.NoArgsConstructor;
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int cartId;
-    private String userId;
-    private List<Integer> productNumbers;
+    private Long cartId;
 
-    public void addProductNumber(int productNumber){
-        productNumbers.add(productNumber);
-    }
-    
-    public Integer deleteProductNumber(int productNumber) {
-        if (productNumbers == null) {
-            return null; // Return null if the list is null
-        }
-        
-        // Attempt to remove the productNumber by its value (remove(Integer.valueOf(33)) deletes item with value 33)
-        boolean removed = productNumbers.remove(Integer.valueOf(productNumber));
-        
-        // Check if the productNumber was found and removed
-        if (removed) {
-            return productNumber;
-        } else {
-            return null; // Return null if productNumber was not found
-        }
-    }
+    @OneToOne
+    private Member user;
+
+    @ManyToMany
+    @JoinTable(
+        name = "cart_products",
+        joinColumns = @JoinColumn(name = "cartId"),
+        inverseJoinColumns = @JoinColumn(name = "productNumber")
+    )
+    private List<Integer> productIDs;
 }
