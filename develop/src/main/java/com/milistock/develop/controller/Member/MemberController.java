@@ -5,6 +5,7 @@ import com.milistock.develop.domain.RefreshToken;
 import com.milistock.develop.domain.Role;
 import com.milistock.develop.domain.IdentityVerification;
 import com.milistock.develop.dto.*;
+import com.milistock.develop.exception.UnauthorizedException;
 import com.milistock.develop.security.jwt.util.IfLogin;
 import com.milistock.develop.security.jwt.util.JwtTokenizer;
 import com.milistock.develop.security.jwt.util.LoginUserDto;
@@ -38,34 +39,37 @@ public class MemberController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/identity")
-    public ResponseEntity<?> identity(@RequestBody @Valid MemberIdentityVerificationDto identityVerificationDto, BindingResult bindingResult){
+    public ResponseEntity<?> identity(@RequestBody @Valid MemberIdentityVerificationDto identityVerificationDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        // ServiceNumber가 없을 경우 Exception이 발생한다. Global Exception에 대한 처리가 필요하다.
-        IdentityVerification identityVerification = identityVerificationService.findByServiceNumber(identityVerificationDto.getServiceNumber());
-
-        if(!identityVerificationDto.getName().equals(identityVerification.getName())){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
     
-        if(!identityVerificationDto.getAffiliation().equals(identityVerification.getAffiliation())){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        try {
+            IdentityVerification identityVerification = identityVerificationService.findByServiceNumber(identityVerificationDto.getServiceNumber());
     
-        if(!identityVerificationDto.getJob().equals(identityVerification.getJob())){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-            
+            if (!identityVerificationDto.getName().equals(identityVerification.getName())) {
+                throw new UnauthorizedException("이름이 일치하지 않습니다.");
+            }
+    
+            if (!identityVerificationDto.getAffiliation().equals(identityVerification.getAffiliation())) {
+                throw new UnauthorizedException("소속이 일치하지 않습니다.");
+            }
+    
+            if (!identityVerificationDto.getJob().equals(identityVerification.getJob())) {
+                throw new UnauthorizedException("직업이 일치하지 않습니다.");
+            }
+    
+            MemberIdentityVerificationResponseDto identityVerificationResponse = MemberIdentityVerificationResponseDto.builder()
+                    .userNumber(identityVerification.getUserNumber())
+                    .name(identityVerification.getName())
+                    .serviceNumber(identityVerification.getServiceNumber())
+                    .job(identityVerification.getJob())
+                    .affiliation(identityVerification.getAffiliation())
+                    .build();
+            return new ResponseEntity<>(identityVerificationResponse, HttpStatus.OK);
+        } catch (UnauthorizedException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
-        MemberIdentityVerificationResponseDto identityVerificationResponse = MemberIdentityVerificationResponseDto.builder()
-                .userNumber(identityVerification.getUserNumber())
-                .name(identityVerification.getName())
-                .serviceNumber(identityVerification.getServiceNumber())
-                .job(identityVerification.getJob())
-                .affiliation(identityVerification.getAffiliation())
-                .build();
-        return new ResponseEntity<>(identityVerificationResponse, HttpStatus.OK);
     }
 
     @PostMapping("/idDuplicate")
