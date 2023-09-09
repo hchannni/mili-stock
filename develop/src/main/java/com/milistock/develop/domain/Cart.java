@@ -2,6 +2,7 @@ package com.milistock.develop.domain;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,16 +28,19 @@ import lombok.NoArgsConstructor;
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cartId;
+    @Column(name = "cart_id")
+    private int cartId;
 
     @OneToOne
+    @JoinColumn(name = "member_id")
     private Member user;
 
     @ManyToMany
     @JoinTable(
         name = "cart_products",
-        joinColumns = @JoinColumn(name = "cartId"),
+        joinColumns = @JoinColumn(name = "cart_Id"),
         inverseJoinColumns = @JoinColumn(name = "productNumber")
     )
-    private List<Integer> productIDs;
+    private List<Product> products;
+
 }

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.milistock.develop.domain.Cart;
+import com.milistock.develop.domain.Member;
+import com.milistock.develop.domain.Product;
 import com.milistock.develop.service.CartService;
 
 @RestController
@@ -22,8 +24,8 @@ public class CartController {
     private CartService cartService;
 
     @PostMapping
-    public ResponseEntity<Cart> createCart(@RequestBody Cart cart) {
-        Cart createdCart = cartService.createCart(cart);
+    public ResponseEntity<Cart> createCart(@RequestBody Member user) {
+        Cart createdCart = cartService.createCart(user);
         return ResponseEntity.ok(createdCart);
     }
 
@@ -38,8 +40,8 @@ public class CartController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Cart> getCartByUserId(@PathVariable String userId) {
-        Optional<Cart> cart = cartService.getCartByUserId(userId);
+    public ResponseEntity<Cart> getCartByUserId(@PathVariable Member user) {
+        Optional<Cart> cart = cartService.getCartByUser(user);
         if (cart.isPresent()) {
             return ResponseEntity.ok(cart.get());
         } else {
@@ -50,8 +52,8 @@ public class CartController {
     // Update -> add/delete productID from Cart
     
     @PostMapping("/{cartId}/addProduct/{productNumber}")
-    public ResponseEntity<Cart> addProductToCart(@PathVariable int cartId, @PathVariable int productNumber) {
-        Cart updatedCart = cartService.addProductToCart(cartId, productNumber);
+    public ResponseEntity<Cart> addProductToCart(@PathVariable Cart cart, @PathVariable Product product) {
+        Cart updatedCart = cartService.addProductToCart(cart, product);
         if (updatedCart != null) {
             return ResponseEntity.ok(updatedCart);
         } else {
@@ -60,8 +62,8 @@ public class CartController {
     }
 
     @DeleteMapping("/{cartId}/deleteProduct/{productNumber}")
-    public ResponseEntity<Cart> deleteProductFromCart(@PathVariable int cartId, @PathVariable int productNumber) {
-        Cart updatedCart = cartService.deleteProductFromCart(cartId, productNumber);
+    public ResponseEntity<Cart> deleteProductFromCart(@PathVariable Cart cart, @PathVariable Product product) {
+        Cart updatedCart = cartService.removeProductFromCart(cart, product);
         if (updatedCart != null) {
             return ResponseEntity.ok(updatedCart);
         } else {
