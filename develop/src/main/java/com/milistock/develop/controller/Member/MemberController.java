@@ -10,7 +10,7 @@ import com.milistock.develop.domain.Member;
 import com.milistock.develop.repository.MemberRepository;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/members")
 public class MemberController {
     private final MemberRepository memberRepository;
 
