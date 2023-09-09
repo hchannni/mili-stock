@@ -7,7 +7,7 @@ import com.milistock.develop.domain.Cart;
 import com.milistock.develop.domain.Member;
 
 @Repository
-public interface CartRepository extends JpaRepository<Cart, Long> {
+public interface CartRepository extends JpaRepository<Cart, Integer> {
     Cart findByUser(Member user);
     Cart findByCartId(int id);
 }
