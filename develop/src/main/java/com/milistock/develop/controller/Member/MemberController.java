@@ -91,10 +91,8 @@ public class MemberController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody @Valid MemberSignupDto memberSignupDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> signup(@RequestBody @Valid MemberSignupDto memberSignupDto) {
+        
         Member member = new Member();
         member.setServiceNumber(memberSignupDto.getServiceNumber());
         member.setName(memberSignupDto.getName());
@@ -114,6 +112,7 @@ public class MemberController {
         Member saveMember = memberService.addMember(member);
 
         MemberSignupResponseDto memberSignupResponse = new MemberSignupResponseDto();
+        memberSignupResponse.setStatus(200);
         memberSignupResponse.setMemberId(saveMember.getMemberId());
         memberSignupResponse.setServiceNumber(saveMember.getServiceNumber());
         memberSignupResponse.setName(saveMember.getName());

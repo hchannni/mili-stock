@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class MemberSignupResponseDto {
+    private Integer status;
     private Long memberId;
     private String serviceNumber;
     private String name;
