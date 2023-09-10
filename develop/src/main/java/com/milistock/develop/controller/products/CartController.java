@@ -3,6 +3,7 @@ package com.milistock.develop.controller.products;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import com.milistock.develop.domain.Cart;
 import com.milistock.develop.domain.Member;
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.service.CartService;
+import com.milistock.develop.service.MemberService;
 
 @RestController
 @RequestMapping("/carts")
@@ -23,9 +25,19 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
+    @Autowired
+    private MemberService memberService;
+
     @PostMapping
-    public ResponseEntity<Cart> createCart(@RequestBody Member user) {
-        Cart createdCart = cartService.createCart(user);
+    public ResponseEntity<?> createCart(@RequestBody Member user) {
+        Member existingMember = memberService.findByUserId(user.getUserId());
+
+        if (existingMember == null) {
+            // Member does not exist, return an error response
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Member does not exist.");
+        }
+
+        Cart createdCart = cartService.createCart(existingMember);
         return ResponseEntity.ok(createdCart);
     }
 
@@ -40,8 +52,8 @@ public class CartController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Cart> getCartByUserId(@PathVariable Member user) {
-        Optional<Cart> cart = cartService.getCartByUser(user);
+    public ResponseEntity<Cart> getCartByUserId(@PathVariable int memberId) {
+        Optional<Cart> cart = cartService.getCartByUser(memberId);
         if (cart.isPresent()) {
             return ResponseEntity.ok(cart.get());
         } else {

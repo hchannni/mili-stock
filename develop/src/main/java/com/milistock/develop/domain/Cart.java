@@ -39,7 +39,7 @@ public class Cart {
     @JoinTable(
         name = "cart_products",
         joinColumns = @JoinColumn(name = "cart_Id"),
-        inverseJoinColumns = @JoinColumn(name = "productNumber")
+        inverseJoinColumns = @JoinColumn(name = "product_number")
     )
     private List<Product> products;
 

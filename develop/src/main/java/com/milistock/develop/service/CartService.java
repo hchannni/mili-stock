@@ -21,8 +21,8 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
-    public Optional<Cart> getCartByUser(Member user) {
-        Cart cart = cartRepository.findByUser(user);
+    public Optional<Cart> getCartByUser(int memberId) {
+        Cart cart = cartRepository.findByMemberId(memberId);
         return Optional.ofNullable(cart);
     }
 
