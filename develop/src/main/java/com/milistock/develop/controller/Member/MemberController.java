@@ -74,18 +74,19 @@ public class MemberController {
     }
 
     @PostMapping("/idDuplicate")
-    public ResponseEntity<?> idDuplicate(@RequestBody @Valid IdDuplicateCheckDto idDuplicateCheckDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> idDuplicate(@RequestBody @Valid IdDuplicateCheckDto idDuplicateCheckDto) {
 
         String userId = idDuplicateCheckDto.getUserId();
         boolean isUserIdExists = memberService.isUserIdExists(userId);
         
         if (isUserIdExists) {
-            return new ResponseEntity<>("아이디가 이미 사용 중입니다.", HttpStatus.CONFLICT); // 아이디 중복 시 CONFLICT 반환
+            throw new BusinessExceptionHandler("아이디가 이미 사용 중입니다.", ErrorCode.CONFLICT); // 아이디 중복 시 CONFLICT 반환
         } else {
-            return new ResponseEntity<>(userId, HttpStatus.OK); // 아이디 사용 가능 시 OK 반환
+            IdDuplicateResponseDto idDuplicateResponseDto = IdDuplicateResponseDto.builder()
+                    .status(200)
+                    .userId(idDuplicateCheckDto.getUserId())
+                    .build();
+            return new ResponseEntity<>(idDuplicateResponseDto, HttpStatus.OK); // 아이디 사용 가능 시 OK 반환
         }
     }
 
