@@ -57,6 +57,11 @@ public class MemberService {
         return memberRepository.existsByUserId(userId);
     }
 
+    @Transactional(readOnly = true)
+    public boolean isServiceNumberExists(String serviceNumber) {
+        return memberRepository.existsByServiceNumber(serviceNumber);
+    }
+
     @Transactional
     public Member updateMemberPw(String userId, String newPassword) {
         Member existingMember = memberRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));

@@ -2,7 +2,6 @@ package com.milistock.develop.service;
 
 import com.milistock.develop.domain.IdentityVerification;
 import com.milistock.develop.repository.IdentityVerificationRepository;
-import com.milistock.develop.exception.UnauthorizedException;
 import com.milistock.develop.exception.*;
 import com.milistock.develop.code.*;
 import lombok.RequiredArgsConstructor;

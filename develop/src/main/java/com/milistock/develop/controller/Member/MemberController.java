@@ -7,7 +7,6 @@ import com.milistock.develop.domain.IdentityVerification;
 import com.milistock.develop.dto.*;
 import com.milistock.develop.exception.*;
 import com.milistock.develop.exception.BusinessExceptionHandler;
-import com.milistock.develop.response.*;
 import com.milistock.develop.security.jwt.util.IfLogin;
 import com.milistock.develop.security.jwt.util.JwtTokenizer;
 import com.milistock.develop.security.jwt.util.LoginUserDto;
@@ -92,7 +91,22 @@ public class MemberController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody @Valid MemberSignupDto memberSignupDto) {
+
+        String userId = memberSignupDto.getUserId();
+        boolean isUserIdExists = memberService.isUserIdExists(userId);
+
+        if (isUserIdExists) {
+            throw new BusinessExceptionHandler("아이디가 이미 사용 중입니다.", ErrorCode.CONFLICT); // 아이디 중복 시 CONFLICT 반환
+        }
+
+        String serviceNumber = memberSignupDto.getServiceNumber();
+        boolean isServiceNumberExists = memberService.isServiceNumberExists(serviceNumber);
+
+        if (isServiceNumberExists) {
+            throw new BusinessExceptionHandler("군번이 이미 사용 중입니다.", ErrorCode.CONFLICT); // 아이디 중복 시 CONFLICT 반환
+        }
         
+
         Member member = new Member();
         member.setServiceNumber(memberSignupDto.getServiceNumber());
         member.setName(memberSignupDto.getName());
@@ -112,7 +126,7 @@ public class MemberController {
         Member saveMember = memberService.addMember(member);
 
         MemberSignupResponseDto memberSignupResponse = new MemberSignupResponseDto();
-        memberSignupResponse.setStatus(200);
+        memberSignupResponse.setStatus(201);
         memberSignupResponse.setMemberId(saveMember.getMemberId());
         memberSignupResponse.setServiceNumber(saveMember.getServiceNumber());
         memberSignupResponse.setName(saveMember.getName());

@@ -65,7 +65,7 @@ public enum ErrorCode {
     // @RequestBody 및 @RequestParam, @PathVariable 값이 유효하지 않음
     NOT_VALID_HEADER_ERROR(404, "G012", "Header에 데이터가 존재하지 않는 경우 "),
 
-    CONFLICT(409,"G013","ID 중복"), 
+    CONFLICT(409,"G013","Conflict(중복된 정보로 충돌이 일어남)"), 
 
     UNPROCESSABLE_ENTITY(422,"G014","유효성 검사 오류"),
 
