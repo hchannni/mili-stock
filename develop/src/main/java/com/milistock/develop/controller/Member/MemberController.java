@@ -60,6 +60,7 @@ public class MemberController {
             }
     
             MemberIdentityVerificationResponseDto identityVerificationResponse = MemberIdentityVerificationResponseDto.builder()
+                    .status(200)
                     .userNumber(identityVerification.getUserNumber())
                     .name(identityVerification.getName())
                     .serviceNumber(identityVerification.getServiceNumber())

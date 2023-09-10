@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberIdentityVerificationResponseDto {
+    private Integer status;
     private Long userNumber;
     private String name;
     private String serviceNumber;

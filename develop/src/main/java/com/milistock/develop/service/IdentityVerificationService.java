@@ -3,6 +3,8 @@ package com.milistock.develop.service;
 import com.milistock.develop.domain.IdentityVerification;
 import com.milistock.develop.repository.IdentityVerificationRepository;
 import com.milistock.develop.exception.UnauthorizedException;
+import com.milistock.develop.exception.*;
+import com.milistock.develop.code.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +23,7 @@ public IdentityVerification findByServiceNumber(String serviceNumber) {
     if (identityVerification.isPresent()) {
         return identityVerification.get();
     } else {
-        throw new UnauthorizedException("군번이 일치하지 않습니다."); // 예외를 UnauthorizedException으로 변경
+        throw new BusinessExceptionHandler("군번이 일치하지 않습니다.", ErrorCode.UNAUTHORIZED); // 예외를 UnauthorizedException으로 변경
     }
 }
 

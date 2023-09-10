@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
             stringBuilder.append(fieldError.getDefaultMessage());
             stringBuilder.append(", ");
         }
-        final ErrorResponse response = ErrorResponse.of(ErrorCode.NOT_VALID_ERROR, String.valueOf(stringBuilder));
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.UNPROCESSABLE_ENTITY, String.valueOf(stringBuilder));
         return new ResponseEntity<>(response, HTTP_STATUS_OK);
     }
 
