@@ -5,7 +5,9 @@ import com.milistock.develop.domain.RefreshToken;
 import com.milistock.develop.domain.Role;
 import com.milistock.develop.domain.IdentityVerification;
 import com.milistock.develop.dto.*;
-import com.milistock.develop.exception.UnauthorizedException;
+import com.milistock.develop.exception.*;
+import com.milistock.develop.exception.BusinessExceptionHandler;
+import com.milistock.develop.response.*;
 import com.milistock.develop.security.jwt.util.IfLogin;
 import com.milistock.develop.security.jwt.util.JwtTokenizer;
 import com.milistock.develop.security.jwt.util.LoginUserDto;
@@ -20,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import com.milistock.develop.code.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -39,24 +42,21 @@ public class MemberController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/identity")
-    public ResponseEntity<?> identity(@RequestBody @Valid MemberIdentityVerificationDto identityVerificationDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> identity(@RequestBody @Valid MemberIdentityVerificationDto identityVerificationDto) {
     
         try {
             IdentityVerification identityVerification = identityVerificationService.findByServiceNumber(identityVerificationDto.getServiceNumber());
     
             if (!identityVerificationDto.getName().equals(identityVerification.getName())) {
-                throw new UnauthorizedException("이름이 일치하지 않습니다.");
+                throw new BusinessExceptionHandler("이름이 일치하지 않습니다.", ErrorCode.UNAUTHORIZED);
             }
     
             if (!identityVerificationDto.getAffiliation().equals(identityVerification.getAffiliation())) {
-                throw new UnauthorizedException("소속이 일치하지 않습니다.");
+                throw new BusinessExceptionHandler("소속이 일치하지 않습니다.",ErrorCode.UNAUTHORIZED);
             }
     
             if (!identityVerificationDto.getJob().equals(identityVerification.getJob())) {
-                throw new UnauthorizedException("직업이 일치하지 않습니다.");
+                throw new BusinessExceptionHandler("직업이 일치하지 않습니다.",ErrorCode.UNAUTHORIZED);
             }
     
             MemberIdentityVerificationResponseDto identityVerificationResponse = MemberIdentityVerificationResponseDto.builder()
