@@ -10,6 +10,7 @@ import com.milistock.develop.domain.Member;
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.repository.CartRepository;
 import com.milistock.develop.repository.MemberRepository;
+import com.milistock.develop.repository.ProductRepository;
 
 @Service
 public class CartService {
@@ -18,6 +19,9 @@ public class CartService {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     public Cart createCart(Member user) {
         Cart cart = new Cart();
@@ -39,9 +43,16 @@ public class CartService {
         return Optional.ofNullable(cart);
     }
 
-    public Cart addProductToCart(Cart cart, Product product) {
-        cart.getProducts().add(product);
-        return cartRepository.save(cart);
+    public Cart addProductToCart(int cartId, int productNumber) {
+        Cart cart = cartRepository.findByCartId(cartId);
+        if (cart!=null){
+            Product product = productRepository.findById(productNumber).orElse(null);
+            if (product!=null){
+                cart.getProducts().add(product);
+                return cartRepository.save(cart);
+            }
+        }
+        return null;      
     }
 
     public Cart removeProductFromCart(Cart cart, Product product) {

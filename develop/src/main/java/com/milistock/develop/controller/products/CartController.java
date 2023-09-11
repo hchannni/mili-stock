@@ -64,8 +64,8 @@ public class CartController {
     // Update -> add/delete productID from Cart
     
     @PostMapping("/{cartId}/addProduct/{productNumber}")
-    public ResponseEntity<Cart> addProductToCart(@PathVariable Cart cart, @PathVariable Product product) {
-        Cart updatedCart = cartService.addProductToCart(cart, product);
+    public ResponseEntity<Cart> addProductToCart(@PathVariable int cartId, @PathVariable int productNumber) {
+        Cart updatedCart = cartService.addProductToCart(cartId, productNumber);
         if (updatedCart != null) {
             return ResponseEntity.ok(updatedCart);
         } else {
