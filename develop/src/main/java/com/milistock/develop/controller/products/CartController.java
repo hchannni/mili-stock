@@ -30,7 +30,7 @@ public class CartController {
 
     @PostMapping
     public ResponseEntity<?> createCart(@RequestBody Member user) {
-        Member existingMember = memberService.findByUserId(user.getUserId());
+        Member existingMember = memberService.findByMemberId(user.getMemberId());
 
         if (existingMember == null) {
             // Member does not exist, return an error response
@@ -52,7 +52,7 @@ public class CartController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Cart> getCartByUserId(@PathVariable int memberId) {
+    public ResponseEntity<Cart> getCartByUserId(@PathVariable Long memberId) {
         Optional<Cart> cart = cartService.getCartByUser(memberId);
         if (cart.isPresent()) {
             return ResponseEntity.ok(cart.get());

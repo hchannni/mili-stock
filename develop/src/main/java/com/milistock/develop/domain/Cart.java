@@ -33,7 +33,7 @@ public class Cart {
 
     @OneToOne
     @JoinColumn(name = "member_id")
-    private Member user;
+    private Member member;
 
     @ManyToMany
     @JoinTable(

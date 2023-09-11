@@ -9,21 +9,29 @@ import com.milistock.develop.domain.Cart;
 import com.milistock.develop.domain.Member;
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.repository.CartRepository;
+import com.milistock.develop.repository.MemberRepository;
 
 @Service
 public class CartService {
     @Autowired
     private CartRepository cartRepository;
 
+    @Autowired
+    private MemberRepository memberRepository;
+
     public Cart createCart(Member user) {
         Cart cart = new Cart();
-        cart.setUser(user);
+        cart.setMember(user);
         return cartRepository.save(cart);
     }
 
-    public Optional<Cart> getCartByUser(int memberId) {
-        Cart cart = cartRepository.findByMemberId(memberId);
-        return Optional.ofNullable(cart);
+    public Optional<Cart> getCartByUser(Long memberId) {
+        Member user = memberRepository.findByMemberId(memberId).orElse(null);
+        if (user!=null){
+            Cart cart = cartRepository.findByMember(user);
+            return Optional.ofNullable(cart);
+        }
+        return null;
     }
 
     public Optional<Cart> getCartById(int cartId) {
