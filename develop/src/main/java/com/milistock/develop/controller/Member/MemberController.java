@@ -155,6 +155,9 @@ public class MemberController {
             throw new BusinessExceptionHandler("존재하지 않는 아이디 입니다.", ErrorCode.UNAUTHORIZED);
         }
 
+        if(loginDto.getPassword().isEmpty() || loginDto.getPassword().isBlank()){
+            throw new BusinessExceptionHandler("비밀번호를 입력하세요.", ErrorCode.UNAUTHORIZED);
+        }
 
         if(!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())){
             throw new BusinessExceptionHandler("잘못된 비밀번호 입니다.", ErrorCode.UNAUTHORIZED);
