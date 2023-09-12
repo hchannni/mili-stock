@@ -19,6 +19,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// 수정2: 왜 DB cart table의 column에 "member"가 있는지 모르겠음
+
 @Data
 @Builder    
 @AllArgsConstructor
@@ -30,7 +32,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cart_id")
     private int cartId;
-
+    
     @OneToOne
     @JoinColumn(name = "member_id")
     private Member member;

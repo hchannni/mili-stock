@@ -7,6 +7,7 @@ import com.milistock.develop.domain.Cart;
 import com.milistock.develop.domain.Member;
 // import com.milistock.develop.domain.Product;
 
+// 수정3: findByMember가 맞는지, findByMemberId는 왜 안되는지 잘 이해 안감
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Integer> {
     Cart findByMember(Member user);

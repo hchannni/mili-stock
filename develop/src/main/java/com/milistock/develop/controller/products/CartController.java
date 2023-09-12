@@ -28,6 +28,7 @@ public class CartController {
     @Autowired
     private MemberService memberService;
 
+    // 수정1: input user 말고 userId로 하기
     @PostMapping
     public ResponseEntity<?> createCart(@RequestBody Member user) {
         Member existingMember = memberService.findByMemberId(user.getMemberId());
@@ -60,8 +61,6 @@ public class CartController {
             return ResponseEntity.notFound().build();
         }
     }    
-
-    // Update -> add/delete productID from Cart
     
     @PostMapping("/{cartId}/addProduct/{productNumber}")
     public ResponseEntity<Cart> addProductToCart(@PathVariable int cartId, @PathVariable int productNumber) {
