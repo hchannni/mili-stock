@@ -51,7 +51,7 @@ public class CartController {
         }
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user/{memberId}")
     public ResponseEntity<Cart> getCartByUserId(@PathVariable Long memberId) {
         Optional<Cart> cart = cartService.getCartByUser(memberId);
         if (cart.isPresent()) {
@@ -74,8 +74,8 @@ public class CartController {
     }
 
     @DeleteMapping("/{cartId}/deleteProduct/{productNumber}")
-    public ResponseEntity<Cart> deleteProductFromCart(@PathVariable Cart cart, @PathVariable Product product) {
-        Cart updatedCart = cartService.removeProductFromCart(cart, product);
+    public ResponseEntity<Cart> deleteProductFromCart(@PathVariable int cartId, @PathVariable int productNumber) {
+        Cart updatedCart = cartService.removeProductFromCart(cartId, productNumber);
         if (updatedCart != null) {
             return ResponseEntity.ok(updatedCart);
         } else {

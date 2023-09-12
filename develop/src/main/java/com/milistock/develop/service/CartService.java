@@ -55,9 +55,17 @@ public class CartService {
         return null;      
     }
 
-    public Cart removeProductFromCart(Cart cart, Product product) {
-        cart.getProducts().remove(product);
-        return cartRepository.save(cart);
+    public Cart removeProductFromCart(int cartId, int productNumber) {
+        Cart cart = cartRepository.findByCartId(cartId);
+        Product product = productRepository.findById(productNumber).orElse(null);
+
+        if (cart!=null && product!=null){
+            if (cart.getProducts().contains(product)){
+                cart.getProducts().remove(product);
+                return cartRepository.save(cart);
+            }
+        }
+        return null;     
     }
 
     public boolean deleteCart(int cartId) {

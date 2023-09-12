@@ -5,11 +5,13 @@ import org.springframework.stereotype.Repository;
 
 import com.milistock.develop.domain.Cart;
 import com.milistock.develop.domain.Member;
+// import com.milistock.develop.domain.Product;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Integer> {
     Cart findByMember(Member user);
     Cart findByCartId(int id);
+    // Cart findByProduct(Product p);
 }
 
 // @Repository
