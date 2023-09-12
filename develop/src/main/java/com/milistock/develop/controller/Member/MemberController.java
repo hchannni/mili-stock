@@ -147,16 +147,17 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid MemberLoginDto loginDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
+    public ResponseEntity<?> login(@RequestBody @Valid MemberLoginDto loginDto) {
+        
         // UserId 없을 경우 Exception이 발생한다. Global Exception에 대한 처리가 필요하다.
         Member member = memberService.findByUserId(loginDto.getUserId());
+        if(!member.getUserId().equals(loginDto.getUserId())){
+            throw new BusinessExceptionHandler("존재하지 않는 아이디 입니다.", ErrorCode.UNAUTHORIZED);
+        }
+
 
         if(!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            throw new BusinessExceptionHandler("잘못된 비밀번호 입니다.", ErrorCode.UNAUTHORIZED);
         }
         
         // List<Role> ===> List<String>
@@ -173,6 +174,7 @@ public class MemberController {
         refreshTokenService.addRefreshToken(refreshTokenEntity);
 
         MemberLoginResponseDto loginResponse = MemberLoginResponseDto.builder()
+                .status(200)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .memberId(member.getMemberId())

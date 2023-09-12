@@ -4,6 +4,8 @@ import com.milistock.develop.domain.Member;
 import com.milistock.develop.domain.Role;
 import com.milistock.develop.repository.MemberRepository;
 import com.milistock.develop.repository.RoleRepository;
+import com.milistock.develop.exception.*;
+import com.milistock.develop.code.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +22,13 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public Member findByUserId(String userid){
-        return memberRepository.findByUserId(userid).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
+        Optional<Member> memberid = memberRepository.findByUserId(userid); // 이거는 바로 jpa 데이터베이스랑 비교하는 것 
+        if (memberid.isPresent()) { 
+                return memberid.get();
+        } else {
+            throw new BusinessExceptionHandler("존재하지 않는 아이디 입니다.", ErrorCode.UNAUTHORIZED); // 예외를 UnauthorizedException으로 변경
+        }
+
     }
 
     @Transactional

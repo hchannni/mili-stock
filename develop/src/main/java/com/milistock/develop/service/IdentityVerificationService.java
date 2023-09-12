@@ -17,7 +17,7 @@ public class IdentityVerificationService {
     //private final RoleRepository roleRepository;
 
     @Transactional(readOnly = true)
-public IdentityVerification findByServiceNumber(String serviceNumber) {
+    public IdentityVerification findByServiceNumber(String serviceNumber) {
     Optional<IdentityVerification> identityVerification = identityVerificationRepository.findByServiceNumber(serviceNumber);
     if (identityVerification.isPresent()) {
         return identityVerification.get();

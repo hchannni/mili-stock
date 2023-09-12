@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberLoginResponseDto {
+    private Integer status;
     private String accessToken;
     private String refreshToken;
     private Long memberId;

@@ -50,7 +50,7 @@ public class Member {
     private String phoneNumber; // (전화번호)
 
     @Column(length = 255, nullable = false)
-    private String email; // (이메일)
+    private String email; // (이메일) VARCHAR
 
     @Column(length = 50)
     private int child; // (자녀수)  
