@@ -14,6 +14,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+// (1) 순위를 위한 product의 좋아요 개수 계산 (product_id)
+// (2) all product page에서 해당 유저가 좋아요 했는지 표시 (member_i, product_id)
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -29,4 +33,8 @@ public class Heart {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 }
