@@ -6,8 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.milistock.develop.domain.Heart;
+import com.milistock.develop.domain.Product;
 
 @Repository
 public interface HeartRepository extends JpaRepository<Heart, Integer> {
     List<Heart> findAllByMember_Id(int userId);
+    Long countByProduct(Product product); // number of hearts
 }

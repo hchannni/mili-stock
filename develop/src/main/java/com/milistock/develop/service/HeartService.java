@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.milistock.develop.repository.HeartRepository;
 import com.milistock.develop.domain.Heart;
+import com.milistock.develop.domain.Product;
 
 @Service
 public class HeartService {
@@ -16,6 +17,10 @@ public class HeartService {
     @Autowired
     public HeartService(HeartRepository heartRepository) {
         this.heartRepository = heartRepository;
+    }
+
+    public Heart saveHeart(Heart heart) {
+        return heartRepository.save(heart);
     }
 
     public List<Heart> getAllHearts() {
@@ -30,8 +35,8 @@ public class HeartService {
         return heartRepository.findAllByMember_Id(userId);
     }
 
-    public Heart saveHeart(Heart heart) {
-        return heartRepository.save(heart);
+    public Long getHeartCountForProduct(Product product) {
+        return heartRepository.countByProduct(product);
     }
 
     public void deleteHeart(int heartId) {
