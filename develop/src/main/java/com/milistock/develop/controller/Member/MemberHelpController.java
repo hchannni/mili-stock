@@ -15,7 +15,6 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 
 import com.milistock.develop.dto.IdInquiryDto;
@@ -38,11 +37,11 @@ public class MemberHelpController {
     private final IdentityVerificationService identityVerificationService;
     private final MemberService memberService;
     
-    @PostMapping("/idCheck")
+    @PostMapping("/idCheck") // 비밀번호 찾기위한 아이디 확인
     public ResponseEntity<?> idCheck(@RequestBody @Valid IdCheckDto iCheckDto) {
 
         String userId = iCheckDto.getUserId();
-        Member member = memberService.findByUserId(userId); // ID존재 확인 회원가입을 했냐?
+        Member member = memberService.findByUserId(userId); // ID존재 확인
         if (member!=null) {
             PwInquiryResponseDto idCheckResponseDto = PwInquiryResponseDto.builder()
             .status(200)
@@ -55,7 +54,7 @@ public class MemberHelpController {
     }
     
 
-    @PostMapping("/pwInquiry")
+    @PostMapping("/pwInquiry") // 비밀번호 찾기위한 본인인증
     public ResponseEntity<?> pwInquiry(@RequestBody @Valid PwInquiryDto pwInquiryDto) {
 
         String userId = pwInquiryDto.getUserId();
@@ -65,7 +64,7 @@ public class MemberHelpController {
         String affiliation = pwInquiryDto.getAffiliation();
 
         IdentityVerification identityVerification = identityVerificationService.findByServiceNumber(serviceNumber); //군번으로 본인인증 DB조사
-        String userIdForIdentity  = memberService.findUserIdByServiceNumber(serviceNumber); // 군번으로 회원가입 내역 조사 
+        String userIdForIdentity  = memberService.findUserIdByServiceNumber(serviceNumber); // 군번으로 회원가입 내역 조사
 
         if (identityVerification != null &&
             name.equals(identityVerification.getName()) &&
@@ -83,7 +82,7 @@ public class MemberHelpController {
     }
 
     
-    @PostMapping("/pwChange")
+    @PostMapping("/pwChange") // 비밀번호 변경 메소드
     public ResponseEntity<?> pwChange(@RequestBody @Valid PwChangeDto pwChangeDto) {
 
         String userId = pwChangeDto.getUserId();
@@ -102,11 +101,8 @@ public class MemberHelpController {
         }        // userId로 회원 정보 조회
     }
     
-    @PostMapping("/idInquiry")
-    public ResponseEntity<?> idInquiry(@RequestBody @Valid IdInquiryDto idInquiryDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    @PostMapping("/idInquiry") // 아이디 찾기 메소드(본인인증)
+    public ResponseEntity<?> idInquiry(@RequestBody @Valid IdInquiryDto idInquiryDto) {
 
         String name = idInquiryDto.getName();
         String serviceNumber = idInquiryDto.getServiceNumber();
@@ -127,14 +123,18 @@ public class MemberHelpController {
 
             if (userId != null) {
                 // userId를 찾았을 경우
-                return new ResponseEntity<>(userId, HttpStatus.OK);
+                PwInquiryResponseDto idInquiryResponseDto = PwInquiryResponseDto.builder()
+                    .status(200)
+                    .userId(userId)
+                    .build();
+                return new ResponseEntity<>(idInquiryResponseDto, HttpStatus.OK);
             } else {
                 // userId를 찾지 못했을 경우
-                return new ResponseEntity<>("아이디를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+                throw new BusinessExceptionHandler("회원가입 내역이 없습니다.", ErrorCode.NOT_FOUND_ERROR);
             }
         } else {
             // 본인인증 실패 또는 정보 불일치
-            return new ResponseEntity<>("본인인증에 실패했습니다.", HttpStatus.UNAUTHORIZED);
+            throw new BusinessExceptionHandler("본인인증에 실패했습니다.", ErrorCode.UNAUTHORIZED);
         }
     }
 }
