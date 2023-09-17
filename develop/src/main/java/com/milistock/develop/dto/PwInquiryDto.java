@@ -11,7 +11,7 @@ public class PwInquiryDto {
     @NotBlank(message = "이름은 필수 입력 항목입니다.")
     private String name;
 
-    @NotBlank(message = "서비스 번호는 필수 입력 항목입니다.")
+    @NotBlank(message = "군번은 필수 입력 항목입니다.")
     private String serviceNumber;
 
     @NotBlank(message = "직업은 필수 입력 항목입니다.")

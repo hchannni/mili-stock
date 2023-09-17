@@ -30,9 +30,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         String token="";
         try {
-            token = getToken(request);
+            token = getToken(request); //accessToken 받는 메소드
             if (StringUtils.hasText(token)) {
-                getAuthentication(token);
+                getAuthentication(token); //Token값이 존재한다면 getAuthentication으로 보내기
             }
             filterChain.doFilter(request, response);
         }
@@ -70,13 +70,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void getAuthentication(String token) {
-        JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(token);
-        Authentication authenticate = authenticationManager.authenticate(authenticationToken);
-                // 이 객체에는 JWT안의 내용을 가지고 로그인 id,role
+        JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(token); //객체생성
+        Authentication authenticate = authenticationManager.authenticate(authenticationToken); // 객체 분석
+                // 이 객체에는 JWT안의 내용을 가지고 name,role, memberId를 보내줌
 
         SecurityContextHolder.getContext().setAuthentication(authenticate); // 현재 요청에서 언제든지 인증정보를 꺼낼 수 있도록 해준다.
     }
-
+    //token값 에서 beark 분리
     private String getToken(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
         if (StringUtils.hasText(authorization) && authorization.startsWith("Bearer")){

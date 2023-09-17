@@ -4,7 +4,9 @@ package com.milistock.develop.controller.Member;
 
 import com.milistock.develop.domain.IdentityVerification;
 import com.milistock.develop.service.MemberService;
-import com.milistock.develop.dto.IdCheckDto;
+import com.milistock.develop.dto.*;
+import com.milistock.develop.exception.*;
+import com.milistock.develop.code.*;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,35 +37,26 @@ public class MemberHelpController {
 
     private final IdentityVerificationService identityVerificationService;
     private final MemberService memberService;
+    
+    @PostMapping("/idCheck")
+    public ResponseEntity<?> idCheck(@RequestBody @Valid IdCheckDto iCheckDto) {
 
-    @PostMapping("/pwChange")
-    public ResponseEntity<?> pwChange(@RequestBody @Valid PwChangeDto pwChangeDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        String userId = pwChangeDto.getUserId();
-        String newPassword = pwChangeDto.getNewPassword();
-
-        // userId로 회원 정보 조회
-        Member member = memberService.findByUserId(userId);
-
-        if (member != null) {
-            // 회원이 존재하면 새로운 비밀번호로 업데이트
-            memberService.updateMemberPw(userId,newPassword);
-
-            return new ResponseEntity<>("비밀번호가 성공적으로 변경되었습니다.", HttpStatus.OK);
+        String userId = iCheckDto.getUserId();
+        Member member = memberService.findByUserId(userId); // ID존재 확인 회원가입을 했냐?
+        if (member!=null) {
+            PwInquiryResponseDto idCheckResponseDto = PwInquiryResponseDto.builder()
+            .status(200)
+            .userId(userId)
+            .build();
+            return new ResponseEntity<>(idCheckResponseDto, HttpStatus.OK); // ID가 존재하면 userID와 HttpStatus.OK 반환
         } else {
-            // 회원이 존재하지 않으면 오류 메시지 반환
-            return new ResponseEntity<>("회원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+            throw new BusinessExceptionHandler("인증 오류", ErrorCode.UNAUTHORIZED); // ID가 존재하지 않으면 HttpStatus.NOT_FOUND 반환
         }
     }
     
+
     @PostMapping("/pwInquiry")
-    public ResponseEntity<?> pwInquiry(@RequestBody @Valid PwInquiryDto pwInquiryDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> pwInquiry(@RequestBody @Valid PwInquiryDto pwInquiryDto) {
 
         String userId = pwInquiryDto.getUserId();
         String name = pwInquiryDto.getName();
@@ -71,39 +64,42 @@ public class MemberHelpController {
         String job = pwInquiryDto.getJob();
         String affiliation = pwInquiryDto.getAffiliation();
 
-        IdentityVerification identityVerification = identityVerificationService.findByServiceNumber(serviceNumber);
-        String userIdForIdentity  = memberService.findUserIdByServiceNumber(serviceNumber);
+        IdentityVerification identityVerification = identityVerificationService.findByServiceNumber(serviceNumber); //군번으로 본인인증 DB조사
+        String userIdForIdentity  = memberService.findUserIdByServiceNumber(serviceNumber); // 군번으로 회원가입 내역 조사 
 
         if (identityVerification != null &&
             name.equals(identityVerification.getName()) &&
             job.equals(identityVerification.getJob()) &&
-            affiliation.equals(identityVerification.getAffiliation())){
-                if(userId.equals(userIdForIdentity)){
-                    return new ResponseEntity<>(userId, HttpStatus.OK);
+            affiliation.equals(identityVerification.getAffiliation())&&
+            userId.equals(userIdForIdentity)){
+                    PwInquiryResponseDto pwInquiryResponseDto = PwInquiryResponseDto.builder()
+                    .status(200)
+                    .userId(userIdForIdentity)
+                    .build();
+                    return new ResponseEntity<>(pwInquiryResponseDto, HttpStatus.OK);
                 }else{
-                    return new ResponseEntity<>("아이디와 본인인증 정보가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED);
-                }
-            }else{
-                return new ResponseEntity<>("본인인증에 실패했습니다.", HttpStatus.UNAUTHORIZED);
-
-                
+                throw new BusinessExceptionHandler("아이디와 본인인증 정보가 일치하지 않습니다.", ErrorCode.UNAUTHORIZED);
             }
     }
 
-    @PostMapping("/idCheck")
-    public ResponseEntity<?> idCheck(@RequestBody @Valid IdCheckDto iCheckDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    
+    @PostMapping("/pwChange")
+    public ResponseEntity<?> pwChange(@RequestBody @Valid PwChangeDto pwChangeDto) {
 
-        String userId = iCheckDto.getUserId();
-        boolean isUserIdExists = memberService.isUserIdExists(userId);
-        
-        if (isUserIdExists) {
-            return new ResponseEntity<>(userId, HttpStatus.OK); // ID가 존재하면 userID와 HttpStatus.OK 반환
-        } else {
-            return new ResponseEntity<>("아이디를 찾을 수 없습니다.", HttpStatus.NOT_FOUND); // ID가 존재하지 않으면 HttpStatus.NOT_FOUND 반환
-        }
+        String userId = pwChangeDto.getUserId();
+        String newPassword = pwChangeDto.getNewPassword();
+
+        Member member = memberService.findByUserId(userId); // userId로 회원 정보 조회
+
+        if(!member.getUserId().equals(userId)){             // ID 대소문자 비교
+            throw new BusinessExceptionHandler("존재하지 않는 아이디 입니다.", ErrorCode.UNAUTHORIZED); // front 오류
+        }else{
+            memberService.updateMemberPw(userId,newPassword);
+            HttpOkResponseDto pwChangeResponseDto = HttpOkResponseDto.builder()
+            .status(200)
+            .build();
+            return new ResponseEntity<>(pwChangeResponseDto, HttpStatus.OK);
+        }        // userId로 회원 정보 조회
     }
     
     @PostMapping("/idInquiry")

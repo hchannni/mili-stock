@@ -5,7 +5,6 @@ import com.milistock.develop.domain.RefreshToken;
 import com.milistock.develop.domain.Role;
 import com.milistock.develop.domain.IdentityVerification;
 import com.milistock.develop.dto.*;
-import com.milistock.develop.exception.*;
 import com.milistock.develop.exception.BusinessExceptionHandler;
 import com.milistock.develop.security.jwt.util.IfLogin;
 import com.milistock.develop.security.jwt.util.JwtTokenizer;
@@ -18,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import com.milistock.develop.code.*;
@@ -43,7 +41,7 @@ public class MemberController {
     @PostMapping("/identity")
     public ResponseEntity<?> identity(@RequestBody @Valid MemberIdentityVerificationDto identityVerificationDto) {
     
-        try {
+        
             IdentityVerification identityVerification = identityVerificationService.findByServiceNumber(identityVerificationDto.getServiceNumber());
     
             if (!identityVerificationDto.getName().equals(identityVerification.getName())) {
@@ -67,9 +65,6 @@ public class MemberController {
                     .affiliation(identityVerification.getAffiliation())
                     .build();
             return new ResponseEntity<>(identityVerificationResponse, HttpStatus.OK);
-        } catch (UnauthorizedException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
-        }
     }
 
     @PostMapping("/idDuplicate")
@@ -189,10 +184,16 @@ public class MemberController {
     @DeleteMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody RefreshTokenDto refreshTokenDto) {
         if (!refreshTokenService.isValidRefreshToken(refreshTokenDto.getRefreshToken())) {
-            return new ResponseEntity<>("Invalid refresh token", HttpStatus.UNAUTHORIZED);
+            throw new BusinessExceptionHandler("Invalid refresh token", ErrorCode.UNAUTHORIZED);
         }
+
         refreshTokenService.deleteRefreshToken(refreshTokenDto.getRefreshToken());
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        HttpOkResponseDto logoutResponseDto = HttpOkResponseDto.builder()
+        .status(200)
+        .build();
+
+        return new ResponseEntity<>(logoutResponseDto, HttpStatus.OK);
     }
 
 
@@ -212,6 +213,7 @@ public class MemberController {
         String accessToken = jwtTokenizer.createAccessToken(memberId, serviceNumber, member.getName(), roles);
 
         MemberLoginResponseDto loginResponse = MemberLoginResponseDto.builder()
+                .status(200)
                 .accessToken(accessToken)
                 .refreshToken(refreshTokenDto.getRefreshToken())
                 .memberId(member.getMemberId())

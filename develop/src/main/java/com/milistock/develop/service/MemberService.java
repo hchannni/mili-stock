@@ -23,7 +23,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public Member findByUserId(String userid){
         Optional<Member> memberid = memberRepository.findByUserId(userid); // 이거는 바로 jpa 데이터베이스랑 비교하는 것 
-        if (memberid.isPresent()) { 
+        if (userid.equals(memberid.get().getUserId())) { 
                 return memberid.get();
         } else {
             throw new BusinessExceptionHandler("존재하지 않는 아이디 입니다.", ErrorCode.UNAUTHORIZED); // 예외를 UnauthorizedException으로 변경

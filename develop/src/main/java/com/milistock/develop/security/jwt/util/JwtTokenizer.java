@@ -18,7 +18,7 @@ public class JwtTokenizer {
     private final byte[] refreshSecret;
 
     public final static Long ACCESS_TOKEN_EXPIRE_COUNT = 30 * 60 * 1000L; // 30 minutes
-    public final static Long REFRESH_TOKEN_EXPIRE_COUNT = 7 * 24 * 60 * 60 * 1000L; // 7 days
+    public final static Long REFRESH_TOKEN_EXPIRE_COUNT = 1 * 24 * 60 * 60 * 1000L; // 1 days
 
     public JwtTokenizer(@Value("${jwt.secretKey}") String accessSecret, @Value("${jwt.refreshKey}") String refreshSecret) {
         this.accessSecret = accessSecret.getBytes(StandardCharsets.UTF_8);
@@ -41,7 +41,7 @@ public class JwtTokenizer {
 
 
     private String createToken(Long id, String serviceNumber, String name, List<String> roles,
-                               Long expire, byte[] secretKey) {
+                                    Long expire, byte[] secretKey) {
         Claims claims = Jwts.claims().setSubject(serviceNumber);
 
         claims.put("roles", roles);
