@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.milistock.develop.domain.Heart;
 import com.milistock.develop.domain.Product;
+import com.milistock.develop.dto.MakeHeartDto;
 import com.milistock.develop.service.HeartService;
 import com.milistock.develop.service.ProductService;
 
@@ -34,13 +35,13 @@ public class HeartController {
         this.productService = productService;
     }
 
-    // int member_id랑 productNumber만 넘겨도 되게 함
+    // input: (member_id, productNumber)
     @PostMapping
-    public Heart saveHeart(@RequestBody Heart heart) {
-        return heartService.saveHeart(heart);
+    public Heart saveHeart(@RequestBody MakeHeartDto heartDto) {
+        return heartService.saveHeart(heartDto);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<Heart> getAllHearts() {
         return heartService.getAllHearts();
     }
@@ -52,7 +53,7 @@ public class HeartController {
     }
 
     @GetMapping("/user/{userId}")
-    public List<Heart> getAllHeartsByUserId(@PathVariable int userId) {
+    public List<Heart> getAllHeartsByUserId(@PathVariable Long userId) {
         return heartService.getAllHeartsByUserId(userId);
     }
 
