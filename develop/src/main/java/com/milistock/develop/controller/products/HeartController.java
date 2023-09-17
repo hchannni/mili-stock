@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.milistock.develop.service.HeartService;
-import com.milistock.develop.service.ProductService;
 import com.milistock.develop.domain.Heart;
 import com.milistock.develop.domain.Product;
+import com.milistock.develop.service.HeartService;
+import com.milistock.develop.service.ProductService;
 
 // (1) 순위를 위한 product의 좋아요 개수 계산 (product_id) -> get number of all hearts for product_id
 // (2) all product page에서 해당 유저가 좋아요 했는지 표시 (member_id, product_id) -> get all hearts for member_id
@@ -34,6 +34,7 @@ public class HeartController {
         this.productService = productService;
     }
 
+    // int member_id랑 productNumber만 넘겨도 되게 함
     @PostMapping
     public Heart saveHeart(@RequestBody Heart heart) {
         return heartService.saveHeart(heart);

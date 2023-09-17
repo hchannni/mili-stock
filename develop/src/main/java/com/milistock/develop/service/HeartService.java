@@ -20,6 +20,8 @@ public class HeartService {
     }
 
     public Heart saveHeart(Heart heart) {
+        // Check if productNumber and member_id exists
+        
         return heartRepository.save(heart);
     }
 
@@ -32,7 +34,7 @@ public class HeartService {
     }
 
     public List<Heart> getAllHeartsByUserId(int userId) {
-        return heartRepository.findAllByMember_Id(userId);
+        return heartRepository.findAllByMemberMemberId(userId);
     }
 
     public Long getHeartCountForProduct(Product product) {

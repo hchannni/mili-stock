@@ -35,6 +35,6 @@ public class Heart {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_number")
     private Product product;
 }
