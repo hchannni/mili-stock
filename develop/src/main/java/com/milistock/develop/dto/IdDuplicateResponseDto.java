@@ -5,17 +5,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberLoginDto {   
-
-    @NotNull
+public class IdDuplicateResponseDto {
+    private Integer status;
     private String userId;
-
-    @NotNull
-    private String password;
 }
