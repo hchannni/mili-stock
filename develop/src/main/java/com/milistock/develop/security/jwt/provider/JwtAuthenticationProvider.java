@@ -40,6 +40,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     }
 
     private List<GrantedAuthority> getGrantedAuthorities(Claims claims) {
+        @SuppressWarnings("unchecked")
         List<String> roles = (List<String>) claims.get("roles");
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (String role : roles) {

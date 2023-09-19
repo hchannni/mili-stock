@@ -6,9 +6,9 @@ import com.milistock.develop.domain.Role;
 import com.milistock.develop.domain.IdentityVerification;
 import com.milistock.develop.dto.*;
 import com.milistock.develop.exception.BusinessExceptionHandler;
-import com.milistock.develop.security.jwt.util.IfLogin;
+//import com.milistock.develop.security.jwt.util.IfLogin;
 import com.milistock.develop.security.jwt.util.JwtTokenizer;
-import com.milistock.develop.security.jwt.util.LoginUserDto;
+//import com.milistock.develop.security.jwt.util.LoginUserDto;
 import com.milistock.develop.service.MemberService;
 import com.milistock.develop.service.IdentityVerificationService;
 import com.milistock.develop.service.RefreshTokenService;
@@ -207,7 +207,9 @@ public class MemberController {
         Member member = memberService.getMember(memberId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
 
 
-        List roles = (List) claims.get("roles");
+        @SuppressWarnings("unchecked")
+        List<String> roles = (List<String>) claims.get("roles");
+
         String serviceNumber = claims.getSubject();
 
         String accessToken = jwtTokenizer.createAccessToken(memberId, serviceNumber, member.getName(), roles);
@@ -222,11 +224,11 @@ public class MemberController {
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/info")
-    public ResponseEntity<?> userinfo(@IfLogin LoginUserDto loginUserDto) {
-        Member member = memberService.findByUserId(loginUserDto.getServiceNumber());
-        return new ResponseEntity<>(member, HttpStatus.OK);
-    }
+    // @GetMapping("/info")
+    // public ResponseEntity<?> userinfo(@IfLogin LoginUserDto loginUserDto) {
+    //     Member member = memberService.findByUserId(loginUserDto.getServiceNumber());
+    //     return new ResponseEntity<>(member, HttpStatus.OK);
+    // }
 
     
 
