@@ -9,7 +9,6 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Entity // Database Table과 맵핑하는 객체.
 @Table(name="member") // Database 테이블 이름 user3 와 User라는 객체가 맵핑.
 @NoArgsConstructor // 기본생성자가 필요하다.

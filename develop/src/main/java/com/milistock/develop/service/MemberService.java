@@ -86,4 +86,9 @@ public class MemberService {
         return saveMember;
     }
 
+    @Transactional(readOnly = true)
+    public Member findByMemberId(Long userid){
+        return memberRepository.findByMemberId(userid).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
+    }
+
 }

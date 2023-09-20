@@ -6,6 +6,7 @@ import com.milistock.develop.domain.Role;
 import com.milistock.develop.domain.IdentityVerification;
 import com.milistock.develop.dto.*;
 import com.milistock.develop.exception.BusinessExceptionHandler;
+import com.milistock.develop.repository.MemberRepository;
 //import com.milistock.develop.security.jwt.util.IfLogin;
 import com.milistock.develop.security.jwt.util.JwtTokenizer;
 //import com.milistock.develop.security.jwt.util.LoginUserDto;
@@ -37,6 +38,7 @@ public class MemberController {
     private final IdentityVerificationService identityVerificationService;
     private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
+    private final MemberRepository memberRepository;
 
     @PostMapping("/identity")
     public ResponseEntity<?> identity(@RequestBody @Valid MemberIdentityVerificationDto identityVerificationDto) {
@@ -229,6 +231,11 @@ public class MemberController {
     //     Member member = memberService.findByUserId(loginUserDto.getServiceNumber());
     //     return new ResponseEntity<>(member, HttpStatus.OK);
     // }
+
+    @GetMapping("/all")
+    public List<Member> getAllMembers() {
+        return memberRepository.findAll();
+    }
 
     
 
