@@ -46,12 +46,13 @@ public class HeartController {
         return heartService.getAllHearts();
     }
     
-    // (2) all product page에서 해당 유저가 좋아요 했는지 표시 (member_id, product_id) -> get all hearts for member_id
+    
     @GetMapping("/{heartId}")
     public Optional<Heart> getHeartById(@PathVariable int heartId) {
         return heartService.getHeartById(heartId);
     }
 
+    // (2) all product page에서 해당 유저가 좋아요 했는지 표시 (member_id, product_id) -> get all hearts for member_id
     @GetMapping("/user/{userId}")
     public List<Heart> getAllHeartsByUserId(@PathVariable Long userId) {
         return heartService.getAllHeartsByUserId(userId);
