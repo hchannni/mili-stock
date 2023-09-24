@@ -1,7 +1,5 @@
 package com.milistock.develop.config;
 
-import static org.springframework.http.HttpMethod.*;
-
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
@@ -20,6 +18,8 @@ import com.milistock.develop.security.jwt.exception.CustomAuthenticationEntryPoi
 
 import lombok.RequiredArgsConstructor;
 
+import static org.springframework.http.HttpMethod.*;
+
 // Spring Security 설정.
 @Configuration
 @RequiredArgsConstructor
@@ -29,40 +29,39 @@ public class SecurityConfig {
         private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
         @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-                httpSecurity
-                                .sessionManagement(
-                                                httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
-                                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                                .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.disable())
-                                .csrf(csrf -> csrf.disable())
-                                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer
-                                                .configurationSource(corsConfigurationSource()))
-                                .httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer.disable())
-                                .authorizeHttpRequests(httpRequests -> httpRequests
-                                                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // Preflight
-                                                                                                            // 요청은 허용한다.
-                                                                                                            // https://velog.io/@jijang/%EC%82%AC%EC%A0%84-%EC%9A%94%EC%B2%AD-Preflight-request
-                                                .mvcMatchers("/members/signup", "/members/login",
-                                                                "/members/refreshToken",
-                                                                "/members/identity", "/members/help/idInquiry",
-                                                                "/members/help/idCheck",
-                                                                "/members/help/pwInquiry",
-                                                                "/members/help/pwChange", "/members/idDuplicate",
-                                                                "/members/all")
-                                                .permitAll()
-                                                .mvcMatchers(GET, "/carts/**").hasAnyRole("USER", "ADMIN")
-                                                .mvcMatchers(POST, "/carts/**").hasAnyRole("ADMIN")
-                                                .mvcMatchers(GET, "/haerts/**").hasAnyRole("USER", "ADMIN")
-                                                .mvcMatchers(GET, "/products/**").hasAnyRole("USER", "ADMIN")
-                                                .anyRequest().hasAnyRole("USER", "ADMIN"))
-                                .exceptionHandling(
-                                                httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer
-                                                                .authenticationEntryPoint(
-                                                                                customAuthenticationEntryPoint))
-                                .apply(authenticationManagerConfig);
-
-                return httpSecurity.build();
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+                return http
+                                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                                .and()
+                                .formLogin().disable() // 직접 id, password를 입력받아서 JWT토큰을 리턴하는 API를 직접 만든다.
+                                .csrf().disable() // CSRF는 Cross Site Request Forgery의 약자. CSRF공격을 막기 위한 방법.
+                                .cors() // .configurationSource(corsConfigurationSource())
+                                .and()
+                                .apply(authenticationManagerConfig)
+                                .and()
+                                .httpBasic().disable()
+                                .authorizeHttpRequests()
+                                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // Preflight
+                                                                                            // 요청은 허용한다.
+                                                                                            // https://velog.io/@jijang/%EC%82%AC%EC%A0%84-%EC%9A%94%EC%B2%AD-Preflight-request
+                                .mvcMatchers("/members/signup", "/members/login",
+                                                "/members/refreshToken",
+                                                "/members/identity", "/members/help/idInquiry",
+                                                "/members/help/idCheck",
+                                                "/members/help/pwInquiry",
+                                                "/members/help/pwChange", "/members/idDuplicate",
+                                                "/members/all")
+                                .permitAll()
+                                .mvcMatchers(GET, "/carts/**").hasAnyRole("USER", "ADMIN")
+                                .mvcMatchers(POST, "/carts/**").hasAnyRole("ADMIN")
+                                .mvcMatchers(GET, "/haerts/**").hasAnyRole("USER", "ADMIN")
+                                .mvcMatchers(GET, "/products/**").hasAnyRole("USER", "ADMIN")
+                                .anyRequest().hasAnyRole("USER", "ADMIN")
+                                .and()
+                                .exceptionHandling()
+                                .authenticationEntryPoint(customAuthenticationEntryPoint)
+                                .and()
+                                .build();
         }
 
         // <<Advanced>> Security Cors로 변경 시도
