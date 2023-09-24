@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
+import com.milistock.develop.code.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +19,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        String exception = (String) request.getAttribute("exception");
+        //String exception = (String) request.getAttribute("exception");
+
+        String exception = request.getAttribute("exception").toString();
 
         if(exception != null) {
             log.error("Commence Get Exception : {}", exception);
@@ -26,33 +29,34 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
             if (exception.equals(JwtExceptionCode.INVALID_TOKEN.getCode())) {
                 log.error("entry point >> invalid token");
-                setResponse(response, JwtExceptionCode.INVALID_TOKEN);
+                setResponse(response, ErrorCode.INVALID_TOKEN);
             }
             //토큰 만료된 경우
             else if (exception.equals(JwtExceptionCode.EXPIRED_TOKEN.getCode())) {
                 log.error("entry point >> expired token");
-                setResponse(response, JwtExceptionCode.EXPIRED_TOKEN);
+                setResponse(response, ErrorCode.EXPIRED_TOKEN);
             }
             //지원되지 않는 토큰인 경우
             else if (exception.equals(JwtExceptionCode.UNSUPPORTED_TOKEN.getCode())) {
                 log.error("entry point >> unsupported token");
-                setResponse(response, JwtExceptionCode.UNSUPPORTED_TOKEN);
+                setResponse(response, ErrorCode.UNSUPPORTED_TOKEN);
             } else if (exception.equals(JwtExceptionCode.NOT_FOUND_TOKEN.getCode())) {
                 log.error("entry point >> not found token");
-                setResponse(response, JwtExceptionCode.NOT_FOUND_TOKEN);
+                setResponse(response, ErrorCode.NOT_FOUND_TOKEN);
             } else {
-                setResponse(response, JwtExceptionCode.UNKNOWN_ERROR);
+                setResponse(response, ErrorCode.UNKNOWN_ERROR);
             }
         }
     }
 
-    private void setResponse(HttpServletResponse response, JwtExceptionCode exceptionCode) throws IOException {
+    private void setResponse(HttpServletResponse response, ErrorCode exceptionCode) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
         HashMap<String, Object> errorInfo = new HashMap<>();
+        errorInfo.put("status", exceptionCode.getStatus());
+        errorInfo.put("divisionCode", exceptionCode.getDivisionCode());
         errorInfo.put("message", exceptionCode.getMessage());
-        errorInfo.put("code", exceptionCode.getCode());
         Gson gson = new Gson();
         String responseJson = gson.toJson(errorInfo);
         response.getWriter().print(responseJson);

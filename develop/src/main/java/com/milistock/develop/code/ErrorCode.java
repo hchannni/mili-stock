@@ -65,7 +65,7 @@ public enum ErrorCode {
     // @RequestBody 및 @RequestParam, @PathVariable 값이 유효하지 않음
     NOT_VALID_HEADER_ERROR(404, "G012", "Header에 데이터가 존재하지 않는 경우 "),
 
-    CONFLICT(409,"G013","Conflict(중복된 정보로 충돌이 일어남)"), 
+    CONFLICT(409,"G013","Conflict(중복된 정보로 충돌이 일어남)"),
 
     UNPROCESSABLE_ENTITY(422,"G014","유효성 검사 오류"),
 
@@ -84,6 +84,21 @@ public enum ErrorCode {
 
     // Transaction Delete Error
     DELETE_ERROR(200, "9999", "Delete Transaction Error Exception"),
+
+
+    // JWT Token Error
+    UNKNOWN_ERROR(520, "1000", "UNKNOWN_ERROR"),
+
+    NOT_FOUND_TOKEN(401, "1001", "Headers에 토큰 형식의 값 찾을 수 없음"),
+
+    INVALID_TOKEN(401, "1002", "유효하지 않은 토큰"),
+
+    EXPIRED_TOKEN(401, "1003", "기간이 만료된 토큰"),
+
+    UNSUPPORTED_TOKEN(401, "1004", "지원하지 않는 토큰"),
+
+
+
 
     ; // End
 
