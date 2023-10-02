@@ -34,28 +34,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (StringUtils.hasText(token)) {
                 getAuthentication(token); //Token값이 존재한다면 getAuthentication으로 보내기
             }
-            filterChain.doFilter(request, response);
+            // filterChain.doFilter(request, response);
         }
         catch (NullPointerException | IllegalStateException e) {
             request.setAttribute("exception", JwtExceptionCode.NOT_FOUND_TOKEN.getCode());
             log.error("Not found Token // token : {}", token);
             log.error("Set Request Exception Code : {}", request.getAttribute("exception"));
-            throw new BadCredentialsException("throw new not found token exception");
         } catch (SecurityException | MalformedJwtException e) {
             request.setAttribute("exception", JwtExceptionCode.INVALID_TOKEN.getCode());
             log.error("Invalid Token // token : {}", token);
             log.error("Set Request Exception Code : {}", request.getAttribute("exception"));
-            throw new BadCredentialsException("throw new invalid token exception");
         } catch (ExpiredJwtException e) {
             request.setAttribute("exception", JwtExceptionCode.EXPIRED_TOKEN.getCode());
-            log.error("EXPIRED Token // token : {}", token);
             log.error("Set Request Exception Code : {}", request.getAttribute("exception"));
-            throw new BadCredentialsException("throw new expired token exception");
         } catch (UnsupportedJwtException e) {
             request.setAttribute("exception", JwtExceptionCode.UNSUPPORTED_TOKEN.getCode());
-            log.error("Unsupported Token // token : {}", token);
-            log.error("Set Request Exception Code : {}", request.getAttribute("exception"));
-            throw new BadCredentialsException("throw new unsupported token exception");
         } catch (Exception e) {
             log.error("====================================================");
             log.error("JwtFilter - doFilterInternal() 오류 발생");
@@ -65,8 +58,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             e.printStackTrace();
             log.error("}");
             log.error("====================================================");
-            throw new BadCredentialsException("throw new exception");
+            request.setAttribute("exception", JwtExceptionCode.UNKNOWN_ERROR.getCode());
         }
+        filterChain.doFilter(request, response);
     }
 
     private void getAuthentication(String token) {
