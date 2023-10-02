@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Cart;
 import com.milistock.develop.domain.Member;
+import com.milistock.develop.exception.BusinessExceptionHandler;
 import com.milistock.develop.service.CartService;
 import com.milistock.develop.service.MemberService;
 
@@ -44,15 +46,15 @@ public class CartController {
 
     // Cart에다가 product 추가할때 어떻게 하는지. 내 코드는 지금 -> (1) memberId로 Cart 찾고 (2) Cart의 CartId로 prduct 집어넣기
     // Member에다가 바로 CartId 넣으면 되지 않을까?
-    public boolean createCart(Long memberId) {
+    public void createCart(Long memberId) {
         Member existingMember = memberService.findByMemberId(memberId);
         if (existingMember == null) {
             // Member does not exist, return an error response
-            return false;
+            throw new BusinessExceptionHandler("이름이 일치하지 않습니다.", ErrorCode.NOT_FOUND_ERROR);            
         }
 
         Cart createdCart = cartService.createCart(existingMember);
-        return true;
+        
     }
 
     @GetMapping("/{cartId}")
