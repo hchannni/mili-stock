@@ -27,18 +27,32 @@ public class CartController {
     @Autowired
     private MemberService memberService;
 
-    // 수정1: input user 말고 userId로 하기
-    @PostMapping
-    public ResponseEntity<?> createCart(@RequestBody Member user) {
-        Member existingMember = memberService.findByMemberId(user.getMemberId());
+    // // 수정1: input user 말고 userId로 하기
+    // @PostMapping
+    // public ResponseEntity<?> createCart(@RequestBody Member user) {
+    // Member existingMember = memberService.findByMemberId(user.getMemberId());
 
+    // if (existingMember == null) {
+    // // Member does not exist, return an error response
+    // return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Member does not
+    // exist.");
+    // }
+
+    // Cart createdCart = cartService.createCart(existingMember);
+    // return ResponseEntity.ok(createdCart);
+    // }
+
+    // Cart에다가 product 추가할때 어떻게 하는지. 내 코드는 지금 -> (1) memberId로 Cart 찾고 (2) Cart의 CartId로 prduct 집어넣기
+    // Member에다가 바로 CartId 넣으면 되지 않을까?
+    public boolean createCart(Long memberId) {
+        Member existingMember = memberService.findByMemberId(memberId);
         if (existingMember == null) {
             // Member does not exist, return an error response
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Member does not exist.");
+            return false;
         }
 
         Cart createdCart = cartService.createCart(existingMember);
-        return ResponseEntity.ok(createdCart);
+        return true;
     }
 
     @GetMapping("/{cartId}")
@@ -59,8 +73,8 @@ public class CartController {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }    
-    
+    }
+
     @PostMapping("/{cartId}/addProduct/{productNumber}")
     public ResponseEntity<Cart> addProductToCart(@PathVariable int cartId, @PathVariable int productNumber) {
         Cart updatedCart = cartService.addProductToCart(cartId, productNumber);
