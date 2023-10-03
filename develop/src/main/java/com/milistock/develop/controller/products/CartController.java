@@ -98,14 +98,21 @@ public class CartController {
         return new ResponseEntity<Integer>(cartItemId, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{cartId}/deleteProduct/{productNumber}")
-    public ResponseEntity<Cart> deleteProductFromCart(@PathVariable int cartId, @PathVariable int productNumber) {
-        Cart updatedCart = cartService.removeProductFromCart(cartId, productNumber);
-        if (updatedCart != null) {
-            return ResponseEntity.ok(updatedCart);
-        } else {
-            return ResponseEntity.notFound().build();
+    // 카트에 상품 제거
+    @DeleteMapping("/productNumber/{productNumber}")
+    public ResponseEntity<?> deleteProductFromCart(@PathVariable int productNumber, Principal principal) {
+
+        String userInfo = principal.getName(); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"        
+        int cartItemId;
+
+        try {
+            cartItemId = cartService.removeProductFromCart(userInfo, productNumber); //dto -> entity
+        } catch(Exception e){
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST); // 장바구니에 잘 안담겼으면 404
         }
+
+        return new ResponseEntity<Integer>(cartItemId, HttpStatus.OK);
+
     }
 
     @DeleteMapping("/{cartId}")

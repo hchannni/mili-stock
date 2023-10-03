@@ -77,17 +77,30 @@ public class CartService {
         return cart.getCartId();
     }
 
-    public Cart removeProductFromCart(int cartId, int productNumber) {
-        Cart cart = cartRepository.findByCartId(cartId);
-        Product product = productRepository.findById(productNumber).orElse(null);
+    public int removeProductFromCart(String userInfo, int productNumber) {
+        // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
+        // 에서 memberId=6만 추출하기
+        Long memberId = RegexFunctions.extractMemberId(userInfo);
 
-        if (cart != null && product != null) {
-            if (cart.getProducts().contains(product)) {
-                cart.getProducts().remove(product);
-                return cartRepository.save(cart);
-            }
+        Product product = productRepository.findById(productNumber).orElseThrow(EntityNotFoundException::new);
+
+        Cart cart = cartRepository.findByMemberMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
+        
+        // 회원이 장바구니 없으면, 에러
+        if (cart == null) {
+            throw new BusinessExceptionHandler("카트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
         }
-        return null;
+
+        // 상품이 장바구니에 있는지 확인
+        if (cart.containsProduct(product)){
+            cart.getProducts().remove(product);
+            cartRepository.save(cart);
+            return cart.getCartId();            
+        }
+        // 상품이 장바구니에 없을 경우
+        else {
+            throw new BusinessExceptionHandler("상품이 카트에 없습니다", ErrorCode.CONFLICT); 
+        }
     }
 
     public boolean deleteCart(int cartId) {
