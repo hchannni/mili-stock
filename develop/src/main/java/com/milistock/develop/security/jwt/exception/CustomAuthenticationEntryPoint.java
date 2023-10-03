@@ -18,13 +18,15 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        String exception = (String) request.getAttribute("exception");
+        //String exception = (String) request.getAttribute("exception");
 
-        if(exception != null) {
-            log.error("Commence Get Exception : {}", exception);
-            log.error("entry point >> not found token");
+        String exception = request.getAttribute("exception").toString();
 
-            if (exception.equals(JwtExceptionCode.INVALID_TOKEN.getCode())) {
+            if(exception == null) {
+            setResponse(response, JwtExceptionCode.UNKNOWN_ERROR);
+            }
+            //유효하지 않은 타입의 토큰
+            else if (exception.equals(JwtExceptionCode.INVALID_TOKEN.getCode())) {
                 log.error("entry point >> invalid token");
                 setResponse(response, JwtExceptionCode.INVALID_TOKEN);
             }
@@ -37,22 +39,27 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             else if (exception.equals(JwtExceptionCode.UNSUPPORTED_TOKEN.getCode())) {
                 log.error("entry point >> unsupported token");
                 setResponse(response, JwtExceptionCode.UNSUPPORTED_TOKEN);
+            
+            //토큰 존재하지 않는 경우
             } else if (exception.equals(JwtExceptionCode.NOT_FOUND_TOKEN.getCode())) {
                 log.error("entry point >> not found token");
                 setResponse(response, JwtExceptionCode.NOT_FOUND_TOKEN);
+
             } else {
                 setResponse(response, JwtExceptionCode.UNKNOWN_ERROR);
             }
-        }
+        
     }
 
     private void setResponse(HttpServletResponse response, JwtExceptionCode exceptionCode) throws IOException {
+        
         response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setStatus(HttpServletResponse.SC_OK);
 
         HashMap<String, Object> errorInfo = new HashMap<>();
-        errorInfo.put("message", exceptionCode.getMessage());
+        errorInfo.put("status", exceptionCode.getStatus());
         errorInfo.put("code", exceptionCode.getCode());
+        errorInfo.put("message", exceptionCode.getMessage());
         Gson gson = new Gson();
         String responseJson = gson.toJson(errorInfo);
         response.getWriter().print(responseJson);
