@@ -82,19 +82,20 @@ public class CartController {
     }
 
     // 카트에 상품 추가
-    @PostMapping("{productNumber}")
-    public ResponseEntity<int> addProductToCart(@PathVariable int productNumber, Principal principal) {
+    // +유저가 카트 없을 시, 카트 최초 생성!
+    @PostMapping("/productNumber/{productNumber}")
+    public ResponseEntity<?> addProductToCart(@PathVariable int productNumber, Principal principal) {
         
-        String userId = principal.getName();
+        String userInfo = principal.getName(); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"        
         int cartItemId;
 
         try {
-            cartItemId = cartService.addProductToCart(userId, productNumber); //dto -> entity
+            cartItemId = cartService.addProductToCart(userInfo, productNumber); //dto -> entity
         } catch(Exception e){
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST); // 장바구니에 잘 안담겼으면 404
         }
 
-        return new ResponseEntity<int>(cartItemId, HttpStatus.OK);
+        return new ResponseEntity<Integer>(cartItemId, HttpStatus.OK);
     }
 
     @DeleteMapping("/{cartId}/deleteProduct/{productNumber}")

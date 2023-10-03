@@ -1,6 +1,10 @@
 package com.milistock.develop.service;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +15,7 @@ import com.milistock.develop.domain.Product;
 import com.milistock.develop.repository.CartRepository;
 import com.milistock.develop.repository.MemberRepository;
 import com.milistock.develop.repository.ProductRepository;
+import com.milistock.develop.utils.RegexFunctions;
 
 @Service
 public class CartService {
@@ -31,7 +36,7 @@ public class CartService {
 
     public Optional<Cart> getCartByUser(Long memberId) {
         Member user = memberRepository.findByMemberId(memberId).orElse(null);
-        if (user!=null){
+        if (user != null) {
             Cart cart = cartRepository.findByMember(user);
             return Optional.ofNullable(cart);
         }
@@ -43,34 +48,39 @@ public class CartService {
         return Optional.ofNullable(cart);
     }
 
-    public int addProductToCart(String userId, int productNumber) {
-        
-        Product product = productRepository.findById(productNumber).orElse(EntityNotFoundException::new);
+    public int addProductToCart(String userInfo, int productNumber) {
+        // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
+        // 에서 memberId=6만 추출하기
+        Long memberId = RegexFunctions.extractMemberId(userInfo);
 
-        Member member = memberRepository.findByUserId(userId).orElse(null);
-        Cart cart = cartRepository.findByMemberId(member.getMemberId()); // 현재 로그인한 회원의 장바구니 엔티티 조회
+        Product product = productRepository.findById(productNumber).orElseThrow(EntityNotFoundException::new);
         
-        if (cart!=null){
-            
-               if (product!=null){
-                cart.getProducts().add(product);
-                return cartRepository.save(cart);
-            }
+        Cart cart = cartRepository.findByMemberMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
+
+        // 회원이 장바구니 없으면, 만들어줌
+        if (cart == null) {
+            Member member = memberRepository.findByMemberId(memberId).orElse(null);
+            cart = Cart.createCart(member);
+            cartRepository.save(cart);
         }
-        return null;      
+
+        // 카트에 상품 저장
+        cart.getProducts().add(product);
+        cartRepository.save(cart);
+        return cart.getCartId();
     }
 
     public Cart removeProductFromCart(int cartId, int productNumber) {
         Cart cart = cartRepository.findByCartId(cartId);
         Product product = productRepository.findById(productNumber).orElse(null);
 
-        if (cart!=null && product!=null){
-            if (cart.getProducts().contains(product)){
+        if (cart != null && product != null) {
+            if (cart.getProducts().contains(product)) {
                 cart.getProducts().remove(product);
                 return cartRepository.save(cart);
             }
         }
-        return null;     
+        return null;
     }
 
     public boolean deleteCart(int cartId) {
