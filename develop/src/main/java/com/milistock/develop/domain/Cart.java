@@ -45,4 +45,20 @@ public class Cart {
     )
     private List<Product> products;
 
+    // CartService에서 유저가 카트에 상품 담을때, 카트가 아직 부재 시 호출
+    public static Cart createCart(Member member){
+        Cart cart = new Cart();
+        cart.setMember(member);
+        return cart;
+    }
+
+    // Check if a product is already in the cart
+    public boolean containsProduct(Product product) {
+        if (products == null) {
+            return false; // Handle the case where the products list is null
+        }
+
+        return products.contains(product);
+    }
+
 }

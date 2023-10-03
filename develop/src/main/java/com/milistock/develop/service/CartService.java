@@ -1,16 +1,23 @@
 package com.milistock.develop.service;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Cart;
 import com.milistock.develop.domain.Member;
 import com.milistock.develop.domain.Product;
+import com.milistock.develop.exception.BusinessExceptionHandler;
 import com.milistock.develop.repository.CartRepository;
 import com.milistock.develop.repository.MemberRepository;
 import com.milistock.develop.repository.ProductRepository;
+import com.milistock.develop.utils.RegexFunctions;
 
 @Service
 public class CartService {
@@ -31,7 +38,7 @@ public class CartService {
 
     public Optional<Cart> getCartByUser(Long memberId) {
         Member user = memberRepository.findByMemberId(memberId).orElse(null);
-        if (user!=null){
+        if (user != null) {
             Cart cart = cartRepository.findByMember(user);
             return Optional.ofNullable(cart);
         }
@@ -43,29 +50,57 @@ public class CartService {
         return Optional.ofNullable(cart);
     }
 
-    public Cart addProductToCart(int cartId, int productNumber) {
-        Cart cart = cartRepository.findByCartId(cartId);
-        if (cart!=null){
-            Product product = productRepository.findById(productNumber).orElse(null);
-            if (product!=null){
-                cart.getProducts().add(product);
-                return cartRepository.save(cart);
-            }
+    public int addProductToCart(String userInfo, int productNumber) {
+        // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
+        // 에서 memberId=6만 추출하기
+        Long memberId = RegexFunctions.extractMemberId(userInfo);
+
+        Product product = productRepository.findById(productNumber).orElseThrow(EntityNotFoundException::new);
+        
+        Cart cart = cartRepository.findByMemberMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
+
+        // 회원이 장바구니 없으면, 만들어줌
+        if (cart == null) {
+            Member member = memberRepository.findByMemberId(memberId).orElse(null);
+            cart = Cart.createCart(member);
+            cartRepository.save(cart);
         }
-        return null;      
+
+        // 상품이 장바구니에 있는지 확인
+        if (cart.containsProduct(product)){
+            throw new BusinessExceptionHandler("상품이 이미 카트에 추가 돼 있습니다", ErrorCode.CONFLICT); 
+        }
+
+        // 카트에 상품 저장
+        cart.getProducts().add(product);
+        cartRepository.save(cart);
+        return cart.getCartId();
     }
 
-    public Cart removeProductFromCart(int cartId, int productNumber) {
-        Cart cart = cartRepository.findByCartId(cartId);
-        Product product = productRepository.findById(productNumber).orElse(null);
+    public int removeProductFromCart(String userInfo, int productNumber) {
+        // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
+        // 에서 memberId=6만 추출하기
+        Long memberId = RegexFunctions.extractMemberId(userInfo);
 
-        if (cart!=null && product!=null){
-            if (cart.getProducts().contains(product)){
-                cart.getProducts().remove(product);
-                return cartRepository.save(cart);
-            }
+        Product product = productRepository.findById(productNumber).orElseThrow(EntityNotFoundException::new);
+
+        Cart cart = cartRepository.findByMemberMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
+        
+        // 회원이 장바구니 없으면, 에러
+        if (cart == null) {
+            throw new BusinessExceptionHandler("카트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
         }
-        return null;     
+
+        // 상품이 장바구니에 있는지 확인
+        if (cart.containsProduct(product)){
+            cart.getProducts().remove(product);
+            cartRepository.save(cart);
+            return cart.getCartId();            
+        }
+        // 상품이 장바구니에 없을 경우
+        else {
+            throw new BusinessExceptionHandler("상품이 카트에 없습니다", ErrorCode.CONFLICT); 
+        }
     }
 
     public boolean deleteCart(int cartId) {
