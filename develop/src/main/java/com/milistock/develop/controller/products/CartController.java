@@ -1,5 +1,6 @@
 package com.milistock.develop.controller.products;
 
+import java.security.Principal;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,16 +47,19 @@ public class CartController {
 
     // Cart에다가 product 추가할때 어떻게 하는지. 내 코드는 지금 -> (1) memberId로 Cart 찾고 (2) Cart의 CartId로 prduct 집어넣기
     // Member에다가 바로 CartId 넣으면 되지 않을까?
-    public void createCart(Long memberId) {
-        Member existingMember = memberService.findByMemberId(memberId);
-        if (existingMember == null) {
-            // Member does not exist, return an error response
-            throw new BusinessExceptionHandler("이름이 일치하지 않습니다.", ErrorCode.NOT_FOUND_ERROR);            
-        }
+    // public void createCart(Long memberId, Principal principal) {
+    //     Member existingMember = memberService.findByMemberId(memberId);
+    //     if (existingMember == null) {
+    //         // Member does not exist, return an error response
+    //         throw new BusinessExceptionHandler("이름이 일치하지 않습니다.", ErrorCode.NOT_FOUND_ERROR);            
+    //     }
 
-        Cart createdCart = cartService.createCart(existingMember);
+    //     String email = principal.getName();
+    //     System.out.println("Email: " + email);
+
+    //     Cart createdCart = cartService.createCart(existingMember);
         
-    }
+    // }
 
     @GetMapping("/{cartId}")
     public ResponseEntity<Cart> getCartById(@PathVariable int cartId) {
@@ -77,13 +81,24 @@ public class CartController {
         }
     }
 
-    @PostMapping("/{cartId}/addProduct/{productNumber}")
-    public ResponseEntity<Cart> addProductToCart(@PathVariable int cartId, @PathVariable int productNumber) {
+    // 카트에 상품 추가
+    @PostMapping("{productNumber}")
+    public ResponseEntity<Long> addProductToCart(@PathVariable int productNumber, Principal principal) {
+        
+        String userId = principal.getName();
+        Long cartItemId;
+
         Cart updatedCart = cartService.addProductToCart(cartId, productNumber);
         if (updatedCart != null) {
             return ResponseEntity.ok(updatedCart);
         } else {
             return ResponseEntity.notFound().build();
+        }
+
+        try {
+            cartItemId = cartService.addProductToCart(userId, productNumber); //dto -> entity
+        } catch(Exception e){
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST); // 장바구니에 잘 안담겼으면 404
         }
     }
 

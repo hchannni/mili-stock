@@ -43,8 +43,11 @@ public class CartService {
         return Optional.ofNullable(cart);
     }
 
-    public Cart addProductToCart(int cartId, int productNumber) {
-        Cart cart = cartRepository.findByCartId(cartId);
+    public int addProductToCart(String userId, int productNumber) {
+        Member member = memberRepository.findByUserId(userId).orElse(null);
+        
+        Cart cart = cartRepository.findByMemberId(userId); // 현재 로그인한 회원의 장바구니 엔티티 조회
+        
         if (cart!=null){
             Product product = productRepository.findById(productNumber).orElse(null);
             if (product!=null){
