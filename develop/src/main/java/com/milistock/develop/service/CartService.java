@@ -44,13 +44,15 @@ public class CartService {
     }
 
     public int addProductToCart(String userId, int productNumber) {
-        Member member = memberRepository.findByUserId(userId).orElse(null);
         
-        Cart cart = cartRepository.findByMemberId(userId); // 현재 로그인한 회원의 장바구니 엔티티 조회
+        Product product = productRepository.findById(productNumber).orElse(EntityNotFoundException::new);
+
+        Member member = memberRepository.findByUserId(userId).orElse(null);
+        Cart cart = cartRepository.findByMemberId(member.getMemberId()); // 현재 로그인한 회원의 장바구니 엔티티 조회
         
         if (cart!=null){
-            Product product = productRepository.findById(productNumber).orElse(null);
-            if (product!=null){
+            
+               if (product!=null){
                 cart.getProducts().add(product);
                 return cartRepository.save(cart);
             }
