@@ -32,8 +32,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = "";
         try {
             token = getToken(request);
-            if (StringUtils.hasText(token)) {
+            if (token != null && StringUtils.hasText(token)) {
                 getAuthentication(token);
+            } else{
+                request.setAttribute("exception", JwtExceptionCode.NOT_FOUND_TOKEN.getCode());
             }
 
         } catch (NullPointerException | IllegalStateException e) {
