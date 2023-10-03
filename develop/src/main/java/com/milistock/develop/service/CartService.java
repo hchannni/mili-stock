@@ -9,9 +9,11 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Cart;
 import com.milistock.develop.domain.Member;
 import com.milistock.develop.domain.Product;
+import com.milistock.develop.exception.BusinessExceptionHandler;
 import com.milistock.develop.repository.CartRepository;
 import com.milistock.develop.repository.MemberRepository;
 import com.milistock.develop.repository.ProductRepository;
@@ -62,6 +64,11 @@ public class CartService {
             Member member = memberRepository.findByMemberId(memberId).orElse(null);
             cart = Cart.createCart(member);
             cartRepository.save(cart);
+        }
+
+        // 상품이 장바구니에 있는지 확인
+        if (cart.containsProduct(product)){
+            throw new BusinessExceptionHandler("상품이 이미 카트에 추가 돼 있습니다", ErrorCode.CONFLICT); 
         }
 
         // 카트에 상품 저장

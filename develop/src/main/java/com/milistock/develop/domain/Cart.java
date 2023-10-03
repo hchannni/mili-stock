@@ -52,4 +52,13 @@ public class Cart {
         return cart;
     }
 
+    // Check if a product is already in the cart
+    public boolean containsProduct(Product product) {
+        if (products == null) {
+            return false; // Handle the case where the products list is null
+        }
+
+        return products.contains(product);
+    }
+
 }
