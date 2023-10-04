@@ -19,4 +19,18 @@ spring:
           physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     database-platform: org.hibernate.dialect.MySQL8Dialect
 
-    
+AWS_ACCESS_KEY_ID: AKIA5EMNQNMHZ7VYPI4I
+AWS_SECRET_ACCESS_KEY: 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
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY_ID}       # AWS IAM AccessKey 적기
+      secretKey: ${AWS_SECRET_ACCESS_KEY}   # AWS IAM SecretKey 적기
+    s3:
+      bucket: test-milistock-bucket    # ex) marryting-gyunny
+      dir: # ex) /gyunny
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
