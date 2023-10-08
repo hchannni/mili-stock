@@ -1,5 +1,6 @@
 package com.milistock.develop.service;
 
+import java.security.Principal;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,6 +9,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Cart;
@@ -55,8 +57,6 @@ public class CartService {
         // 에서 memberId=6만 추출하기
         Long memberId = RegexFunctions.extractMemberId(userInfo);
 
-        System.out.println(memberId);
-
         Product product = productRepository.findById(productNumber).orElseThrow(EntityNotFoundException::new);
         
         Cart cart = cartRepository.findByMemberMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
@@ -96,26 +96,34 @@ public class CartService {
         }
 
         // 상품이 장바구니에 있는지 확인
+        // 카트에 상품 추가
         if (cart.containsProduct(product)){
             cart.getProducts().remove(product);
             cartRepository.save(cart);
             return cart.getCartId();            
         }
+
         // 상품이 장바구니에 없을 경우
         else {
             throw new BusinessExceptionHandler("상품이 카트에 없습니다", ErrorCode.CONFLICT); 
         }
     }
 
-    public boolean deleteCart(int cartId) {
-        Cart cart = cartRepository.findByCartId(cartId);
-        Optional<Cart> cartOptional = Optional.ofNullable(cart);
-        if (cartOptional.isPresent()) {
-            cartRepository.delete(cartOptional.get());
-            return true;
-        } else {
-            return false; // Cart not found
+    public Long deleteCart(String userInfo) {
+        // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
+        // 에서 memberId=6만 추출하기
+        Long memberId = RegexFunctions.extractMemberId(userInfo);
+
+        Cart cart = cartRepository.findByMemberMemberId(memberId);
+
+        // 회원이 장바구니 없으면, 에러
+        if (cart == null) {
+            throw new BusinessExceptionHandler("카트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
         }
+
+        cartRepository.delete(cart);
+        return memberId;
+
     }
 }
 
