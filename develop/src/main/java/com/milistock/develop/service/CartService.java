@@ -55,12 +55,15 @@ public class CartService {
         // 에서 memberId=6만 추출하기
         Long memberId = RegexFunctions.extractMemberId(userInfo);
 
+        System.out.println(memberId);
+
         Product product = productRepository.findById(productNumber).orElseThrow(EntityNotFoundException::new);
         
         Cart cart = cartRepository.findByMemberMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
 
         // 회원이 장바구니 없으면, 만들어줌
         if (cart == null) {
+            System.out.println("No Cart!");
             Member member = memberRepository.findByMemberId(memberId).orElse(null);
             cart = Cart.createCart(member);
             cartRepository.save(cart);
@@ -71,6 +74,7 @@ public class CartService {
             throw new BusinessExceptionHandler("상품이 이미 카트에 추가 돼 있습니다", ErrorCode.CONFLICT); 
         }
 
+        System.out.println("just before storing product!");
         // 카트에 상품 저장
         cart.getProducts().add(product);
         cartRepository.save(cart);

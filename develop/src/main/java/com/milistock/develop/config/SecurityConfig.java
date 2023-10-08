@@ -47,6 +47,7 @@ public class SecurityConfig {
                                 "/members/all").permitAll()
                                 .mvcMatchers(GET, "/carts/**").hasAnyRole("USER", "ADMIN")
                                 .mvcMatchers(POST, "/carts/**").hasAnyRole("ADMIN")
+                                .mvcMatchers(DELETE, "/carts/**").hasAnyRole("ADMIN")
                                 .mvcMatchers(GET, "/haerts/**").hasAnyRole("USER", "ADMIN")
                                 .mvcMatchers(GET, "/products/**").hasAnyRole("USER", "ADMIN")
                                 .anyRequest().hasAnyRole("USER", "ADMIN"))
