@@ -47,10 +47,21 @@ public class CartService {
         return null;
     }
 
+    public Optional<Cart> getCart(String userInfo) {
+        // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
+        // 에서 memberId=6만 추출하기
+        Long memberId = RegexFunctions.extractMemberId(userInfo);
+
+        Cart cart = cartRepository.findByMemberMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
+        
+        return Optional.ofNullable(cart);
+    }
+
     public Optional<Cart> getCartById(int cartId) {
         Cart cart = cartRepository.findByCartId(cartId);
         return Optional.ofNullable(cart);
     }
+    
 
     public int addProductToCart(String userInfo, int productNumber) {
         // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"

@@ -61,6 +61,19 @@ public class CartController {
         
     // }
 
+    @GetMapping
+    public ResponseEntity<Cart> getCart(Principal principal) {
+        String userInfo = principal.getName(); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"        
+
+        Optional<Cart> cart = cartService.getCart(userInfo);
+
+        if (cart.isPresent()) {
+            return ResponseEntity.ok(cart.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("/{cartId}")
     public ResponseEntity<Cart> getCartById(@PathVariable int cartId) {
         Optional<Cart> cart = cartService.getCartById(cartId);
