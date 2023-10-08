@@ -117,6 +117,7 @@ public class CartController {
 
     }
 
+    // 카트 제거
     @DeleteMapping
     public ResponseEntity<String> deleteCart(Principal principal) {
         String userInfo = principal.getName(); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"        

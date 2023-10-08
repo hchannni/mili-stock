@@ -1,5 +1,6 @@
 package com.milistock.develop.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -49,6 +50,7 @@ public class Cart {
     public static Cart createCart(Member member){
         Cart cart = new Cart();
         cart.setMember(member);
+        cart.setProducts(new ArrayList<>());
         return cart;
     }
 
