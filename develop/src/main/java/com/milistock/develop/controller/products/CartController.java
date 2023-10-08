@@ -89,7 +89,7 @@ public class CartController {
         String userInfo = principal.getName(); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"        
         int cartItemId;
 
-        System.out.println(userInfo);
+        // System.out.println(userInfo);
 
         try {
             cartItemId = cartService.addProductToCart(userInfo, productNumber); //dto -> entity
