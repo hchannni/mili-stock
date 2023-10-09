@@ -1,5 +1,7 @@
 package com.milistock.develop.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +14,7 @@ import com.milistock.develop.domain.Member;
 public interface CartRepository extends JpaRepository<Cart, Integer> {
     Cart findByMember(Member user);
     Cart findByMemberMemberId(Long memberId);
-    Cart findByCartId(int id);
+    Optional<Cart> findByCartId(int id);
     // Cart findByProduct(Product p);
 }
 

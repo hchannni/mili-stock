@@ -76,12 +76,9 @@ public class CartController {
 
     @GetMapping("/{cartId}")
     public ResponseEntity<Cart> getCartById(@PathVariable int cartId) {
-        Optional<Cart> cart = cartService.getCartById(cartId);
-        if (cart.isPresent()) {
-            return ResponseEntity.ok(cart.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Cart cart = cartService.getCartById(cartId);
+        System.out.println("Before return cart");
+        return ResponseEntity.ok(cart);
     }
 
     @GetMapping("/user/{memberId}")

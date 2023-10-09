@@ -57,9 +57,8 @@ public class CartService {
         return Optional.ofNullable(cart);
     }
 
-    public Optional<Cart> getCartById(int cartId) {
-        Cart cart = cartRepository.findByCartId(cartId);
-        return Optional.ofNullable(cart);
+    public Cart getCartById(int cartId) {
+        return findByCartId(cartId);
     }
     
 
@@ -136,7 +135,13 @@ public class CartService {
         return memberId;
 
     }
+
+    public Cart findByCartId(int cartId){
+        return cartRepository.findByCartId(cartId).orElseThrow(() -> new IllegalArgumentException("해당 카트가 없습니다."));
+    }
 }
+
+    
 
 // public class CartService {
 // private final CartRepository cartRepository;
