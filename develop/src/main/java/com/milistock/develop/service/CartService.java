@@ -8,8 +8,9 @@ import java.util.regex.Pattern;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.server.ResponseStatusException;
 
 import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Cart;
@@ -137,7 +138,8 @@ public class CartService {
     }
 
     public Cart findByCartId(int cartId){
-        return cartRepository.findByCartId(cartId).orElseThrow(() -> new IllegalArgumentException("해당 카트가 없습니다."));
+        // return cartRepository.findByCartId(cartId).orElseThrow(() -> new IllegalArgumentException("해당 카트가 없습니다."));
+        return cartRepository.findByCartId(cartId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "카트가 존재 안 합니다"));
     }
 }
 
