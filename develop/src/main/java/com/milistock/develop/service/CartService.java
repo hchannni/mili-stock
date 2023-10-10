@@ -39,6 +39,7 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
+    
     public Optional<Cart> getCartByUser(Long memberId) {
         Member user = memberRepository.findByMemberId(memberId).orElse(null);
         if (user != null) {
@@ -53,13 +54,21 @@ public class CartService {
         // 에서 memberId=6만 추출하기
         Long memberId = RegexFunctions.extractMemberId(userInfo);
 
-        Cart cart = cartRepository.findByMemberMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
+        Cart cart = findByMemberId(memberId);
         
         return Optional.ofNullable(cart);
     }
 
     public Cart getCartById(int cartId) {
-        return findByCartId(cartId);
+
+        Optional<Cart> cart = cartRepository.findByCartId(cartId);
+
+        if(cart.isPresent()){
+            return cart.get();
+        } else{
+            throw new BusinessExceptionHandler("카트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR);
+        }
+        
     }
     
 
@@ -137,10 +146,17 @@ public class CartService {
 
     }
 
-    public Cart findByCartId(int cartId){
-        // return cartRepository.findByCartId(cartId).orElseThrow(() -> new IllegalArgumentException("해당 카트가 없습니다."));
-        return cartRepository.findByCartId(cartId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "카트가 존재 안 합니다"));
+    public Cart findByMemberId(Long memberId){
+        Cart cart = cartRepository.findByMemberMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
+        
+        // 회원이 장바구니 없으면, 에러
+        if (cart == null) {
+            throw new BusinessExceptionHandler("카트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
+        }
+
+        return cart;
     }
+
 }
 
     
