@@ -13,7 +13,7 @@ import com.milistock.develop.domain.Member;
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Integer> {
     Cart findByMember(Member user);
-    Cart findByMemberMemberId(Long memberId);
+    Optional<Cart> findByMemberMemberId(Long memberId);
     Optional<Cart> findByCartId(int id);
     // Cart findByProduct(Product p);
 }

@@ -1,16 +1,9 @@
 package com.milistock.develop.service;
 
-import java.security.Principal;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Cart;
@@ -19,19 +12,18 @@ import com.milistock.develop.domain.Product;
 import com.milistock.develop.exception.BusinessExceptionHandler;
 import com.milistock.develop.repository.CartRepository;
 import com.milistock.develop.repository.MemberRepository;
-import com.milistock.develop.repository.ProductRepository;
 import com.milistock.develop.utils.RegexFunctions;
 
 @Service
 public class CartService {
     @Autowired
+    private ProductService productService;
+
+    @Autowired
     private CartRepository cartRepository;
 
     @Autowired
     private MemberRepository memberRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
 
     public Cart createCart(Member user) {
         Cart cart = new Cart();
@@ -49,6 +41,7 @@ public class CartService {
         return null;
     }
 
+    // done
     public Optional<Cart> getCart(String userInfo) {
         // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
         // 에서 memberId=6만 추출하기
@@ -59,6 +52,7 @@ public class CartService {
         return Optional.ofNullable(cart);
     }
 
+    // done
     public Cart getCartById(int cartId) {
 
         Optional<Cart> cart = cartRepository.findByCartId(cartId);
@@ -71,15 +65,15 @@ public class CartService {
         
     }
     
-
+    // not done (카트 제한)
     public int addProductToCart(String userInfo, int productNumber) {
         // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
         // 에서 memberId=6만 추출하기
         Long memberId = RegexFunctions.extractMemberId(userInfo);
 
-        Product product = productRepository.findById(productNumber).orElseThrow(EntityNotFoundException::new);
+        Product product = productService.getProductById(productNumber);
         
-        Cart cart = cartRepository.findByMemberMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
+        Cart cart = cartRepository.findByMemberMemberId(memberId).get(); // 현재 로그인한 회원의 장바구니 엔티티 조회
 
         // 회원이 장바구니 없으면, 만들어줌
         if (cart == null) {
@@ -101,19 +95,15 @@ public class CartService {
         return cart.getCartId();
     }
 
+    // done
     public int removeProductFromCart(String userInfo, int productNumber) {
         // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
         // 에서 memberId=6만 추출하기
         Long memberId = RegexFunctions.extractMemberId(userInfo);
 
-        Product product = productRepository.findById(productNumber).orElseThrow(EntityNotFoundException::new);
+        Product product = productService.getProductById(productNumber);
 
-        Cart cart = cartRepository.findByMemberMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
-        
-        // 회원이 장바구니 없으면, 에러
-        if (cart == null) {
-            throw new BusinessExceptionHandler("카트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
-        }
+        Cart cart = findByMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
 
         // 상품이 장바구니에 있는지 확인
         // 카트에 상품 추가
@@ -129,32 +119,33 @@ public class CartService {
         }
     }
 
+    // done
     public Long deleteCart(String userInfo) {
         // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
         // 에서 memberId=6만 추출하기
         Long memberId = RegexFunctions.extractMemberId(userInfo);
 
-        Cart cart = cartRepository.findByMemberMemberId(memberId);
-
-        // 회원이 장바구니 없으면, 에러
-        if (cart == null) {
-            throw new BusinessExceptionHandler("카트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
-        }
+        Cart cart = findByMemberId(memberId);
 
         cartRepository.delete(cart);
         return memberId;
 
     }
 
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Helper Functions
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
     public Cart findByMemberId(Long memberId){
-        Cart cart = cartRepository.findByMemberMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
+        Optional<Cart> cart = cartRepository.findByMemberMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
         
         // 회원이 장바구니 없으면, 에러
-        if (cart == null) {
+        if (cart.isPresent()) {
+            return cart.get();
+        } else {
             throw new BusinessExceptionHandler("카트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
         }
-
-        return cart;
     }
 
 }
