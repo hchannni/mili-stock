@@ -1,5 +1,6 @@
 package com.milistock.develop.controller.products;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 
 import com.milistock.develop.domain.Heart;
 import com.milistock.develop.domain.Product;
@@ -35,11 +37,16 @@ public class HeartController {
         this.productService = productService;
     }
 
-    // input: (member_id, productNumber)
     @PostMapping
-    public Heart saveHeart(@RequestBody MakeHeartDto heartDto) {
-        return heartService.saveHeart(heartDto);
+    public Heart saveHeart(Principal principal, int productNumber) {
+        return heartService.saveHeart(principal, productNumber);
     }
+
+    // input: (member_id, productNumber)    
+    // @PostMapping
+    // public Heart saveHeart(@RequestBody MakeHeartDto heartDto) {
+    //     return heartService.saveHeart(heartDto);
+    // }
 
     @GetMapping("/all")
     public List<Heart> getAllHearts() {
@@ -70,10 +77,16 @@ public class HeartController {
         return ResponseEntity.ok(heartCount);
     }
     
+    // productId로 해당 유저의 좋아요 취소하기
+    @DeleteMapping("/product/{productNumber}")
+    public void deleteHeart(Principal principal, @PathVariable int productNumber) {
+        heartService.deleteHeart(principal, productNumber);
+    }
 
+    // heartId로 삭제하기
     @DeleteMapping("/{heartId}")
     public void deleteHeart(@PathVariable int heartId) {
-        heartService.deleteHeart(heartId);
+        heartService.deleteHeartById(heartId);
     }
 
 }

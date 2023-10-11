@@ -1,5 +1,6 @@
 package com.milistock.develop.service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,39 +8,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.milistock.develop.repository.HeartRepository;
-import com.milistock.develop.repository.MemberRepository;
 import com.milistock.develop.repository.ProductRepository;
+import com.milistock.develop.utils.RegexFunctions;
 import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Heart;
 import com.milistock.develop.domain.Member;
 import com.milistock.develop.domain.Product;
-import com.milistock.develop.dto.MakeHeartDto;
 import com.milistock.develop.exception.BusinessExceptionHandler;
 
 @Service
 public class HeartService {
     private final HeartRepository heartRepository;
     private final ProductRepository productRepository;
-    private final MemberRepository memberRepository;
 
     @Autowired
     private MemberService memberService;
 
     @Autowired
-    public HeartService(HeartRepository heartRepository, ProductRepository productRepository, MemberRepository memberRepository) {
+    public HeartService(HeartRepository heartRepository, ProductRepository productRepository) {
         this.heartRepository = heartRepository;
         this.productRepository = productRepository;
-        this.memberRepository = memberRepository;
     }
 
     // not done -> product 예외방지 필요
-    public Heart saveHeart(MakeHeartDto heartDto) {
+    public Heart saveHeart(Principal principal, int productNumber) {
+        Long memberId = RegexFunctions.extractMemberId(principal);
+
         // Check if productNumber and member_id exists
-        Member member = memberService.findByMemberId(heartDto.getMemberId());
-        Product product = productRepository.findById(heartDto.getProductNumber()).orElse(null);
+        Member member = memberService.findByMemberId(memberId);
+        Product product = productRepository.findById(productNumber).orElse(null);
 
         // 하트 중복 체크
-        if (heartRepository.existsByMemberIdAndProductNumber(member.getMemberId(),product.getProductNumber())){
+        if (heartRepository.existsByMemberMemberIdAndProductProductNumber(memberId,productNumber)){
             throw new BusinessExceptionHandler("하트가 이미 돼 있습니다", ErrorCode.CONFLICT); 
         }
 
@@ -74,11 +74,29 @@ public class HeartService {
         }
     }
 
-    public Long getHeartCountForProduct(Product product) {
-        return heartRepository.countByProduct(product);
+    public void deleteHeart(Principal principal, int productNumber){
+        Long memberId = RegexFunctions.extractMemberId(principal);
+        Optional<Heart> heart = heartRepository.findByMemberMemberIdAndProductProductNumber(memberId,productNumber);
+        if (heart.isPresent()){
+            heartRepository.delete(heart.get());
+        } else {
+            throw new BusinessExceptionHandler("해당 상품의 하트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
+        }
+
     }
 
-    public void deleteHeart(int heartId) {
-        heartRepository.deleteById(heartId);
+    // done
+    public void deleteHeartById(int heartId) {
+        Optional<Heart> heart = heartRepository.findById(heartId);
+        if(heart.isPresent()){
+            heartRepository.deleteById(heartId);
+        } else{
+            throw new BusinessExceptionHandler("해당 id의 하트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR);
+        }        
+    }
+
+    // Extra (later)
+    public Long getHeartCountForProduct(Product product) {
+        return heartRepository.countByProduct(product);
     }
 }

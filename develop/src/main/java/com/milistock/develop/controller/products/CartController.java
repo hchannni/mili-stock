@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.milistock.develop.domain.Cart;
 import com.milistock.develop.service.CartService;
-import com.milistock.develop.service.MemberService;
+import com.milistock.develop.utils.RegexFunctions;
 
 @RestController
 @RequestMapping("/carts")
@@ -23,14 +23,11 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-    @Autowired
-    private MemberService memberService;
-
     @GetMapping
     public ResponseEntity<Cart> getCart(Principal principal) {
-        String userInfo = principal.getName(); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"        
+        Long memberId = RegexFunctions.extractMemberId(principal); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"        
 
-        Optional<Cart> cart = cartService.getCart(userInfo);
+        Optional<Cart> cart = cartService.getCart(memberId);
 
         if (cart.isPresent()) {
             return ResponseEntity.ok(cart.get());
@@ -59,15 +56,12 @@ public class CartController {
     // 카트에 상품 추가
     // +유저가 카트 없을 시, 카트 최초 생성!
     @PostMapping("/productNumber/{productNumber}")
-    public ResponseEntity<?> addProductToCart(@PathVariable int productNumber, Principal principal) {
-        
-        String userInfo = principal.getName(); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"        
+    public ResponseEntity<?> addProductToCart(@PathVariable int productNumber, Principal principal) {        
+        Long memberId = RegexFunctions.extractMemberId(principal); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"        
         int cartItemId;
 
-        // System.out.println(userInfo);
-
         try {
-            cartItemId = cartService.addProductToCart(userInfo, productNumber); //dto -> entity
+            cartItemId = cartService.addProductToCart(memberId, productNumber); //dto -> entity
         } catch(Exception e){
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST); // 장바구니에 잘 안담겼으면 404
         }
@@ -78,12 +72,11 @@ public class CartController {
     // 카트에 상품 제거
     @DeleteMapping("/productNumber/{productNumber}")
     public ResponseEntity<?> deleteProductFromCart(@PathVariable int productNumber, Principal principal) {
-
-        String userInfo = principal.getName(); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"        
+        Long memberId = RegexFunctions.extractMemberId(principal); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"        
         int cartItemId;
 
         try {
-            cartItemId = cartService.removeProductFromCart(userInfo, productNumber); //dto -> entity
+            cartItemId = cartService.removeProductFromCart(memberId, productNumber); //dto -> entity
         } catch(Exception e){
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST); // 장바구니에 잘 안담겼으면 404
         }
@@ -95,11 +88,10 @@ public class CartController {
     // 카트 제거
     @DeleteMapping
     public ResponseEntity<String> deleteCart(Principal principal) {
-        String userInfo = principal.getName(); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"        
-        Long memberId;
+        Long memberId = RegexFunctions.extractMemberId(principal); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"        
 
         try {
-            memberId = cartService.deleteCart(userInfo);
+            memberId = cartService.deleteCart(memberId);
         } catch(Exception e){
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST); // 장바구니에 잘 안담겼으면 404
         }

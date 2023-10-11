@@ -45,11 +45,7 @@ public class CartService {
     }
 
     // done
-    public Optional<Cart> getCart(String userInfo) {
-        // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
-        // 에서 memberId=6만 추출하기
-        Long memberId = RegexFunctions.extractMemberId(userInfo);
-
+    public Optional<Cart> getCart(Long memberId) {
         Cart cart = findByMemberId(memberId);
         
         return Optional.ofNullable(cart);
@@ -69,10 +65,7 @@ public class CartService {
     }
     
     // not done (카트 제한 & product)
-    public int addProductToCart(String userInfo, int productNumber) {
-        // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
-        // 에서 memberId=6만 추출하기
-        Long memberId = RegexFunctions.extractMemberId(userInfo);
+    public int addProductToCart(Long memberId, int productNumber) {
 
         Product product = productService.getProductById(productNumber);
         
@@ -99,10 +92,7 @@ public class CartService {
     }
 
     // done
-    public int removeProductFromCart(String userInfo, int productNumber) {
-        // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
-        // 에서 memberId=6만 추출하기
-        Long memberId = RegexFunctions.extractMemberId(userInfo);
+    public int removeProductFromCart(Long memberId, int productNumber) {
 
         Product product = productService.getProductById(productNumber);
 
@@ -123,10 +113,7 @@ public class CartService {
     }
 
     // done
-    public Long deleteCart(String userInfo) {
-        // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
-        // 에서 memberId=6만 추출하기
-        Long memberId = RegexFunctions.extractMemberId(userInfo);
+    public Long deleteCart(Long memberId) {
 
         Cart cart = findByMemberId(memberId);
 
