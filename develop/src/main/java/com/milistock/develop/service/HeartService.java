@@ -51,6 +51,13 @@ public class HeartService {
     }
 
     // done
+    public List<Heart> getHeart(Principal principal){
+        Long memberId = RegexFunctions.extractMemberId(principal);
+        
+        return heartRepository.findAllByMemberMemberId(memberId);
+    }
+
+    // done
     public List<Heart> getAllHearts() {
         return heartRepository.findAll();
     }

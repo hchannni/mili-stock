@@ -10,14 +10,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
 import com.milistock.develop.domain.Heart;
 import com.milistock.develop.domain.Product;
-import com.milistock.develop.dto.MakeHeartDto;
 import com.milistock.develop.service.HeartService;
 import com.milistock.develop.service.ProductService;
 
@@ -37,8 +35,8 @@ public class HeartController {
         this.productService = productService;
     }
 
-    @PostMapping
-    public Heart saveHeart(Principal principal, int productNumber) {
+    @PostMapping("/product/{productNumber}")
+    public Heart saveHeart(Principal principal, @PathVariable int productNumber) {
         return heartService.saveHeart(principal, productNumber);
     }
 
@@ -47,6 +45,11 @@ public class HeartController {
     // public Heart saveHeart(@RequestBody MakeHeartDto heartDto) {
     //     return heartService.saveHeart(heartDto);
     // }
+
+    @GetMapping
+    public List<Heart> getHeart(Principal principal) {
+        return heartService.getHeart(principal);
+    }
 
     @GetMapping("/all")
     public List<Heart> getAllHearts() {
