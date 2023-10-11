@@ -12,4 +12,5 @@ import com.milistock.develop.domain.Product;
 public interface HeartRepository extends JpaRepository<Heart, Integer> {
     List<Heart> findAllByMemberMemberId(Long memberId);
     Long countByProduct(Product product); // number of hearts
+    boolean existsByMemberIdAndProductNumber(Long memberId, int productNumber);
 }

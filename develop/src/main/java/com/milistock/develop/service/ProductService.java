@@ -33,7 +33,7 @@ public class ProductService {
         if (product.isPresent()) {
             return product.get();            
         } else {
-            throw new BusinessExceptionHandler("회원이 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
+            throw new BusinessExceptionHandler("상품이 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
         }
         
     }

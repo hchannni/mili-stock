@@ -54,8 +54,8 @@ public class HeartController {
 
     // (2) all product page에서 해당 유저가 좋아요 했는지 표시 (member_id, product_id) -> get all hearts for member_id
     @GetMapping("/user/{userId}")
-    public List<Heart> getAllHeartsByUserId(@PathVariable Long userId) {
-        return heartService.getAllHeartsByUserId(userId);
+    public List<Heart> getAllHeartsByMemberId(@PathVariable Long userId) {
+        return heartService.getAllHeartsByMemberId(userId);
     }
 
     // (1) 순위를 위한 product의 좋아요 개수 계산 (product_id) -> get number of all hearts for product_id

@@ -20,6 +20,9 @@ public class CartService {
     private ProductService productService;
 
     @Autowired
+    private MemberService memberService;
+
+    @Autowired
     private CartRepository cartRepository;
 
     @Autowired
@@ -31,9 +34,9 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
-    
+    // done
     public Optional<Cart> getCartByUser(Long memberId) {
-        Member user = memberRepository.findByMemberId(memberId).orElse(null);
+        Member user = memberService.findByMemberId(memberId);
         if (user != null) {
             Cart cart = cartRepository.findByMember(user);
             return Optional.ofNullable(cart);
@@ -65,7 +68,7 @@ public class CartService {
         
     }
     
-    // not done (카트 제한)
+    // not done (카트 제한 & product)
     public int addProductToCart(String userInfo, int productNumber) {
         // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
         // 에서 memberId=6만 추출하기
