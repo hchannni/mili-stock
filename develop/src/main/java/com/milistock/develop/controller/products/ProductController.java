@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,17 +18,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.repository.ProductRepository;
+import com.milistock.develop.service.ProductService;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
 
-    private final ProductRepository productRepository;
+    @Autowired
+    private ProductService productService;
 
     @Autowired
-    public ProductController(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+    private ProductRepository productRepository;
+
+    // @Autowired
+    // public ProductController(ProductRepository productRepository) {
+    //     this.productRepository = productRepository;
+    // }
 
     // 상품 등록 post
     @PostMapping
@@ -41,20 +46,20 @@ public class ProductController {
         return productRepository.findAll();
     }
 
-    @GetMapping("/popular")
-    public List<Product> getPopularProducts() {
-        return productRepository.findByIsPopularProduct(true);
-    }
+    // @GetMapping("/popular")
+    // public List<Product> getPopularProducts() {
+    //     return productRepository.findByIsPopularProduct(true);
+    // }
 
-    @GetMapping("/discounted")
-    public List<Product> getDiscountedProducts() {
-        return productRepository.findByIsDiscountedProduct(true);
-    }
+    // @GetMapping("/discounted")
+    // public List<Product> getDiscountedProducts() {
+    //     return productRepository.findByIsDiscountedProduct(true);
+    // }
 
-    @GetMapping("/new")
-    public List<Product> getNewProducts() {
-        return productRepository.findByIsNewProduct(true);
-    }
+    // @GetMapping("/new")
+    // public List<Product> getNewProducts() {
+    //     return productRepository.findByIsNewProduct(true);
+    // }
 
     @GetMapping("/category/{category}")
     public List<Product> getCategory(@PathVariable String category) {
@@ -87,15 +92,13 @@ public class ProductController {
     }
 
     @DeleteMapping("/{productNumber}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable int productNumber) {
-        Optional<Product> product = productRepository.findById(productNumber);
+    public ResponseEntity<String> deleteProduct(@PathVariable int productNumber) {
+        Product product = productService.getProductById(productNumber);
 
-        if (product.isPresent()) {
-            productRepository.delete(product.get());
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        productRepository.delete(product);
+        
+        String successResponse = "상품id= " + productNumber + "가 삭제되었습니다";
+        return new ResponseEntity<String>(successResponse, HttpStatus.OK);
     }
 
 
