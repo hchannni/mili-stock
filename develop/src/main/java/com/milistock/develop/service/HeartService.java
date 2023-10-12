@@ -24,6 +24,9 @@ public class HeartService {
     @Autowired
     private MemberService memberService;
 
+    @Autowired 
+    private ProductService productService;
+
     @Autowired
     public HeartService(HeartRepository heartRepository, ProductRepository productRepository) {
         this.heartRepository = heartRepository;
@@ -36,7 +39,7 @@ public class HeartService {
 
         // Check if productNumber and member_id exists
         Member member = memberService.findByMemberId(memberId);
-        Product product = productRepository.findById(productNumber).orElse(null);
+        Product product = productService.getProductById(productNumber);
 
         // 하트 중복 체크
         if (heartRepository.existsByMemberMemberIdAndProductProductNumber(memberId,productNumber)){
@@ -83,7 +86,9 @@ public class HeartService {
 
     public void deleteHeart(Principal principal, int productNumber){
         Long memberId = RegexFunctions.extractMemberId(principal);
+
         Optional<Heart> heart = heartRepository.findByMemberMemberIdAndProductProductNumber(memberId,productNumber);
+
         if (heart.isPresent()){
             heartRepository.delete(heart.get());
         } else {

@@ -30,6 +30,7 @@ public class ProductController {
         this.productRepository = productRepository;
     }
 
+    // 상품 등록 post
     @PostMapping
     public Product createProduct(@RequestBody Product product) {
         return productRepository.save(product);

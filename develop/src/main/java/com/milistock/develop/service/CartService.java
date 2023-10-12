@@ -12,7 +12,6 @@ import com.milistock.develop.domain.Product;
 import com.milistock.develop.exception.BusinessExceptionHandler;
 import com.milistock.develop.repository.CartRepository;
 import com.milistock.develop.repository.MemberRepository;
-import com.milistock.develop.utils.RegexFunctions;
 
 @Service
 public class CartService {
@@ -108,7 +107,7 @@ public class CartService {
 
         // 상품이 장바구니에 없을 경우
         else {
-            throw new BusinessExceptionHandler("상품이 카트에 없습니다", ErrorCode.CONFLICT); 
+            throw new BusinessExceptionHandler("상품이 카트에 없습니다", ErrorCode.NOT_FOUND_ERROR); 
         }
     }
 
