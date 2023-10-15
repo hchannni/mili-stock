@@ -1,6 +1,8 @@
 package com.milistock.develop.dto;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.modelmapper.ModelMapper;
 
@@ -18,8 +20,13 @@ import lombok.NoArgsConstructor;
 public class ProductDto {
     @NotBlank(message = "상품명은 필수 입력 값입니다.")
     private String productTitle;
+
+    @Min(value = 1, message = "가격은 최소 1 이상이어야 합니다.")
     private int productPrice;
+
+    @Min(value = 1, message = "재고는 최소 1 이상이어야 합니다.")
     private int productStock;
+
     private String productImageUrl;
     private String category;
     private Boolean isDiscountedProduct;

@@ -3,6 +3,8 @@ package com.milistock.develop.controller.products;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,9 +40,18 @@ public class ProductController {
 
     // 상품 등록 post
     @PostMapping
-    public Product createProduct(@RequestBody ProductDto productDto) {
-        Product product = productDto.createItem();
-        return productRepository.save(product);
+    public ResponseEntity<String> createProduct(@Valid @RequestBody ProductDto productDto) {
+
+        try {
+            productService.createProduct(productDto); // 상품 중복 확인 후 추가
+        }
+        catch (Exception e) {
+            // String errorResponse = "상품 추가 중 에러가 발생했습니다";
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        String successResponse = "상품" + productDto.getProductTitle() + "가 추가되었습니다";
+        return new ResponseEntity<String>(successResponse, HttpStatus.OK);
     }
 
     @GetMapping("/all")
