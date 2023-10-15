@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.milistock.develop.domain.Product;
+import com.milistock.develop.dto.ProductDto;
 import com.milistock.develop.repository.ProductRepository;
 import com.milistock.develop.service.ProductService;
 
@@ -37,7 +38,8 @@ public class ProductController {
 
     // 상품 등록 post
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
+    public Product createProduct(@RequestBody ProductDto productDto) {
+        Product product = productDto.createItem();
         return productRepository.save(product);
     }
 
