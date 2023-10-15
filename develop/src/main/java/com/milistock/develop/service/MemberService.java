@@ -86,9 +86,34 @@ public class MemberService {
         return saveMember;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // 태연 수정!
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Transactional(readOnly = true)
-    public Member findByMemberId(Long userid){
-        return memberRepository.findByMemberId(userid).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
+    public Member findByMemberId(Long memberId){
+        Optional<Member> member = memberRepository.findByMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
+        
+        // 회원이 장바구니 없으면, 에러
+        if (member.isPresent()) {
+            return member.get();
+        } else {
+            throw new BusinessExceptionHandler("유저가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
+        }
     }
 
+    @Transactional(readOnly = true)
+    public boolean isMemberIdExists(Long memberId) {
+        boolean exist = memberRepository.existsByMemberId(memberId);
+        if(exist){
+            return true;
+        } else{
+            throw new BusinessExceptionHandler("유저가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
+        }
+    }
+
+    //@Transactional(readOnly = true)
+    //public Member findByMemberId(Long userid){
+    //    return memberRepository.findByMemberId(userid).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
+        
+    //}
 }

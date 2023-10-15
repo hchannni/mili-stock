@@ -12,12 +12,14 @@ import com.milistock.develop.domain.Product;
 import com.milistock.develop.exception.BusinessExceptionHandler;
 import com.milistock.develop.repository.CartRepository;
 import com.milistock.develop.repository.MemberRepository;
-import com.milistock.develop.utils.RegexFunctions;
 
 @Service
 public class CartService {
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private MemberService memberService;
 
     @Autowired
     private CartRepository cartRepository;
@@ -31,9 +33,9 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
-    
+    // done
     public Optional<Cart> getCartByUser(Long memberId) {
-        Member user = memberRepository.findByMemberId(memberId).orElse(null);
+        Member user = memberService.findByMemberId(memberId);
         if (user != null) {
             Cart cart = cartRepository.findByMember(user);
             return Optional.ofNullable(cart);
@@ -42,11 +44,7 @@ public class CartService {
     }
 
     // done
-    public Optional<Cart> getCart(String userInfo) {
-        // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
-        // 에서 memberId=6만 추출하기
-        Long memberId = RegexFunctions.extractMemberId(userInfo);
-
+    public Optional<Cart> getCart(Long memberId) {
         Cart cart = findByMemberId(memberId);
         
         return Optional.ofNullable(cart);
@@ -65,11 +63,8 @@ public class CartService {
         
     }
     
-    // not done (카트 제한)
-    public int addProductToCart(String userInfo, int productNumber) {
-        // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
-        // 에서 memberId=6만 추출하기
-        Long memberId = RegexFunctions.extractMemberId(userInfo);
+    // not done (카트 제한 & product)
+    public int addProductToCart(Long memberId, int productNumber) {
 
         Product product = productService.getProductById(productNumber);
         
@@ -96,10 +91,7 @@ public class CartService {
     }
 
     // done
-    public int removeProductFromCart(String userInfo, int productNumber) {
-        // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
-        // 에서 memberId=6만 추출하기
-        Long memberId = RegexFunctions.extractMemberId(userInfo);
+    public int removeProductFromCart(Long memberId, int productNumber) {
 
         Product product = productService.getProductById(productNumber);
 
@@ -115,15 +107,12 @@ public class CartService {
 
         // 상품이 장바구니에 없을 경우
         else {
-            throw new BusinessExceptionHandler("상품이 카트에 없습니다", ErrorCode.CONFLICT); 
+            throw new BusinessExceptionHandler("상품이 카트에 없습니다", ErrorCode.NOT_FOUND_ERROR); 
         }
     }
 
     // done
-    public Long deleteCart(String userInfo) {
-        // userInfo = "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"
-        // 에서 memberId=6만 추출하기
-        Long memberId = RegexFunctions.extractMemberId(userInfo);
+    public Long deleteCart(Long memberId) {
 
         Cart cart = findByMemberId(memberId);
 

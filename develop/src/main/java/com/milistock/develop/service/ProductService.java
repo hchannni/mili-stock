@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Product;
+import com.milistock.develop.dto.ProductDto;
 import com.milistock.develop.exception.BusinessExceptionHandler;
 import com.milistock.develop.repository.ProductRepository;
 
@@ -22,6 +23,21 @@ public class ProductService {
 
     // Constructor or method to initialize products
 
+    // 새 상품 생성
+    public int createProduct(ProductDto productDto){
+        // 중복 확인
+        if(productRepository.existsByProductTitle( productDto.getProductTitle() )){
+            throw new BusinessExceptionHandler("같은 이름의 상품이 이미 추가 돼 있습니다", ErrorCode.CONFLICT); 
+        }
+
+        // 상품 추가
+        Product product = productDto.createItem();
+        productRepository.save(product);
+
+        return product.getProductNumber();
+    }
+
+
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
@@ -33,7 +49,7 @@ public class ProductService {
         if (product.isPresent()) {
             return product.get();            
         } else {
-            throw new BusinessExceptionHandler("회원이 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
+            throw new BusinessExceptionHandler("상품이 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
         }
         
     }
