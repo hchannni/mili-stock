@@ -63,9 +63,6 @@ public class MemberSignupDto {
         private String email;
 
         @NotNull
-        private int child;
-
-        @NotNull
         private String gender;
 
         @NotNull

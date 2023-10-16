@@ -115,7 +115,6 @@ public class MemberController {
         member.setBirth(memberSignupDto.getBirth());
         member.setPhoneNumber(memberSignupDto.getPhoneNumber());
         member.setEmail(memberSignupDto.getEmail());
-        member.setChild(memberSignupDto.getChild());
         member.setGender(memberSignupDto.getGender());
         member.setAppointment(memberSignupDto.getAppointment());
         member.setDischarge(memberSignupDto.getDischarge());
@@ -134,7 +133,6 @@ public class MemberController {
         memberSignupResponse.setBirth(saveMember.getBirth());
         memberSignupResponse.setPhoneNumber(saveMember.getPhoneNumber());
         memberSignupResponse.setEmail(saveMember.getEmail());
-        memberSignupResponse.setChild(saveMember.getChild());
         memberSignupResponse.setGender(saveMember.getGender());
         memberSignupResponse.setAppointment(saveMember.getAppointment());
         memberSignupResponse.setDischarge(saveMember.getDischarge());

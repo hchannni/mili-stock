@@ -15,7 +15,6 @@ public class MemberSignupResponseDto {
     private String birth;
     private String phoneNumber;
     private String email;
-    private int child;
     private String gender;
     private String appointment;
     private String discharge;
