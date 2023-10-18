@@ -6,6 +6,8 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -114,5 +116,11 @@ public class ProductController {
         return new ResponseEntity<String>(successResponse, HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<List<Product>> getProducts(Pageable pageable) {
+        Page<Product> productPage = productService.getAllProducts(pageable);
+        List<Product> products = productPage.getContent();
+        return ResponseEntity.ok(products);
+    }
 
 }

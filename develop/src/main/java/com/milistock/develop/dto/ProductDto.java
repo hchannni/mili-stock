@@ -1,8 +1,9 @@
 package com.milistock.develop.dto;
 
+import java.time.LocalDateTime;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import org.modelmapper.ModelMapper;
 
@@ -39,6 +40,11 @@ public class ProductDto {
 
     // dto -> Product
     public Product createItem(){
-        return modelMapper.map(this, Product.class);
+        Product product = modelMapper.map(this, Product.class);
+
+        // Set the productAddedTime to the current timestamp
+        product.setProductTimeAdded(LocalDateTime.now());
+
+        return product;
     }
 }
