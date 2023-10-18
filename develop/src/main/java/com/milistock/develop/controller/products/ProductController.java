@@ -117,8 +117,9 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Product>> getProducts(Pageable pageable) {
-        Page<Product> products = productService.getAllProducts(pageable);
+    public ResponseEntity<List<Product>> getProducts(Pageable pageable) {
+        Page<Product> productPage = productService.getAllProducts(pageable);
+        List<Product> products = productPage.getContent();
         return ResponseEntity.ok(products);
     }
 
