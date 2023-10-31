@@ -39,6 +39,9 @@ public class ProductService {
         return product.getProductNumber();
     }
 
+    public List<Product> searchProducts(String keyword) {
+        return productRepository.findByProductTitleContaining(keyword);
+    }
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();

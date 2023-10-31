@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.milistock.develop.domain.Product;
@@ -40,6 +41,10 @@ public class ProductController {
     //     this.productRepository = productRepository;
     // }
 
+    @GetMapping("/search")
+    public List<Product> searchProducts(@RequestParam String keyword) {
+        return productService.searchProducts(keyword);
+    }
     // 상품 등록 post
     @PostMapping
     public ResponseEntity<String> createProduct(@Valid @RequestBody ProductDto productDto) {
@@ -60,6 +65,8 @@ public class ProductController {
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
+
+
 
     // @GetMapping("/popular")
     // public List<Product> getPopularProducts() {
