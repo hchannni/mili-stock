@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,12 +29,14 @@ public class Product {
     private String productTitle;
     private int productPrice;
     private int productStock;
-    private String productImageUrl;
+    
     private String category;
     private Boolean isDiscountedProduct;
     private Boolean isNewProduct;
     private Boolean isPopularProduct;
     private int productDiscountPrice;
+
+    private MultipartFile image;
 
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime productTimeAdded;

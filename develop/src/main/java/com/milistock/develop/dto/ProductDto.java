@@ -6,6 +6,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.milistock.develop.domain.Product;
 
@@ -28,7 +29,7 @@ public class ProductDto {
     @Min(value = 1, message = "재고는 최소 1 이상이어야 합니다.")
     private int productStock;
 
-    private String productImageUrl;
+    private MultipartFile image;
     private String category;
     private Boolean isDiscountedProduct;
     private Boolean isNewProduct;

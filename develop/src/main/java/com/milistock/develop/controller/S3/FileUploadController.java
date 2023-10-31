@@ -26,3 +26,4 @@ public class FileUploadController {
                              .body(uploadedUrl);
     }
 }
+
