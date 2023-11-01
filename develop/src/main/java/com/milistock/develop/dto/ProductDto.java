@@ -40,11 +40,12 @@ public class ProductDto {
     private static ModelMapper modelMapper = new ModelMapper();
 
     // dto -> Product
-    public Product createItem(){
+    public Product createItem(String product_image_url){
         Product product = modelMapper.map(this, Product.class);
 
         // Set the productAddedTime to the current timestamp
         product.setProductTimeAdded(LocalDateTime.now());
+        product.setProduct_image_url(product_image_url);
 
         return product;
     }

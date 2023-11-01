@@ -29,7 +29,6 @@ import com.milistock.develop.repository.ProductRepository;
 import com.milistock.develop.service.ProductService;
 import com.milistock.develop.service.S3UploadService;
 
-
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -67,21 +66,26 @@ public class ProductController {
     // }
 
     @PostMapping("/product/create")
-    public String createProduct(@Valid @ModelAttribute ProductDto productDto, BindingResult bindingResult) throws IOException {
+    public String createProduct(@Valid @ModelAttribute ProductDto productDto, BindingResult bindingResult)
+            throws IOException {
 
         if (bindingResult.hasErrors()) {
             return "product-form";
         }
-        
-        MultipartFile image = productDto.getImage();        
+
+        MultipartFile image = productDto.getImage();
+
+        String uploadedUrl = s3UploadService.upload(image);
 
         try {
-            String uploadedUrl = s3UploadService.upload(image);
-            return uploadedUrl;
-        } catch (IOException e) {
-            return "error-page";
+            productService.createProduct(productDto, uploadedUrl); // 상품 중복 확인 후 추가
+        } catch (Exception e) {
+            // String errorResponse = "상품 추가 중 에러가 발생했습니다";
+            return "server internal error while adding product";
         }
-        
+
+        return "success-page";
+
     }
 
     @GetMapping("/all")
