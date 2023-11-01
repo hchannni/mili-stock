@@ -1,8 +1,11 @@
 package com.milistock.develop.controller.products;
 
+import java.io.File;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,20 +13,27 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.dto.ProductDto;
 import com.milistock.develop.repository.ProductRepository;
 import com.milistock.develop.service.ProductService;
+import com.milistock.develop.service.S3UploadService;
+
+import io.jsonwebtoken.io.IOException;
 
 @RestController
 @RequestMapping("/products")
@@ -35,25 +45,53 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private S3UploadService s3UploadService;
+
     // @Autowired
     // public ProductController(ProductRepository productRepository) {
-    //     this.productRepository = productRepository;
+    // this.productRepository = productRepository;
     // }
 
-    // 상품 등록 post
-    @PostMapping
-    public ResponseEntity<String> createProduct(@Valid @RequestBody ProductDto productDto) {
+    // // 상품 등록 post
+    // @PostMapping
+    // public ResponseEntity<String> createProduct(@Valid @RequestBody ProductDto
+    // productDto) {
+
+    // try {
+    // productService.createProduct(productDto); // 상품 중복 확인 후 추가
+    // }
+    // catch (Exception e) {
+    // // String errorResponse = "상품 추가 중 에러가 발생했습니다";
+    // return new ResponseEntity<>(e.getMessage(),
+    // HttpStatus.INTERNAL_SERVER_ERROR);
+    // }
+
+    // String successResponse = "상품" + productDto.getProductTitle() + "가 추가되었습니다";
+    // return new ResponseEntity<String>(successResponse, HttpStatus.OK);
+    // }
+
+    @PostMapping("/product/create")
+    public String createProduct(
+            @Valid @ModelAttribute ProductDto productDto,
+            BindingResult bindingResult) throws IOException {
+
+        if (bindingResult.hasErrors()) {
+            return "product-form";
+        }
+        
+        MultipartFile image = productDto.getImage();
+
+        
 
         try {
-            productService.createProduct(productDto); // 상품 중복 확인 후 추가
+            String uploadedUrl = s3UploadService.upload(image);
+            return uploadedUrl;
+        } catch (IOException e) {
+            // Handle the IOException, such as logging the error or returning an error page.
+            return "error-page";
         }
-        catch (Exception e) {
-            // String errorResponse = "상품 추가 중 에러가 발생했습니다";
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        String successResponse = "상품" + productDto.getProductTitle() + "가 추가되었습니다";
-        return new ResponseEntity<String>(successResponse, HttpStatus.OK);
+        
     }
 
     @GetMapping("/all")
@@ -63,17 +101,17 @@ public class ProductController {
 
     // @GetMapping("/popular")
     // public List<Product> getPopularProducts() {
-    //     return productRepository.findByIsPopularProduct(true);
+    // return productRepository.findByIsPopularProduct(true);
     // }
 
     // @GetMapping("/discounted")
     // public List<Product> getDiscountedProducts() {
-    //     return productRepository.findByIsDiscountedProduct(true);
+    // return productRepository.findByIsDiscountedProduct(true);
     // }
 
     // @GetMapping("/new")
     // public List<Product> getNewProducts() {
-    //     return productRepository.findByIsNewProduct(true);
+    // return productRepository.findByIsNewProduct(true);
     // }
 
     @GetMapping("/category/{category}")
@@ -111,7 +149,7 @@ public class ProductController {
         Product product = productService.getProductById(productNumber);
 
         productRepository.delete(product);
-        
+
         String successResponse = "상품id= " + productNumber + "가 삭제되었습니다";
         return new ResponseEntity<String>(successResponse, HttpStatus.OK);
     }
