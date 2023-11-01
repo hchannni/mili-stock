@@ -26,6 +26,11 @@ import com.milistock.develop.dto.ProductDto;
 import com.milistock.develop.repository.ProductRepository;
 import com.milistock.develop.service.ProductService;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -42,8 +47,21 @@ public class ProductController {
     // }
 
     @GetMapping("/search")
-    public List<Product> searchProducts(@RequestParam String keyword) {
-        return productService.searchProducts(keyword);
+    public List<Product> searchProducts(@RequestParam(required = false) String keyword) {
+        if (keyword != null) {
+            String[] keywords = keyword.split(" ");
+            Set<Product> searchResults = new HashSet<>();
+
+            for (String searchWord : keywords) {
+                List<Product> resultsForKeyword = productRepository.findByProductTitleContaining(searchWord);
+                searchResults.addAll(resultsForKeyword);
+            }
+
+            return new ArrayList<>(searchResults);
+
+        } else {
+            return productRepository.findAll();
+        }
     }
     // 상품 등록 post
     @PostMapping
