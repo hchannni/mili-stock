@@ -1,11 +1,9 @@
 package com.milistock.develop.controller.products;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.dto.ProductDto;
@@ -33,7 +29,6 @@ import com.milistock.develop.repository.ProductRepository;
 import com.milistock.develop.service.ProductService;
 import com.milistock.develop.service.S3UploadService;
 
-import io.jsonwebtoken.io.IOException;
 
 @RestController
 @RequestMapping("/products")
@@ -72,23 +67,18 @@ public class ProductController {
     // }
 
     @PostMapping("/product/create")
-    public String createProduct(
-            @Valid @ModelAttribute ProductDto productDto,
-            BindingResult bindingResult) throws IOException {
+    public String createProduct(@Valid @ModelAttribute ProductDto productDto, BindingResult bindingResult) throws IOException {
 
         if (bindingResult.hasErrors()) {
             return "product-form";
         }
         
-        MultipartFile image = productDto.getImage();
-
-        
+        MultipartFile image = productDto.getImage();        
 
         try {
             String uploadedUrl = s3UploadService.upload(image);
             return uploadedUrl;
         } catch (IOException e) {
-            // Handle the IOException, such as logging the error or returning an error page.
             return "error-page";
         }
         
