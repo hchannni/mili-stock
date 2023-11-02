@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -65,11 +66,23 @@ public class ProductController {
     // return new ResponseEntity<String>(successResponse, HttpStatus.OK);
     // }
 
-    @PostMapping("/product/create")
+    @PostMapping("/create")
     public String createProduct(@Valid @ModelAttribute ProductDto productDto, BindingResult bindingResult)
             throws IOException {
-
+        
+        System.out.println(productDto);
+        
         if (bindingResult.hasErrors()) {
+
+            // 유저가 뭘 잘못 입력했는지 출력
+            for (FieldError fieldError : bindingResult.getFieldErrors()) {
+                // Get the name of the field that has an error
+                String fieldName = fieldError.getField();
+                // Get the error message for this field
+                String errorMessage = fieldError.getDefaultMessage();                
+                System.out.println("Validation error for field '" + fieldName + "': " + errorMessage);
+            }
+
             return "product-form";
         }
 

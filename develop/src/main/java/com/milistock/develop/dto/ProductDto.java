@@ -36,11 +36,12 @@ public class ProductDto {
     private Boolean isPopularProduct;
     private int productDiscountPrice;
 
-    // ModelMapper: 서로 다른 클래스의 값을! 필드의 이름과 자료형이 같을 때! getter, setter 를 통해 값을 복사해서 객체를 반환함
+    // ModelMapper: 서로 다른 클래스의 값을! 필드의 이름과 자료형이 같을 때! getter, setter 를 통해 값을 복사해서
+    // 객체를 반환함
     private static ModelMapper modelMapper = new ModelMapper();
 
     // dto -> Product
-    public Product createItem(String product_image_url){
+    public Product createItem(String product_image_url) {
         Product product = modelMapper.map(this, Product.class);
 
         // Set the productAddedTime to the current timestamp
@@ -48,5 +49,19 @@ public class ProductDto {
         product.setProduct_image_url(product_image_url);
 
         return product;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductDto{" +
+                "productTitle='" + productTitle + '\'' +
+                ", productPrice=" + productPrice +
+                ", productStock=" + productStock +
+                ", category='" + category + '\'' +
+                ", isDiscountedProduct=" + isDiscountedProduct +
+                ", isNewProduct=" + isNewProduct +
+                ", isPopularProduct=" + isPopularProduct +
+                ", productDiscountPrice=" + productDiscountPrice +
+                '}';
     }
 }
