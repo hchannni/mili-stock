@@ -70,7 +70,7 @@ public class ProductController {
     public String createProduct(@Valid @ModelAttribute ProductDto productDto, BindingResult bindingResult)
             throws IOException {
         
-        System.out.println(productDto);
+        // System.out.println(productDto);
         
         if (bindingResult.hasErrors()) {
 
@@ -87,14 +87,17 @@ public class ProductController {
         }
 
         MultipartFile image = productDto.getImage();
+        String uploadedUrl = null;
 
-        String uploadedUrl = s3UploadService.upload(image);
+        // image 없어도 됨
+        if (image != null){            
+            uploadedUrl = s3UploadService.upload(image);
+        }
 
         try {
             productService.createProduct(productDto, uploadedUrl); // 상품 중복 확인 후 추가
         } catch (Exception e) {
-            // String errorResponse = "상품 추가 중 에러가 발생했습니다";
-            return "server internal error while adding product";
+            return e.getMessage();
         }
 
         return "success-page";
