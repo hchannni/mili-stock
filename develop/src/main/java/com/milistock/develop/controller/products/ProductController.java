@@ -39,7 +39,6 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
     public ProductController(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
@@ -49,7 +48,7 @@ public class ProductController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String category) {
         List<Product> results;
-        
+
 
         if (category != null) {
             if (keyword != null) {
