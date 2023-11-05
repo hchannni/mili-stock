@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.dto.ProductDto;
 import com.milistock.develop.repository.ProductRepository;
+import com.milistock.develop.response.ValidationResponse;
 import com.milistock.develop.service.ProductService;
 import com.milistock.develop.service.S3UploadService;
 
@@ -67,7 +68,7 @@ public class ProductController {
     // }
 
     @PostMapping("/create")
-    public String createProduct(@Valid @ModelAttribute ProductDto productDto, BindingResult bindingResult)
+    public ResponseEntity<?> createProduct(@Valid @ModelAttribute ProductDto productDto, BindingResult bindingResult)
             throws IOException {
         
         // System.out.println(productDto);
@@ -75,15 +76,11 @@ public class ProductController {
         if (bindingResult.hasErrors()) {
 
             // 유저가 뭘 잘못 입력했는지 출력
+            ValidationResponse errors = new ValidationResponse();
             for (FieldError fieldError : bindingResult.getFieldErrors()) {
-                // Get the name of the field that has an error
-                String fieldName = fieldError.getField();
-                // Get the error message for this field
-                String errorMessage = fieldError.getDefaultMessage();                
-                System.out.println("Validation error for field '" + fieldName + "': " + errorMessage);
+                errors.addFieldError(fieldError.getField(), fieldError.getDefaultMessage());
             }
-
-            return "product-form";
+            return ResponseEntity.badRequest().body(errors);
         }
 
         MultipartFile image = productDto.getImage();
@@ -97,10 +94,10 @@ public class ProductController {
         try {
             productService.createProduct(productDto, uploadedUrl); // 상품 중복 확인 후 추가
         } catch (Exception e) {
-            return e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
 
-        return "success-page";
+        return ResponseEntity.ok("Success");
 
     }
 
