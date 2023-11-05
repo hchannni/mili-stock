@@ -27,10 +27,10 @@ public class MemberService {
             if (userid.equals(memberid.get().getUserId())) {
                 return memberid.get();
             } else{
-                throw new BusinessExceptionHandler("존재하지 않는 아이디 입니다.", ErrorCode.UNAUTHORIZED);
+                return null;
             }
         }else{
-            throw new BusinessExceptionHandler("존재하지 않는 아이디 입니다.", ErrorCode.UNAUTHORIZED);
+            return null;
         }
 
     }
