@@ -3,10 +3,14 @@ package com.milistock.develop.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 
 import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Product;
@@ -18,7 +22,6 @@ import com.milistock.develop.repository.ProductRepository;
 public class ProductService {
     private final ProductRepository productRepository;
     
-    @Autowired
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
@@ -39,6 +42,22 @@ public class ProductService {
         return product.getProductNumber();
     }
 
+    public List<Product> searchProducts(String keyword) {
+        return productRepository.findByProductTitleContaining(keyword);
+    }
+
+    public List<Product> searchProductsByMultipleKeywords(String query) {
+        String[] keywords = query.split(" ");
+        Set<Product> searchResults = new HashSet<>();
+    
+        for (String keyword : keywords) {
+            List<Product> resultsForKeyword = productRepository.findByProductTitleContaining(keyword);
+            searchResults.addAll(resultsForKeyword);
+        }
+    
+        return new ArrayList<>(searchResults);
+    }
+    
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();

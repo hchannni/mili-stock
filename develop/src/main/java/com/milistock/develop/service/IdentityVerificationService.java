@@ -22,7 +22,7 @@ public class IdentityVerificationService {
     if (identityVerification.isPresent()) {
         return identityVerification.get();
     } else {
-        throw new BusinessExceptionHandler("존재하지 않는 군번입니다.", ErrorCode.UNAUTHORIZED); // 예외를 UnauthorizedException으로 변경
+        throw new BusinessExceptionHandler("존재하지 않는 군번입니다.", ErrorCode.SERVICENUMBER_ERROR); // 예외를 UnauthorizedException으로 변경
     }
 }
 

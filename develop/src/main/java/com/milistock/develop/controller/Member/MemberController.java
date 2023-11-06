@@ -47,15 +47,15 @@ public class MemberController {
             IdentityVerification identityVerification = identityVerificationService.findByServiceNumber(identityVerificationDto.getServiceNumber());
     
             if (!identityVerificationDto.getName().equals(identityVerification.getName())) {
-                throw new BusinessExceptionHandler("이름이 일치하지 않습니다.", ErrorCode.UNAUTHORIZED);
+                throw new BusinessExceptionHandler("이름이 일치하지 않습니다.", ErrorCode.NAME_ERROR);
             }
     
             if (!identityVerificationDto.getAffiliation().equals(identityVerification.getAffiliation())) {
-                throw new BusinessExceptionHandler("소속이 일치하지 않습니다.",ErrorCode.UNAUTHORIZED);
+                throw new BusinessExceptionHandler("소속이 일치하지 않습니다.",ErrorCode.AFFILIATION_ERROR);
             }
     
             if (!identityVerificationDto.getJob().equals(identityVerification.getJob())) {
-                throw new BusinessExceptionHandler("직업이 일치하지 않습니다.",ErrorCode.UNAUTHORIZED);
+                throw new BusinessExceptionHandler("직군이 일치하지 않습니다.",ErrorCode.JOB_ERROR);
             }
     
             MemberIdentityVerificationResponseDto identityVerificationResponse = MemberIdentityVerificationResponseDto.builder()
@@ -76,7 +76,7 @@ public class MemberController {
         boolean isUserIdExists = memberService.isUserIdExists(userId);
         
         if (isUserIdExists) {
-            throw new BusinessExceptionHandler("아이디가 이미 사용 중입니다.", ErrorCode.CONFLICT); // 아이디 중복 시 CONFLICT 반환
+            throw new BusinessExceptionHandler("아이디가 이미 사용 중입니다.", ErrorCode.ID_CONFLICT); // 아이디 중복 시 CONFLICT 반환
         } else {
             IdDuplicateResponseDto idDuplicateResponseDto = IdDuplicateResponseDto.builder()
                     .status(200)
@@ -93,14 +93,14 @@ public class MemberController {
         boolean isUserIdExists = memberService.isUserIdExists(userId);
 
         if (isUserIdExists) {
-            throw new BusinessExceptionHandler("아이디가 이미 사용 중입니다.", ErrorCode.CONFLICT); // 아이디 중복 시 CONFLICT 반환
+            throw new BusinessExceptionHandler("아이디가 이미 사용 중입니다.", ErrorCode.ID_CONFLICT); // 아이디 중복 시 CONFLICT 반환
         }
 
         String serviceNumber = memberSignupDto.getServiceNumber();
         boolean isServiceNumberExists = memberService.isServiceNumberExists(serviceNumber);
 
         if (isServiceNumberExists) {
-            throw new BusinessExceptionHandler("군번이 이미 사용 중입니다.", ErrorCode.CONFLICT); // 아이디 중복 시 CONFLICT 반환
+            throw new BusinessExceptionHandler("군번이 이미 사용 중입니다.", ErrorCode.SERVICENUMBER_CONFLICT); // 아이디 중복 시 CONFLICT 반환
         }
         
 
@@ -146,8 +146,12 @@ public class MemberController {
         
         // UserId 없을 경우 Exception이 발생한다. Global Exception에 대한 처리가 필요하다.
         Member member = memberService.findByUserId(loginDto.getUserId());
+        if (member == null) {
+            throw new BusinessExceptionHandler("아이디 또는 비밀번호를 잘못 입력했습니다. 입력하신 내용을 다시 확인해주세요.", ErrorCode.UNAUTHORIZED);
+        }
+
         if(!member.getUserId().equals(loginDto.getUserId())){
-            throw new BusinessExceptionHandler("존재하지 않는 아이디 입니다.", ErrorCode.UNAUTHORIZED);
+            throw new BusinessExceptionHandler("아이디 또는 비밀번호를 잘못 입력했습니다. 입력하신 내용을 다시 확인해주세요.", ErrorCode.UNAUTHORIZED);
         }
 
         if(loginDto.getPassword().isEmpty() || loginDto.getPassword().isBlank()){
@@ -155,7 +159,7 @@ public class MemberController {
         }
 
         if(!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())){
-            throw new BusinessExceptionHandler("잘못된 비밀번호 입니다.", ErrorCode.UNAUTHORIZED);
+            throw new BusinessExceptionHandler("아이디 또는 비밀번호를 잘못 입력했습니다. 입력하신 내용을 다시 확인해주세요.", ErrorCode.UNAUTHORIZED);
         }
         
         // List<Role> ===> List<String>

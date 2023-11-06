@@ -4,7 +4,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +28,6 @@ public class HeartController {
     private final HeartService heartService;
     private final ProductService productService;
 
-    @Autowired
     public HeartController(HeartService heartService, ProductService productService) {
         this.heartService = heartService;
         this.productService = productService;
