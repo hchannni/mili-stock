@@ -81,6 +81,7 @@ public class ProductController {
                 errors.addFieldError(fieldError.getField(), fieldError.getDefaultMessage());
             }
             return ResponseEntity.badRequest().body(errors);
+            // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body('d');
         }
 
         MultipartFile image = productDto.getImage();
