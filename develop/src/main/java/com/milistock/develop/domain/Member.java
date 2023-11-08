@@ -51,9 +51,6 @@ public class Member {
     @Column(length = 255, nullable = false)
     private String email; // (이메일) VARCHAR
 
-    @Column(length = 50)
-    private int child; // (자녀수)  
-
     @Column(length = 10, nullable = false)
     private String gender; //(성별)
 
@@ -88,7 +85,6 @@ public class Member {
                 ", birth='" + birth + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
-                ", child='" + child + '\'' +
                 ", gender='" + gender + '\'' +
                 ", appointment='" + appointment + '\'' +
                 ", discharge=" + discharge +

@@ -86,6 +86,25 @@ public class MemberService {
         return saveMember;
     }
 
+    @Transactional
+    public Member updateMember(Long memberId, String newAppointment, String Birth, String Discharge, String Email, String MilitaryRank, String PhoneNumber, String Gender) {
+        Member existingMember = memberRepository.findByMemberId(memberId).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
+
+
+        // 새로운 개인정보 저장
+        existingMember.setAppointment(newAppointment);
+        existingMember.setBirth(Birth);
+        existingMember.setDischarge(Discharge);
+        existingMember.setEmail(Email);
+        existingMember.setMilitaryRank(MilitaryRank);
+        existingMember.setPhoneNumber(PhoneNumber);
+        existingMember.setGender(Gender);
+
+        // 회원 정보 업데이트
+        Member saveMember = memberRepository.save(existingMember);
+        return saveMember;
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // 태연 수정!
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +116,7 @@ public class MemberService {
         if (member.isPresent()) {
             return member.get();
         } else {
-            throw new BusinessExceptionHandler("유저가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
+            throw new BusinessExceptionHandler("유저가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR);
         }
     }
 
