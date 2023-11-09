@@ -22,10 +22,25 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public Member findByUserId(String userid){
-        Optional<Member> memberid = memberRepository.findByUserId(userid); // 이거는 바로 jpa 데이터베이스랑 비교하는 것
-        if(memberid.isPresent()){
-            if (userid.equals(memberid.get().getUserId())) {
-                return memberid.get();
+        Optional<Member> memberFromUserId = memberRepository.findByUserId(userid); // 이거는 바로 jpa 데이터베이스랑 비교하는 것
+        if(memberFromUserId.isPresent()){
+            if (userid.equals(memberFromUserId.get().getUserId())) {
+                return memberFromUserId.get();
+            } else{
+                return null;
+            }
+        }else{
+            return null;
+        }
+
+    }
+
+    @Transactional(readOnly = true)
+    public Member findByServiceNumber(String serviceNumber){
+        Optional<Member> memberFromServiceNumber = memberRepository.findByServiceNumber(serviceNumber);
+        if(memberFromServiceNumber.isPresent()){
+            if (serviceNumber.equals(memberFromServiceNumber.get().getServiceNumber())) {
+                return memberFromServiceNumber.get();
             } else{
                 return null;
             }

@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Member;
+import com.milistock.develop.dto.EditMemberInfoDto;
 import com.milistock.develop.dto.EditMemberPasswordDto;
+import com.milistock.develop.dto.EditMemberPwChangeDto;
 import com.milistock.develop.dto.HttpOkResponseDto;
-import com.milistock.develop.dto.MemberSignupDto;
 import com.milistock.develop.dto.MemberSignupResponseDto;
 import com.milistock.develop.exception.BusinessExceptionHandler;
 import com.milistock.develop.security.jwt.util.IfLogin;
@@ -68,12 +69,12 @@ public class EditMemberController {
 
     @PostMapping("/infoChange") // 개인정보 변경 메소드
     public ResponseEntity<?> pwChange(@IfLogin LoginUserDto loginUserDto,
-            @RequestBody @Valid MemberSignupDto infoChangeDto) {
+            @RequestBody @Valid EditMemberInfoDto infoChangeDto) {
 
         Long tokenMemberId = loginUserDto.getMemberId();
-        String clientUserId = infoChangeDto.getUserId();
+        String clientServiceNumber = infoChangeDto.getServiceNumber();
         Member tokenMember = memberService.findByMemberId(tokenMemberId);
-        Member clientMember = memberService.findByUserId(clientUserId);
+        Member clientMember = memberService.findByServiceNumber(clientServiceNumber);
 
         if (clientMember == null) {
             throw new BusinessExceptionHandler("존재하지 않는 아이디 입니다.", ErrorCode.ID_ERROR);
@@ -82,21 +83,42 @@ public class EditMemberController {
         if (!tokenMember.getUserId().equals(clientMember.getUserId())) { // ID 대소문자 비교
             throw new BusinessExceptionHandler("존재하지 않는 아이디 입니다.", ErrorCode.ID_ERROR); // front 오류
         } else {
-            memberService.updateMember(tokenMemberId, clientMember.getAffiliation(), clientMember.getBirth(),
-                    clientMember.getDischarge(), clientMember.getEmail(), clientMember.getMilitaryRank(),
-                    clientMember.getPhoneNumber(), clientMember.getGender());
-            HttpOkResponseDto pwChangeResponseDto = HttpOkResponseDto.builder()
+            memberService.updateMember(tokenMemberId, infoChangeDto.getAffiliation(), infoChangeDto.getBirth(),
+                    infoChangeDto.getDischarge(), infoChangeDto.getEmail(), infoChangeDto.getMilitaryRank(),
+                    infoChangeDto.getPhoneNumber(), infoChangeDto.getGender());
+            HttpOkResponseDto infoChangeResponseDto = HttpOkResponseDto.builder()
                     .status(200)
                     .build();
-            return new ResponseEntity<>(pwChangeResponseDto, HttpStatus.OK);
-        } // userId로 회원 정보 조회
+            return new ResponseEntity<>(infoChangeResponseDto, HttpStatus.OK);
+        }
     }
 
-    // existingMember.setAppointment(newAppointment);
-    // existingMember.setBirth(Birth);
-    // existingMember.setDischarge(Discharge);
-    // existingMember.setEmail(Email);
-    // existingMember.setMilitaryRank(MilitaryRank);
-    // existingMember.setPhoneNumber(PhoneNumber);
-    // existingMember.setGender(Gender);
+    @PostMapping("/pwChange") // 비밀번호 변경 메소드
+    public ResponseEntity<?> pwChange(@IfLogin LoginUserDto loginUserDto,
+            @RequestBody @Valid EditMemberPwChangeDto pwChangeDto) {
+
+        Long memberId = loginUserDto.getMemberId();
+        String newPassword = pwChangeDto.getNewPassword();
+        String currentPassword = pwChangeDto.getcurrentPassword();
+
+        Member member = memberService.findByMemberId(memberId); // memberId로 회원 정보 조회
+
+        if (currentPassword.isEmpty() || member.getPassword().isBlank()) {
+            throw new BusinessExceptionHandler("비밀번호를 입력하세요.", ErrorCode.UNAUTHORIZED);
+        }
+
+        if (!passwordEncoder.matches(currentPassword, member.getPassword())) {
+            throw new BusinessExceptionHandler("비밀번호가 틀렸습니다.", ErrorCode.UNAUTHORIZED);
+        }
+
+        memberService.updateMemberPw(member.getUserId(), newPassword);
+        HttpOkResponseDto pwChangeResponseDto = HttpOkResponseDto.builder()
+                .status(200)
+                .build();
+        return new ResponseEntity<>(pwChangeResponseDto, HttpStatus.OK);
+
+        
+
+    }
+
 }
