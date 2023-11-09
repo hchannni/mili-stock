@@ -45,16 +45,8 @@ public class ProductService {
     }
 
     public Product getProductById(int productId) {
-        System.out.println("findbyId 전");
-        Optional<Product> product;
-        try{
-            product = productRepository.findById(productId); // 현재 로그인한 회원의 장바구니 엔티티 조회
-            System.out.println("try 끝!");
-        }
-        catch(Exception e) {
-            System.out.println("findbyId 후");
-            throw new BusinessExceptionHandler("상품이 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
-        }
+        
+        Optional<Product> product = productRepository.findById(productId); // 현재 로그인한 회원의 장바구니 엔티티 조회           
 
         // 해당 id의 회원이 없으면, 에러
         if (product.isPresent()) {
