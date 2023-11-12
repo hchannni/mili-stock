@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +48,30 @@ public class EditMemberController {
         if (!passwordEncoder.matches(password.getPassword(), member.getPassword())) {
             throw new BusinessExceptionHandler("비밀번호가 틀렸습니다.", ErrorCode.UNAUTHORIZED);
         }
+
+        MemberSignupResponseDto memberSignupResponse = new MemberSignupResponseDto();
+        memberSignupResponse.setStatus(200);
+        memberSignupResponse.setMemberId(member.getMemberId());
+        memberSignupResponse.setServiceNumber(member.getServiceNumber());
+        memberSignupResponse.setName(member.getName());
+        memberSignupResponse.setUserId(member.getUserId());
+        memberSignupResponse.setJob(member.getJob());
+        memberSignupResponse.setAffiliation(member.getAffiliation());
+        memberSignupResponse.setMilitaryRank(member.getMilitaryRank());
+        memberSignupResponse.setBirth(member.getBirth());
+        memberSignupResponse.setPhoneNumber(member.getPhoneNumber());
+        memberSignupResponse.setEmail(member.getEmail());
+        memberSignupResponse.setGender(member.getGender());
+        memberSignupResponse.setAppointment(member.getAppointment());
+        memberSignupResponse.setDischarge(member.getDischarge());
+
+        return new ResponseEntity<>(memberSignupResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/getInfo")
+    public ResponseEntity<?> getInfo(@IfLogin LoginUserDto loginUserDto) {
+        Long tokenMemberId = loginUserDto.getMemberId();
+        Member member = memberService.findByMemberId(tokenMemberId);
 
         MemberSignupResponseDto memberSignupResponse = new MemberSignupResponseDto();
         memberSignupResponse.setStatus(200);
@@ -116,8 +141,6 @@ public class EditMemberController {
                 .status(200)
                 .build();
         return new ResponseEntity<>(pwChangeResponseDto, HttpStatus.OK);
-
-        
 
     }
 
