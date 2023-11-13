@@ -46,6 +46,7 @@ public class SecurityConfig {
                                 .mvcMatchers(GET, "/haerts/**").hasAnyRole("USER", "ADMIN")
                                 .mvcMatchers(GET, "/products/**").hasAnyRole("USER", "ADMIN")
                                 .mvcMatchers(GET, "/members/edit/**").hasAnyRole("USER", "ADMIN")
+                                .mvcMatchers(POST, "/boards/**").hasAnyRole("USER", "ADMIN")
                                 .anyRequest().hasAnyRole("USER", "ADMIN"))
                         .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint))
                         .apply(authenticationManagerConfig);
