@@ -35,6 +35,7 @@ public class Board {
     private LocalDateTime date;
 
     private boolean answered;
+    private String answer;
 
     @Override
     public String toString() {
@@ -45,7 +46,8 @@ public class Board {
                 ", name='" + name + '\'' +
                 ", memberId='" + memberId + '\'' +
                 ", date='" + date + '\'' +
-                ", answered='" + answered +
+                ", answered='" + answered +'\'' +
+                ", answer='" + answer +
                 '}';
     }
     // Constructors, getters, setters

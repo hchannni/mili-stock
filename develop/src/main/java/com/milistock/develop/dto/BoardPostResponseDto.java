@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class BoardPostResponseDto {
 
+    private Integer status;
     private Long boardId;
     private String title;
     private String content;
@@ -13,4 +14,5 @@ public class BoardPostResponseDto {
     private Long memberId;
     private LocalDateTime date;
     private boolean answered;
+    private String answer;
 }

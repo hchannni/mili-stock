@@ -123,7 +123,7 @@ public enum ErrorCode {
     
 
 
-
+    BOARD_VIEW_ERROR(404,"","게시물을 찾을 수 없습니다."),
 
 
     ; // End
