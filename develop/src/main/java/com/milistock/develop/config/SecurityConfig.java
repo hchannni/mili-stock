@@ -41,8 +41,8 @@ public class SecurityConfig {
                                 "/members/help/pwChange", "/members/idDuplicate",
                                 "/members/all").permitAll()
                                 .mvcMatchers(GET, "/carts/**").hasAnyRole("USER", "ADMIN")
-                                .mvcMatchers(POST, "/carts/**").hasAnyRole("ADMIN")
-                                .mvcMatchers(DELETE, "/carts/**").hasAnyRole("ADMIN")
+                                .mvcMatchers(POST, "/carts/**").hasAnyRole("USER","ADMIN")
+                                .mvcMatchers(DELETE, "/carts/**").hasAnyRole("USER","ADMIN")
                                 .mvcMatchers(GET, "/haerts/**").hasAnyRole("USER", "ADMIN")
                                 .mvcMatchers(GET, "/products/**").hasAnyRole("USER", "ADMIN")
                                 .mvcMatchers(GET, "/members/edit/**").hasAnyRole("USER", "ADMIN")
