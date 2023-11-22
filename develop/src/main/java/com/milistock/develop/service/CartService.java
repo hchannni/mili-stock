@@ -93,7 +93,7 @@ public class CartService {
 
         System.out.println("just before storing product!");
         // 카트에 상품 저장
-        cart.getProducts().add(product);
+        cart.addCartItem(product, 1);
         cartRepository.save(cart);
         return cart.getCartId();
     }
@@ -108,7 +108,7 @@ public class CartService {
         // 상품이 장바구니에 있는지 확인
         // 카트에 상품 추가
         if (doesCartContainProduct(cart, product.getProductNumber())){
-            cart.getProducts().remove(product);
+            cart.removeCartItem(product);
             cartRepository.save(cart);
             return cart.getCartId();            
         }
