@@ -10,6 +10,7 @@ import com.milistock.develop.domain.Cart;
 import com.milistock.develop.domain.Member;
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.exception.BusinessExceptionHandler;
+import com.milistock.develop.repository.CartItemRepository;
 import com.milistock.develop.repository.CartRepository;
 import com.milistock.develop.repository.MemberRepository;
 
@@ -26,6 +27,9 @@ public class CartService {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private CartItemRepository cartItemRepository;
 
     public Cart createCart(Member user) {
         Cart cart = new Cart();
@@ -62,6 +66,10 @@ public class CartService {
         }
         
     }
+
+    public boolean doesCartContainProduct(Cart cart, int productId) {
+        return cartItemRepository.existsByCartAndProduct_ProductNumber(cart, productId);
+    }
     
     // not done (카트 제한 & product)
     public int addProductToCart(Long memberId, int productNumber) {
@@ -79,7 +87,7 @@ public class CartService {
         }
 
         // 상품이 장바구니에 있는지 확인
-        if (cart.containsProduct(product)){
+        if (doesCartContainProduct(cart, product.getProductNumber())){
             throw new BusinessExceptionHandler("상품이 이미 카트에 추가 돼 있습니다", ErrorCode.CONFLICT); 
         }
 
@@ -99,7 +107,7 @@ public class CartService {
 
         // 상품이 장바구니에 있는지 확인
         // 카트에 상품 추가
-        if (cart.containsProduct(product)){
+        if (doesCartContainProduct(cart, product.getProductNumber())){
             cart.getProducts().remove(product);
             cartRepository.save(cart);
             return cart.getCartId();            
