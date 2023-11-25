@@ -76,11 +76,6 @@ public class CartController {
         int cartItemId;
 
         cartItemId = cartService.removeProductFromCart(memberId, productNumber);
-        // try {
-        //     cartItemId = cartService.removeProductFromCart(memberId, productNumber); //dto -> entity
-        // } catch(Exception e){
-        //     return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST); // 장바구니에 잘 안담겼으면 404
-        // }
 
         return new ResponseEntity<Integer>(cartItemId, HttpStatus.OK);
 

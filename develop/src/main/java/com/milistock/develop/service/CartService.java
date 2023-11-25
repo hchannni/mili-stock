@@ -76,7 +76,8 @@ public class CartService {
 
         Product product = productService.getProductById(productNumber);
         
-        Cart cart = cartRepository.findByMemberMemberId(memberId).get(); // 현재 로그인한 회원의 장바구니 엔티티 조회
+        Optional<Cart> ocart = cartRepository.findByMemberMemberId(memberId); 
+        Cart cart = ocart.orElse(null); // 현재 로그인한 회원의 장바구니 엔티티 조회
 
         // 회원이 장바구니 없으면, 만들어줌
         if (cart == null) {
