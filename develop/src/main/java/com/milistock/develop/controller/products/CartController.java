@@ -107,5 +107,14 @@ public class CartController {
         return new ResponseEntity<Integer>(updatedQuantity, HttpStatus.OK);
     }
 
+    // 해당 cartItem의 count를 n만큼 줄여줌
+    @PutMapping("/decreaseCount/productNumber/{productNumber}/by/{quantity}")
+    public ResponseEntity<?> decreaseCount(@PathVariable int productNumber, @PathVariable int quantity, Principal principal) {
+        Long memberId = RegexFunctions.extractMemberId(principal); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)" 
+        
+        int updatedQuantity = cartService.decreaseCount(productNumber, quantity, memberId);
+
+        return new ResponseEntity<Integer>(updatedQuantity, HttpStatus.OK);
+    }
 
 }

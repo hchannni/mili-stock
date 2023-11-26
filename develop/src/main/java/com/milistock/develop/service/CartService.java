@@ -1,6 +1,7 @@
 package com.milistock.develop.service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -143,25 +144,25 @@ public class CartService {
             if (cartItems == null) {
                 cartItems = new ArrayList<>();
             }
-    
+
             for (CartItem cartItem : cartItems) {
                 if (cartItem.getProduct().equals(product)) {
                     int newQuantity = cartItem.getQuantity() + quantity;
-                    
+
                     cartItem.setQuantity(newQuantity);
-                    
+
                     cartRepository.save(cart.get());
-                    
+
                     return newQuantity;
                 }
             }
-    
+
             // If the product is not in the cart, create a new cart item
             CartItem cartItem = new CartItem();
             cartItem.setCart(cart.get());
             cartItem.setProduct(product);
             cartItem.setQuantity(quantity);
-    
+
             cartItems.add(cartItem);
 
             cartRepository.save(cart.get());
@@ -171,7 +172,45 @@ public class CartService {
         } else {
             throw new BusinessExceptionHandler("카트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR);
         }
-   
+
+    }
+
+    // cartItem의 count 1 줄이기
+    public int decreaseCount(int productNumber, int quantity, Long memberId) {
+        Optional<Cart> cart = getCartByUser(memberId);
+        Product product = productService.getProductById(productNumber);
+
+        if (cart.isPresent()) {
+            List<CartItem> cartItems = cart.get().getCartItems();
+
+            if (cartItems != null) {
+                // Iterate through the cart items to find the one associated with the given
+                // product
+                Iterator<CartItem> iterator = cartItems.iterator();
+                while (iterator.hasNext()) {
+                    CartItem cartItem = iterator.next();
+                    if (cartItem.getProduct().equals(product)) {
+                        int newQuantity = cartItem.getQuantity() - quantity;
+                        if (newQuantity > 0) {
+                            // If the quantity is more than 1, just decrement the quantity
+                            cartItem.setQuantity(newQuantity);
+                        } else {
+                            // If the quantity is 1 or less, remove the cart item from the list
+                            iterator.remove();
+                        }
+                        cartRepository.save(cart.get());
+                        return newQuantity;
+                    }
+                }
+                throw new BusinessExceptionHandler("상품이 카트에 없습니다", ErrorCode.NOT_FOUND_ERROR);
+            } else {
+                throw new BusinessExceptionHandler("상품이 카트에 없습니다", ErrorCode.NOT_FOUND_ERROR);
+            }
+
+        } else {
+            throw new BusinessExceptionHandler("카트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR);
+        }
+
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

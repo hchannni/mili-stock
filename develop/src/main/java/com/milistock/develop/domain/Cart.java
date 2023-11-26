@@ -114,29 +114,29 @@ public class Cart {
         }
     }
 
-    // 카트 아이템 숫자 하나 줄이기
-    // 더 효율: repo로 productId로 찾으면 더 빠름
-    public void decrementCartItemCount(Product product) {
-        if (cartItems != null) {
-            // Iterate through the cart items to find the one associated with the given product
-            Iterator<CartItem> iterator = cartItems.iterator();
-            while (iterator.hasNext()) {
-                CartItem cartItem = iterator.next();
-                if (cartItem.getProduct().equals(product)) {
-                    int newQuantity = cartItem.getQuantity() - 1;
-                    if (newQuantity > 0) {
-                        // If the quantity is more than 1, just decrement the quantity
-                        cartItem.setQuantity(newQuantity);
-                    } else {
-                        // If the quantity is 1 or less, remove the cart item from the list
-                        iterator.remove();
-                    }
-                    return;
-                }
-            }
-            throw new BusinessExceptionHandler("상품이 카트에 없습니다", ErrorCode.NOT_FOUND_ERROR); 
-        }
-    }
+    // // 카트 아이템 숫자 하나 줄이기
+    // // 더 효율: repo로 productId로 찾으면 더 빠름
+    // public void decrementCartItemCount(Product product) {
+    //     if (cartItems != null) {
+    //         // Iterate through the cart items to find the one associated with the given product
+    //         Iterator<CartItem> iterator = cartItems.iterator();
+    //         while (iterator.hasNext()) {
+    //             CartItem cartItem = iterator.next();
+    //             if (cartItem.getProduct().equals(product)) {
+    //                 int newQuantity = cartItem.getQuantity() - 1;
+    //                 if (newQuantity > 0) {
+    //                     // If the quantity is more than 1, just decrement the quantity
+    //                     cartItem.setQuantity(newQuantity);
+    //                 } else {
+    //                     // If the quantity is 1 or less, remove the cart item from the list
+    //                     iterator.remove();
+    //                 }
+    //                 return;
+    //             }
+    //         }
+    //         throw new BusinessExceptionHandler("상품이 카트에 없습니다", ErrorCode.NOT_FOUND_ERROR); 
+    //     }
+    // }
 
 
 }
