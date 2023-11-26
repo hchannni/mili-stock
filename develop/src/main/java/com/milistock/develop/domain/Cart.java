@@ -73,28 +73,27 @@ public class Cart {
         cartItems.add(cartItem);
     }
 
-    // 카트 아이템 숫자 하나 더하기
-    public int incrementCartItemCount(Product product, int quantity) {
-        if (cartItems == null) {
-            cartItems = new ArrayList<>();
-        }
+    // // 카트 아이템 숫자 하나 더하기
+    // public int incrementCartItemCount(Product product, int quantity) {
+    //     if (cartItems == null) {
+    //         cartItems = new ArrayList<>();
+    //     }
 
-        for (CartItem cartItem : cartItems) {
-            if (cartItem.getProduct().equals(product)) {
-                cartItem.setQuantity(cartItem.getQuantity() + quantity);
-                cartItemRepository.save(cartItem);
-                return cartItem.getQuantity();
-            }
-        }
+    //     for (CartItem cartItem : cartItems) {
+    //         if (cartItem.getProduct().equals(product)) {
+    //             cartItem.setQuantity(cartItem.getQuantity() + quantity);                
+    //             return cartItem.getQuantity();
+    //         }
+    //     }
 
-        // If the product is not in the cart, create a new cart item
-        CartItem cartItem = new CartItem();
-        cartItem.setProduct(product);
-        cartItem.setQuantity(quantity);
+    //     // If the product is not in the cart, create a new cart item
+    //     CartItem cartItem = new CartItem();
+    //     cartItem.setProduct(product);
+    //     cartItem.setQuantity(quantity);
 
-        cartItems.add(cartItem);
-        return quantity;
-    }
+    //     cartItems.add(cartItem);
+    //     return quantity;
+    // }
 
     // 카트 아이템 제거
     // 더 효율: repo로 productId로 찾으면 더 빠름

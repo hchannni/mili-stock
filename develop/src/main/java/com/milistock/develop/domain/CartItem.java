@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 @Entity(name = "cart_items")
 @Table(name = "cart_items")
 public class CartItem {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cart_item_id")
