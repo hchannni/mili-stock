@@ -130,6 +130,16 @@ public class CartService {
 
     }
 
+    // cartItem의 count 1 증가
+    public int increaseCount(int productNumber, int quantity, Long memberId){
+        Optional<Cart> cart = getCartByUser(memberId);
+        Product product = productService.getProductById(productNumber);
+
+        int updatedQuantity = cart.get().incrementCartItemCount(product, quantity);
+
+        return updatedQuantity;
+    }
+
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Helper Functions

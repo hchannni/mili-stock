@@ -74,7 +74,7 @@ public class Cart {
     }
 
     // 카트 아이템 숫자 하나 더하기
-    public void incrementCartItemCount(Product product, int quantity) {
+    public int incrementCartItemCount(Product product, int quantity) {
         if (cartItems == null) {
             cartItems = new ArrayList<>();
         }
@@ -82,7 +82,9 @@ public class Cart {
         for (CartItem cartItem : cartItems) {
             if (cartItem.getProduct().equals(product)) {
                 cartItem.setQuantity(cartItem.getQuantity() + quantity);
-                return;
+                System.out.println("-----dsaf-sd-sa-fdsa-fsd--%%%$#$%$#%$#%\n" + cartItem.getQuantity());
+                cartItemRepository.save(cartItem);
+                return cartItem.getQuantity();
             }
         }
 
@@ -92,6 +94,7 @@ public class Cart {
         cartItem.setQuantity(quantity);
 
         cartItems.add(cartItem);
+        return quantity;
     }
 
     // 카트 아이템 제거
