@@ -7,12 +7,11 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -43,7 +42,8 @@ public class Cart {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL) // cascade를 통해 cart를 예: 삭제할 때 모든 cartItem들도 삭제
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "cart_id")
     private List<CartItem> cartItems;
 
     // CartService에서 유저가 카트에 상품 담을때, 카트가 아직 부재 시 호출
@@ -54,7 +54,7 @@ public class Cart {
         return cart;
     }
 
-    public void addCartItem(Product product, int quantity) {
+    public void addCartItem(Product product, int quantity) {    
         if (cartItems == null) {
             cartItems = new ArrayList<>();
         }
@@ -70,8 +70,6 @@ public class Cart {
         CartItem cartItem = new CartItem();
         cartItem.setProduct(product);
         cartItem.setQuantity(quantity);
-        cartItem.setCart(this);
-    
         cartItems.add(cartItem);
     }
 
@@ -92,7 +90,6 @@ public class Cart {
         CartItem cartItem = new CartItem();
         cartItem.setProduct(product);
         cartItem.setQuantity(quantity);
-        cartItem.setCart(this);
 
         cartItems.add(cartItem);
     }
