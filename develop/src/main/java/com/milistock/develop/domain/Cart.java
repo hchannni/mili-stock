@@ -82,7 +82,6 @@ public class Cart {
         for (CartItem cartItem : cartItems) {
             if (cartItem.getProduct().equals(product)) {
                 cartItem.setQuantity(cartItem.getQuantity() + quantity);
-                System.out.println("-----dsaf-sd-sa-fdsa-fsd--%%%$#$%$#%$#%\n" + cartItem.getQuantity());
                 cartItemRepository.save(cartItem);
                 return cartItem.getQuantity();
             }
