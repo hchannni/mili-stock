@@ -76,7 +76,10 @@ public class ProductController {
                 results = new PageImpl<>(resultList.subList(start, end), pageable, resultList.size());
             } else {
                 // 카테고리만 입력된 경우
-                results = new PageImpl<>(productRepository.findByCategory(category), pageable, 0);
+                List<Product> resultList = new ArrayList<>(productRepository.findByCategory(category));
+                int start = (int) pageable.getOffset();
+                int end = Math.min((start + pageable.getPageSize()), resultList.size());
+                results = new PageImpl<>(resultList.subList(start, end), pageable, resultList.size());
             }
         } else {
             if (keyword != null) {
