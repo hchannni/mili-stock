@@ -41,24 +41,7 @@ public class ProductService {
 
         return product.getProductNumber();
     }
-
-    public List<Product> searchProducts(String keyword) {
-        return productRepository.findByProductTitleContaining(keyword);
-    }
-
-    public List<Product> searchProductsByMultipleKeywords(String query) {
-        String[] keywords = query.split(" ");
-        Set<Product> searchResults = new HashSet<>();
     
-        for (String keyword : keywords) {
-            List<Product> resultsForKeyword = productRepository.findByProductTitleContaining(keyword);
-            searchResults.addAll(resultsForKeyword);
-        }
-    
-        return new ArrayList<>(searchResults);
-    }
-    
-
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
