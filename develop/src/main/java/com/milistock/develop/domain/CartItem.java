@@ -40,4 +40,17 @@ public class CartItem {
 
     @Column(name = "quantity")
     private int quantity;
+
+    @JoinColumn(name = "heart_id")
+    private Heart heart;
+
+    public boolean isLiked(){
+        if(heart==null){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
 }
