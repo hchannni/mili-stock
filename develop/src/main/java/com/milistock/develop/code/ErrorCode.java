@@ -125,6 +125,9 @@ public enum ErrorCode {
 
     BOARD_VIEW_ERROR(404,"","게시물을 찾을 수 없습니다."),
 
+    BOARD_DELETE_ERROR(404,"","이미 삭제된 게시물 입니다."),
+
+
 
     ; // End
 

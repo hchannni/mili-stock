@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BoardViewDto {
 
-    private String title;
     private Long boardId;
 
 }

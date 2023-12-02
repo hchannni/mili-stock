@@ -7,10 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
 
 import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Product;
@@ -32,7 +28,7 @@ public class ProductService {
     public int createProduct(ProductDto productDto){
         // 중복 확인
         if(productRepository.existsByProductTitle( productDto.getProductTitle() )){
-            throw new BusinessExceptionHandler("같은 이름의 상품이 이미 추가 돼 있습니다", ErrorCode.CONFLICT); 
+            throw new BusinessExceptionHandler("같은 이름의 상품이 이미 추가 돼 있습니다", ErrorCode.CONFLICT);
         }
 
         // 상품 추가
@@ -51,9 +47,9 @@ public class ProductService {
             
         // 해당 id의 회원이 없으면, 에러
         if (product.isPresent()) {
-            return product.get();            
+            return product.get();
         } else {
-            throw new BusinessExceptionHandler("상품이 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
+            throw new BusinessExceptionHandler("상품이 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR);
         }
         
     }

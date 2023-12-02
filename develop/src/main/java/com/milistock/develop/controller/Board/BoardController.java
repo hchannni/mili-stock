@@ -3,8 +3,8 @@ package com.milistock.develop.controller.Board;
 import javax.validation.Valid;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +27,6 @@ import com.milistock.develop.exception.BusinessExceptionHandler;
 import com.milistock.develop.security.jwt.util.IfLogin;
 import com.milistock.develop.security.jwt.util.LoginUserDto;
 import com.milistock.develop.service.BoardService;
-
 
 @RestController
 @RequestMapping("/boards")
@@ -147,6 +146,11 @@ public class BoardController {
 
         Long boardId = boardDeleteDto.getBoardId();
 
+        Board ifDeleteBoard = boardService.viewBoard(boardId);
+        if (ifDeleteBoard == null) {
+            throw new BusinessExceptionHandler("이미 삭제된 게시물 입니다.", ErrorCode.BOARD_DELETE_ERROR);
+        }
+
         // BoardService를 통해 게시물 삭제
         boardService.deleteBoard(boardId);
 
@@ -157,18 +161,15 @@ public class BoardController {
     }
 
     @GetMapping
-    public Page<Board> getBoard(@RequestParam(required = false, defaultValue = "0") int page) {
-        int size = 1;
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<Board> getBoard(@PageableDefault(size = 1) Pageable pageable) {
         return boardService.getAllBoards(pageable);
     }
-    
+
     @GetMapping("/search")
-    public Page<Board> searchBoard(@RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false) String title, @RequestParam(required = false) String author) {
-        int size = 1;
-        Pageable pageable = PageRequest.of(page, size);
-    
+    public Page<Board> searchBoard(
+            @RequestParam(required = false) String title, @RequestParam(required = false) String author,
+            @PageableDefault(size = 1) Pageable pageable) {
+
         if (title != null) {
             return boardService.searchBoardsByTitle(title, pageable);
         } else if (author != null) {
@@ -177,29 +178,28 @@ public class BoardController {
             return boardService.getAllBoards(pageable);
         }
     }
-    
 
     @PostMapping("/answer")
     public ResponseEntity<?> answerBoard(@IfLogin LoginUserDto loginUserDto,
             @RequestBody @Valid BoardAnswerDto boardAnswerDto) {
 
-                Long boardId = boardAnswerDto.getBoardId();
-                String answer = boardAnswerDto.getAnswer();
-                
-                // BoardService를 통해 답변달기
-                Board answerBoard = boardService.answerBoard(boardId, answer);
+        Long boardId = boardAnswerDto.getBoardId();
+        String answer = boardAnswerDto.getAnswer();
 
-                BoardPostResponseDto responseDto = new BoardPostResponseDto();
-                responseDto.setStatus(200);
-                responseDto.setBoardId(answerBoard.getBoardId());
-                responseDto.setTitle(answerBoard.getTitle());
-                responseDto.setContent(answerBoard.getContent());
-                responseDto.setName(answerBoard.getName());
-                responseDto.setMemberId(answerBoard.getMemberId());
-                responseDto.setDate(answerBoard.getDate());
-                responseDto.setAnswered(answerBoard.isAnswered());
-                responseDto.setAnswer(answerBoard.getAnswer());
-        
-                return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        // BoardService를 통해 답변달기
+        Board answerBoard = boardService.answerBoard(boardId, answer);
+
+        BoardPostResponseDto responseDto = new BoardPostResponseDto();
+        responseDto.setStatus(200);
+        responseDto.setBoardId(answerBoard.getBoardId());
+        responseDto.setTitle(answerBoard.getTitle());
+        responseDto.setContent(answerBoard.getContent());
+        responseDto.setName(answerBoard.getName());
+        responseDto.setMemberId(answerBoard.getMemberId());
+        responseDto.setDate(answerBoard.getDate());
+        responseDto.setAnswered(answerBoard.isAnswered());
+        responseDto.setAnswer(answerBoard.getAnswer());
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 }
