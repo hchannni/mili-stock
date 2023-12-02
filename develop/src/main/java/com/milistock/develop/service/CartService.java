@@ -7,15 +7,18 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Cart;
 import com.milistock.develop.domain.CartItem;
+import com.milistock.develop.domain.Heart;
 import com.milistock.develop.domain.Member;
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.exception.BusinessExceptionHandler;
 import com.milistock.develop.repository.CartItemRepository;
 import com.milistock.develop.repository.CartRepository;
+import com.milistock.develop.repository.HeartRepository;
 import com.milistock.develop.repository.MemberRepository;
 
 @Service
@@ -34,6 +37,9 @@ public class CartService {
 
     @Autowired
     private CartItemRepository cartItemRepository;
+
+    @Autowired
+    private HeartRepository heartRepository;
 
     public Cart createCart(Member user) {
         Cart cart = new Cart();
@@ -76,6 +82,7 @@ public class CartService {
     }
 
     // not done (카트 제한 & product)
+    @Transactional
     public int addProductToCart(Long memberId, int productNumber) {
 
         Product product = productService.getProductById(productNumber);
@@ -96,13 +103,20 @@ public class CartService {
             throw new BusinessExceptionHandler("상품이 이미 카트에 추가 돼 있습니다", ErrorCode.CONFLICT);
         }
 
+        // 하트 있는지 확인
+        Heart heart = null;
+        if(heartRepository.existsByProduct(product)){
+            heart = heartRepository.findByProduct(product);
+        }
+
         // 카트에 상품 저장
-        cart.addCartItem(product, 1); // cart.cartItems를 update
+        cart.addCartItem(product, 1, heart); // cart.cartItems를 update
         cartRepository.save(cart); // repo에 저장!
         return cart.getCartId();
     }
 
     // done
+    @Transactional
     public int removeProductFromCart(Long memberId, int productNumber) {
 
         Product product = productService.getProductById(productNumber);
@@ -227,6 +241,25 @@ public class CartService {
             throw new BusinessExceptionHandler("카트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR);
         }
     }
+
+    // 하트를 삭제할때 참조하는 cartItem 또한 삭제하기 위해 존재하는 함수
+    @Transactional
+    public void removeHeart(int heartId){
+        Optional<CartItem> cartItem = cartItemRepository.findByHeart_HeartId(heartId);
+        if (cartItem.isPresent()){
+            cartItem.get().setHeart(null);
+        }
+    }
+
+    // 하트를 생성할때 상품이 cartItem으로 돼 있으면, cartItem.setHeart()를 통해 heart를 추가 
+    @Transactional
+    public void addHeart(int productNumber, Heart heart){
+        Optional<CartItem> cartItem = cartItemRepository.findByProduct_ProductNumber(productNumber);
+        if (cartItem.isPresent()){
+            cartItem.get().setHeart(heart);
+        }
+    }
+
 
 }
 

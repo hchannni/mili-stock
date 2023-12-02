@@ -172,15 +172,12 @@ public class ProductController {
         Product product = productService.getProductById(productNumber); // exception 처리 함
 
         try{            
-            System.out.println("before existsByProduct");
             if(cartItemRepository.existsByProduct(product)){
                 cartItemRepository.deleteByProduct(product);
             }
-            System.out.println("before deleting product from heartRepo");
             if(heartRepository.existsByProduct(product)){
                 heartRepository.deleteByProduct(product);
             }
-            System.out.println("before deleting product from productRepo");
             productRepository.delete(product);
 
             String successResponse = "상품id= " + productNumber + "가 삭제되었습니다";

@@ -17,4 +17,5 @@ public interface HeartRepository extends JpaRepository<Heart, Integer> {
     boolean existsByProduct(Product product);
     void deleteByProduct(Product product);
     Optional<Heart> findByMemberMemberIdAndProductProductNumber(Long memberId, int productNumber);
+    Heart findByProduct(Product product);
 }
