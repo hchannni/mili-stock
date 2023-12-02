@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ public class ProductService {
     // Constructor or method to initialize products
 
     // 새 상품 생성
+    @Transactional
     public int createProduct(ProductDto productDto){
         // 중복 확인
         if(productRepository.existsByProductTitle( productDto.getProductTitle() )){
@@ -42,10 +44,12 @@ public class ProductService {
         return product.getProductNumber();
     }
 
+    @Transactional(readOnly = true)
     public List<Product> searchProducts(String keyword) {
         return productRepository.findByProductTitleContaining(keyword);
     }
 
+    @Transactional(readOnly = true)
     public List<Product> searchProductsByMultipleKeywords(String query) {
         String[] keywords = query.split(" ");
         Set<Product> searchResults = new HashSet<>();
@@ -59,10 +63,12 @@ public class ProductService {
     }
     
 
+    @Transactional(readOnly = true)
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Product getProductById(int productId) {
         Optional<Product> product = productRepository.findById(productId); // 현재 로그인한 회원의 장바구니 엔티티 조회
             
@@ -75,6 +81,7 @@ public class ProductService {
         
     }
 
+    @Transactional(readOnly = true)
     public Page<Product> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable);
     }
