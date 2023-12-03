@@ -20,7 +20,6 @@ import com.milistock.develop.exception.BusinessExceptionHandler;
 @Service
 public class HeartService {
     private final HeartRepository heartRepository;
-    private final ProductRepository productRepository;
 
     @Autowired
     private MemberService memberService;
@@ -33,7 +32,6 @@ public class HeartService {
 
     public HeartService(HeartRepository heartRepository, ProductRepository productRepository) {
         this.heartRepository = heartRepository;
-        this.productRepository = productRepository;
     }
 
     // not done -> product 예외방지 필요
@@ -91,17 +89,20 @@ public class HeartService {
         }
     }
 
+    @Transactional
     public void deleteHeart(Principal principal, int productNumber){
         Long memberId = RegexFunctions.extractMemberId(principal);
 
         Optional<Heart> heart = heartRepository.findByMemberMemberIdAndProductProductNumber(memberId,productNumber);
 
         if (heart.isPresent()){
+            // 이 하트를 참조하는 cartItem 찾은 후 heart=null 처리, 없으면 아무 일 없음
+            cartService.removeHeart_productNumber(productNumber);
+
             heartRepository.delete(heart.get());
         } else {
             throw new BusinessExceptionHandler("해당 상품의 하트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
         }
-
     }
 
     // done
@@ -110,7 +111,7 @@ public class HeartService {
         Optional<Heart> heart = heartRepository.findById(heartId);
         if(heart.isPresent()){
             // 이 하트를 참조하는 cartItem 찾은 후 heart=null 처리, 없으면 아무 일 없음
-            cartService.removeHeart(heartId);
+            cartService.removeHeart_heartId(heartId);
 
             heartRepository.deleteById(heartId);
         } else{

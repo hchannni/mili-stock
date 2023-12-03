@@ -244,12 +244,21 @@ public class CartService {
 
     // 하트를 삭제할때 참조하는 cartItem 또한 삭제하기 위해 존재하는 함수
     @Transactional
-    public void removeHeart(int heartId){
+    public void removeHeart_heartId(int heartId){
         Optional<CartItem> cartItem = cartItemRepository.findByHeart_HeartId(heartId);
         if (cartItem.isPresent()){
             cartItem.get().setHeart(null);
         }
     }
+
+    @Transactional
+    public void removeHeart_productNumber(int productNumber){
+        Optional<CartItem> cartItem = cartItemRepository.findByProduct_ProductNumber(productNumber);
+        if (cartItem.isPresent()){
+            cartItem.get().setHeart(null);
+        }
+    }
+    
 
     // 하트를 생성할때 상품이 cartItem으로 돼 있으면, cartItem.setHeart()를 통해 heart를 추가 
     @Transactional
