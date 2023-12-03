@@ -11,7 +11,9 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,51 +55,65 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public List<Product> searchProducts(
+    public ResponseEntity<Page<Product>> searchProducts(
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String category) {
-        List<Product> results;
-
-
+            @RequestParam(required = false) String category,
+            @PageableDefault(size = 1) Pageable pageable) {
+    
+        Page<Product> results;
+    
         if (category != null) {
             if (keyword != null) {
                 // 카테고리와 키워드 모두가 입력된 경우
                 List<Product> categoryResults = productRepository.findByCategory(category);
-
+    
                 String[] keywords = keyword.split(" ");
                 Set<Product> searchResults = new HashSet<>();
-
+    
                 for (String searchWord : keywords) {
                     List<Product> resultsForKeyword = categoryResults.stream()
                             .filter(product -> product.getProductTitle().contains(searchWord))
                             .collect(Collectors.toList());
                     searchResults.addAll(resultsForKeyword);
                 }
-
-                results = new ArrayList<>(searchResults);
+    
+                List<Product> resultList = new ArrayList<>(searchResults);
+    
+                // 결과 리스트를 페이지로 변환
+                int start = (int) pageable.getOffset();
+                int end = Math.min((start + pageable.getPageSize()), resultList.size());
+                results = new PageImpl<>(resultList.subList(start, end), pageable, resultList.size());
             } else {
                 // 카테고리만 입력된 경우
-                results = productRepository.findByCategory(category);
+                List<Product> resultList = new ArrayList<>(productRepository.findByCategory(category));
+                int start = (int) pageable.getOffset();
+                int end = Math.min((start + pageable.getPageSize()), resultList.size());
+                results = new PageImpl<>(resultList.subList(start, end), pageable, resultList.size());
             }
         } else {
             if (keyword != null) {
                 // 키워드만 입력된 경우
                 String[] keywords = keyword.split(" ");
                 Set<Product> searchResults = new HashSet<>();
-
+    
                 for (String searchWord : keywords) {
                     List<Product> resultsForKeyword = productRepository.findByProductTitleContaining(searchWord);
                     searchResults.addAll(resultsForKeyword);
                 }
-
-                results = new ArrayList<>(searchResults);
+    
+                List<Product> resultList = new ArrayList<>(searchResults);
+    
+                // 결과 리스트를 페이지로 변환
+                int start = (int) pageable.getOffset();
+                int end = Math.min((start + pageable.getPageSize()), resultList.size());
+                results = new PageImpl<>(resultList.subList(start, end), pageable, resultList.size());
             } else {
                 // 아무 입력도 없는 경우
-                results = productRepository.findAll();
+                results = productRepository.findAll(pageable);
             }
         }
-
-        return results;
+    
+        return ResponseEntity.ok(results);
     }
 
     // 상품 등록 post

@@ -8,10 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
 
 import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Product;
@@ -34,7 +30,7 @@ public class ProductService {
     public int createProduct(ProductDto productDto){
         // 중복 확인
         if(productRepository.existsByProductTitle( productDto.getProductTitle() )){
-            throw new BusinessExceptionHandler("같은 이름의 상품이 이미 추가 돼 있습니다", ErrorCode.CONFLICT); 
+            throw new BusinessExceptionHandler("같은 이름의 상품이 이미 추가 돼 있습니다", ErrorCode.CONFLICT);
         }
 
         // 상품 추가
@@ -44,26 +40,6 @@ public class ProductService {
         return product.getProductNumber();
     }
 
-    @Transactional(readOnly = true)
-    public List<Product> searchProducts(String keyword) {
-        return productRepository.findByProductTitleContaining(keyword);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Product> searchProductsByMultipleKeywords(String query) {
-        String[] keywords = query.split(" ");
-        Set<Product> searchResults = new HashSet<>();
-    
-        for (String keyword : keywords) {
-            List<Product> resultsForKeyword = productRepository.findByProductTitleContaining(keyword);
-            searchResults.addAll(resultsForKeyword);
-        }
-    
-        return new ArrayList<>(searchResults);
-    }
-    
-
-    @Transactional(readOnly = true)
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
@@ -74,9 +50,9 @@ public class ProductService {
             
         // 해당 id의 회원이 없으면, 에러
         if (product.isPresent()) {
-            return product.get();            
+            return product.get();
         } else {
-            throw new BusinessExceptionHandler("상품이 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
+            throw new BusinessExceptionHandler("상품이 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR);
         }
         
     }
