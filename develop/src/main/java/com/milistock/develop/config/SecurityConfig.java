@@ -61,6 +61,7 @@ public class SecurityConfig {
                                                                                 customAuthenticationEntryPoint))
                                 .apply(authenticationManagerConfig);
 
+
                 return httpSecurity.build();
         }
 

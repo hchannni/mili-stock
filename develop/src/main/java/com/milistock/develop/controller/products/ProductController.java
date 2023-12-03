@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.dto.ProductDto;
+import com.milistock.develop.repository.CartItemRepository;
+import com.milistock.develop.repository.HeartRepository;
 import com.milistock.develop.repository.ProductRepository;
 import com.milistock.develop.service.ProductService;
 
@@ -40,6 +43,12 @@ public class ProductController {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CartItemRepository cartItemRepository;
+
+    @Autowired
+    private HeartRepository heartRepository;
 
     public ProductController(ProductRepository productRepository) {
         this.productRepository = productRepository;
@@ -172,14 +181,30 @@ public class ProductController {
         }
     }
 
+    @Transactional
     @DeleteMapping("/{productNumber}")
     public ResponseEntity<String> deleteProduct(@PathVariable int productNumber) {
-        Product product = productService.getProductById(productNumber);
+        System.out.println("before getProductById");
+        Product product = productService.getProductById(productNumber); // exception 처리 함
 
-        productRepository.delete(product);
+        try{            
+            System.out.println("before existsByProduct");
+            if(cartItemRepository.existsByProduct(product)){
+                cartItemRepository.deleteByProduct(product);
+            }
+            System.out.println("before deleting product from heartRepo");
+            if(heartRepository.existsByProduct(product)){
+                heartRepository.deleteByProduct(product);
+            }
+            System.out.println("before deleting product from productRepo");
+            productRepository.delete(product);
 
-        String successResponse = "상품id= " + productNumber + "가 삭제되었습니다";
-        return new ResponseEntity<String>(successResponse, HttpStatus.OK);
+            String successResponse = "상품id= " + productNumber + "가 삭제되었습니다";
+            return new ResponseEntity<String>(successResponse, HttpStatus.OK);
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @GetMapping

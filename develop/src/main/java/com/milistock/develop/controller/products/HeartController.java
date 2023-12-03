@@ -38,12 +38,7 @@ public class HeartController {
         return heartService.saveHeart(principal, productNumber);
     }
 
-    // input: (member_id, productNumber)    
-    // @PostMapping
-    // public Heart saveHeart(@RequestBody MakeHeartDto heartDto) {
-    //     return heartService.saveHeart(heartDto);
-    // }
-
+    // Get all hearts of current user
     @GetMapping
     public List<Heart> getHeart(Principal principal) {
         return heartService.getHeart(principal);
