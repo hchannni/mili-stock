@@ -1,5 +1,6 @@
 package com.milistock.develop.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,10 +40,12 @@ public class ProductService {
         return product.getProductNumber();
     }
 
+    //전체 상품 찾기
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
-
+    
+    //상품 업데이트(관리자)
     @Transactional
     public Product updateProduct(int productNumber,String productTitle,int productPrice,
                                 int productStock,String productImageUrl,String category,
@@ -59,6 +62,27 @@ public class ProductService {
         
         Product saveProduct = productRepository.save(existingProduct);
         return saveProduct;
+    }
+
+    //신상품 업데이트
+    @Transactional
+    public void updateProductStatus() {
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+        List<Product> products= productRepository.findByProductTimeAddedBeforeAndIsNewProductIsTrue(oneWeekAgo);
+        
+        for (Product product : products) {
+            product.setIsNewProduct(false);
+        }
+
+        productRepository.saveAll(products);
+
+        List<Product> errorProducts= productRepository.findByProductTimeAddedAfterAndIsNewProductIsFalse(oneWeekAgo);
+
+        for (Product product : errorProducts) {
+            product.setIsNewProduct(true);
+        }
+
+        productRepository.saveAll(errorProducts);
     }
 
     @Transactional(readOnly = true)

@@ -118,8 +118,8 @@ public class ProductController {
         return ResponseEntity.ok(results);
     }
 
-    // 상품 등록 post
-    @PostMapping
+    // 상품 등록 메소드
+    @PostMapping("/create")
     public ResponseEntity<String> createProduct(@Valid @RequestBody ProductDto productDto) {
 
         try {
@@ -133,7 +133,7 @@ public class ProductController {
         return new ResponseEntity<String>(successResponse, HttpStatus.OK);
     }
 
-    // 상품 수정하는 로직(김동현 수정 요구) 그냥 다 건드릴 수 있게
+    // 상품 수정 메소드
     @PutMapping("/edit")
     public ResponseEntity<?> updateProduct(@RequestBody @Valid ProductEditDto updatedProduct) {
 
@@ -151,7 +151,17 @@ public class ProductController {
         }
     }
 
-    // 상품 삭제로직
+    //신상품 업데이트 메소드
+    @PutMapping("/updateNewProduct")
+    public ResponseEntity<?> updateNewProduct() {
+
+        productService.updateProductStatus();
+
+        return ResponseEntity.ok("신상품이 업데이트 되었습니다.");
+        
+    }
+
+    // 상품 삭제 메소드
     @Transactional
     @DeleteMapping("/{productNumber}")
     public ResponseEntity<String> deleteProduct(@PathVariable int productNumber) {
@@ -177,6 +187,27 @@ public class ProductController {
         }
     }
 
+    //신상품 조회 메소드
+    @GetMapping("/newProduct")
+    public ResponseEntity<?> newProducts() {
+        List<Product> newProducts = productRepository.findByIsNewProduct(true);
+        return ResponseEntity.ok(newProducts);
+    }
+
+    //할인상품 조회 메소드
+    @GetMapping("/discountProduct")
+    public ResponseEntity<?> discountProducts() {
+        List<Product> discountProducts = productRepository.findByIsDiscountedProduct(true);
+        return ResponseEntity.ok(discountProducts);
+    }
+
+    //인기상품 조회 메소드
+    @GetMapping("/popularProduct")
+    public ResponseEntity<?> popularProducts() {
+        List<Product> popularProducts = productRepository.findByIsPopularProduct(true);
+        return ResponseEntity.ok(popularProducts);
+    }
+    
     @GetMapping
     public ResponseEntity<List<Product>> getProducts(Pageable pageable) {
         Page<Product> productPage = productService.getAllProducts(pageable);
