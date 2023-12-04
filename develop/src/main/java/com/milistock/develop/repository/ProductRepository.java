@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.milistock.develop.domain.Product;
+import java.util.Optional;
+
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
@@ -16,4 +18,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     boolean existsByProductTitle(String productTitle);
     List<Product> findByProductTitleContaining(String keyword);
     List<Product> findByCategoryContaining(String category);
+    Optional<Product> findByproductNumber(int productNumber);
 }

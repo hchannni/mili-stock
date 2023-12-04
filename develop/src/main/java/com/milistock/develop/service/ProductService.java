@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.dto.ProductDto;
@@ -18,7 +17,7 @@ import com.milistock.develop.repository.ProductRepository;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
-    
+
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
@@ -27,9 +26,9 @@ public class ProductService {
 
     // 새 상품 생성
     @Transactional
-    public int createProduct(ProductDto productDto){
+    public int createProduct(ProductDto productDto) {
         // 중복 확인
-        if(productRepository.existsByProductTitle( productDto.getProductTitle() )){
+        if (productRepository.existsByProductTitle(productDto.getProductTitle())) {
             throw new BusinessExceptionHandler("같은 이름의 상품이 이미 추가 돼 있습니다", ErrorCode.CONFLICT);
         }
 
@@ -44,17 +43,35 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    @Transactional
+    public Product updateProduct(int productNumber,String productTitle,int productPrice,
+                                int productStock,String productImageUrl,String category,
+                                Boolean isDiscountedProduct,int productDiscountPrice){
+        Product existingProduct = productRepository.findByproductNumber(productNumber).orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+
+        existingProduct.setProductTitle(productTitle);
+        existingProduct.setProductPrice(productPrice);
+        existingProduct.setProductStock(productStock);
+        existingProduct.setProductImageUrl(productImageUrl);
+        existingProduct.setCategory(category);
+        existingProduct.setIsDiscountedProduct(isDiscountedProduct);
+        existingProduct.setProductDiscountPrice(productDiscountPrice);
+        
+        Product saveProduct = productRepository.save(existingProduct);
+        return saveProduct;
+    }
+
     @Transactional(readOnly = true)
     public Product getProductById(int productId) {
         Optional<Product> product = productRepository.findById(productId); // 현재 로그인한 회원의 장바구니 엔티티 조회
-            
+
         // 해당 id의 회원이 없으면, 에러
         if (product.isPresent()) {
             return product.get();
         } else {
             throw new BusinessExceptionHandler("상품이 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR);
         }
-        
+
     }
 
     @Transactional(readOnly = true)
