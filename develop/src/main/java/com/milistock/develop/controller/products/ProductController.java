@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.dto.ProductDto;
+import com.milistock.develop.dto.ProductEditDto;
 import com.milistock.develop.repository.CartItemRepository;
 import com.milistock.develop.repository.HeartRepository;
 import com.milistock.develop.repository.ProductRepository;
@@ -54,31 +55,32 @@ public class ProductController {
         this.productRepository = productRepository;
     }
 
+    // 상품 검색 메소드
     @GetMapping("/search")
     public ResponseEntity<Page<Product>> searchProducts(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String category,
             @PageableDefault(size = 1) Pageable pageable) {
-    
+
         Page<Product> results;
-    
+
         if (category != null) {
             if (keyword != null) {
                 // 카테고리와 키워드 모두가 입력된 경우
                 List<Product> categoryResults = productRepository.findByCategory(category);
-    
+
                 String[] keywords = keyword.split(" ");
                 Set<Product> searchResults = new HashSet<>();
-    
+
                 for (String searchWord : keywords) {
                     List<Product> resultsForKeyword = categoryResults.stream()
                             .filter(product -> product.getProductTitle().contains(searchWord))
                             .collect(Collectors.toList());
                     searchResults.addAll(resultsForKeyword);
                 }
-    
+
                 List<Product> resultList = new ArrayList<>(searchResults);
-    
+
                 // 결과 리스트를 페이지로 변환
                 int start = (int) pageable.getOffset();
                 int end = Math.min((start + pageable.getPageSize()), resultList.size());
@@ -95,14 +97,14 @@ public class ProductController {
                 // 키워드만 입력된 경우
                 String[] keywords = keyword.split(" ");
                 Set<Product> searchResults = new HashSet<>();
-    
+
                 for (String searchWord : keywords) {
                     List<Product> resultsForKeyword = productRepository.findByProductTitleContaining(searchWord);
                     searchResults.addAll(resultsForKeyword);
                 }
-    
+
                 List<Product> resultList = new ArrayList<>(searchResults);
-    
+
                 // 결과 리스트를 페이지로 변환
                 int start = (int) pageable.getOffset();
                 int end = Math.min((start + pageable.getPageSize()), resultList.size());
@@ -112,7 +114,7 @@ public class ProductController {
                 results = productRepository.findAll(pageable);
             }
         }
-    
+
         return ResponseEntity.ok(results);
     }
 
@@ -131,69 +133,38 @@ public class ProductController {
         return new ResponseEntity<String>(successResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/all")
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
-    }
+    // 상품 수정하는 로직(김동현 수정 요구) 그냥 다 건드릴 수 있게
+    @PutMapping("/edit")
+    public ResponseEntity<?> updateProduct(@RequestBody @Valid ProductEditDto updatedProduct) {
 
-    // @GetMapping("/popular")
-    // public List<Product> getPopularProducts() {
-    // return productRepository.findByIsPopularProduct(true);
-    // }
-
-    // @GetMapping("/discounted")
-    // public List<Product> getDiscountedProducts() {
-    // return productRepository.findByIsDiscountedProduct(true);
-    // }
-
-    // @GetMapping("/new")
-    // public List<Product> getNewProducts() {
-    // return productRepository.findByIsNewProduct(true);
-    // }
-
-    @GetMapping("/category/{category}")
-    public List<Product> getCategory(@PathVariable String category) {
-        return productRepository.findByCategory(category);
-    }
-
-    @GetMapping("/{productNumber}")
-    public ResponseEntity<Product> getProductById(@PathVariable int productNumber) {
+        int productNumber = updatedProduct.getProductNumber();
         Optional<Product> product = productRepository.findById(productNumber);
 
         if (product.isPresent()) {
-            return ResponseEntity.ok(product.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    // Sends JSON of the WHOLE updated product (not just the changed part)
-    @PutMapping("/{productNumber}")
-    public ResponseEntity<Product> updateProduct(@PathVariable int productNumber, @RequestBody Product updatedProduct) {
-        Optional<Product> product = productRepository.findById(productNumber);
-
-        if (product.isPresent()) {
-            updatedProduct.setProductNumber(productNumber);
-            productRepository.save(updatedProduct);
+            productService.updateProduct(productNumber, updatedProduct.getProductTitle(),
+                    updatedProduct.getProductPrice(), updatedProduct.getProductStock(),
+                    updatedProduct.getProductImageUrl(), updatedProduct.getCategory(),
+                    updatedProduct.getIsDiscountedProduct(), updatedProduct.getProductDiscountPrice());
             return ResponseEntity.ok(updatedProduct);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
+    // 상품 삭제로직
     @Transactional
     @DeleteMapping("/{productNumber}")
     public ResponseEntity<String> deleteProduct(@PathVariable int productNumber) {
         System.out.println("before getProductById");
         Product product = productService.getProductById(productNumber); // exception 처리 함
 
-        try{            
+        try {
             System.out.println("before existsByProduct");
-            if(cartItemRepository.existsByProduct(product)){
+            if (cartItemRepository.existsByProduct(product)) {
                 cartItemRepository.deleteByProduct(product);
             }
             System.out.println("before deleting product from heartRepo");
-            if(heartRepository.existsByProduct(product)){
+            if (heartRepository.existsByProduct(product)) {
                 heartRepository.deleteByProduct(product);
             }
             System.out.println("before deleting product from productRepo");
@@ -201,8 +172,7 @@ public class ProductController {
 
             String successResponse = "상품id= " + productNumber + "가 삭제되었습니다";
             return new ResponseEntity<String>(successResponse, HttpStatus.OK);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
