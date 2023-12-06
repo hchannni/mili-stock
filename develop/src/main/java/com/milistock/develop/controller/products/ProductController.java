@@ -63,7 +63,7 @@ public class ProductController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String sortBy,
-            @PageableDefault(size = 1) Pageable pageable) {
+            @PageableDefault(size = 10) Pageable pageable) {
 
         Page<Product> results;
 
