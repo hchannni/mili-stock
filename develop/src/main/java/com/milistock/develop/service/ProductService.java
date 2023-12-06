@@ -62,7 +62,28 @@ public class ProductService {
         return new ArrayList<>(searchResults);
     }
     
+    //하트 개수 증가
+    @Transactional
+    public Product productHeartPlus(int productNumber){
+        Product existingProduct = productRepository.findByproductNumber(productNumber).orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
 
+        existingProduct.setProductHeartCount(existingProduct.getProductHeartCount()+1);
+        
+        Product saveProduct = productRepository.save(existingProduct);
+        return saveProduct;
+    }
+
+    //하트 개수 감소
+    @Transactional
+    public Product productHeartMinus(int productNumber){
+        Product existingProduct = productRepository.findByproductNumber(productNumber).orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+ 
+        existingProduct.setProductHeartCount(existingProduct.getProductHeartCount()-1);
+        
+        Product saveProduct = productRepository.save(existingProduct);
+        return saveProduct;
+    }
+    
     @Transactional(readOnly = true)
     public List<Product> getAllProducts() {
         return productRepository.findAll();

@@ -33,6 +33,9 @@ public class Product {
     private Boolean isNewProduct;
     private Boolean isPopularProduct;
     private int productDiscountPrice;
+    //처음 하트개수 0개로 초기화
+    @Builder.Default
+    private int productHeartCount=0;
 
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime productTimeAdded;
