@@ -14,6 +14,6 @@ public interface CartItemRepository extends JpaRepository<CartItem, Integer> {
     boolean existsByCartAndProduct_ProductNumber(Cart cart, int productNumber);
     boolean existsByProduct(Product product);
     Optional<CartItem> findByHeart_HeartId(int heartId);
-    Optional<CartItem> findByProduct_ProductNumber(int productNumber);
+    Optional<CartItem> findByProduct_ProductNumberAndCart_CartId(int productNumber, int cartId); // 수정 필요 -> findByProduct_ProductNumberAndCartId
     void deleteByProduct(Product product);
 }

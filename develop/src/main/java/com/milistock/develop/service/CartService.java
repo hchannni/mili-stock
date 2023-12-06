@@ -100,7 +100,9 @@ public class CartService {
 
         // 상품이 장바구니에 있는지 확인
         if (doesCartContainProduct(cart, product.getProductNumber())) {
-            throw new BusinessExceptionHandler("상품이 이미 카트에 추가 돼 있습니다", ErrorCode.CONFLICT);
+            // throw new BusinessExceptionHandler("상품이 이미 카트에 추가 돼 있습니다", ErrorCode.CONFLICT);
+            increaseCount(product.getProductNumber(), 1, memberId); // 카운트 증가
+            return cart.getCartId();
         }
 
         // 하트 있는지 확인
@@ -114,6 +116,8 @@ public class CartService {
         cartRepository.save(cart); // repo에 저장!
         return cart.getCartId();
     }
+
+
 
     // done
     @Transactional
@@ -252,8 +256,14 @@ public class CartService {
     }
 
     @Transactional
-    public void removeHeart_productNumber(int productNumber){
-        Optional<CartItem> cartItem = cartItemRepository.findByProduct_ProductNumber(productNumber);
+    public void removeHeart_productNumber(int productNumber, Long memberId){
+        Optional<Cart> ocart = cartRepository.findByMemberMemberId(memberId);
+
+        if (ocart.isEmpty()){
+            return;
+        }
+        Cart cart = ocart.get();
+        Optional<CartItem> cartItem = cartItemRepository.findByProduct_ProductNumberAndCart_CartId(productNumber, cart.getCartId());
         if (cartItem.isPresent()){
             cartItem.get().setHeart(null);
         }
@@ -262,8 +272,14 @@ public class CartService {
 
     // 하트를 생성할때 상품이 cartItem으로 돼 있으면, cartItem.setHeart()를 통해 heart를 추가 
     @Transactional
-    public void addHeart(int productNumber, Heart heart){
-        Optional<CartItem> cartItem = cartItemRepository.findByProduct_ProductNumber(productNumber);
+    public void addHeart(int productNumber, Heart heart, Long memberId){
+        Optional<Cart> ocart = cartRepository.findByMemberMemberId(memberId);
+
+        if (ocart.isEmpty()){
+            return;
+        }
+        Cart cart = ocart.get();
+        Optional<CartItem> cartItem = cartItemRepository.findByProduct_ProductNumberAndCart_CartId(productNumber, cart.getCartId());
         if (cartItem.isPresent()){
             cartItem.get().setHeart(heart);
         }

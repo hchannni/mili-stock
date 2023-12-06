@@ -53,7 +53,7 @@ public class HeartService {
         heart.setProduct(product);
 
         // 해당 상품이 cartItem에 있다면, cartItem.setHeart(heart)
-        cartService.addHeart(product.getProductNumber(), heart);
+        cartService.addHeart(product.getProductNumber(), heart, memberId);
 
         return heartRepository.save(heart);
     }
@@ -97,7 +97,7 @@ public class HeartService {
 
         if (heart.isPresent()){
             // 이 하트를 참조하는 cartItem 찾은 후 heart=null 처리, 없으면 아무 일 없음
-            cartService.removeHeart_productNumber(productNumber);
+            cartService.removeHeart_productNumber(productNumber, memberId);
 
             heartRepository.delete(heart.get());
         } else {
