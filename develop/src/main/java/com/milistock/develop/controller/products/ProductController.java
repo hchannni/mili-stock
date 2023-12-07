@@ -35,6 +35,8 @@ import com.milistock.develop.repository.HeartRepository;
 import com.milistock.develop.repository.ProductRepository;
 import com.milistock.develop.service.ProductService;
 
+import java.util.Comparator;
+
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -60,7 +62,8 @@ public class ProductController {
     public ResponseEntity<Page<Product>> searchProducts(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String category,
-            @PageableDefault(size = 1) Pageable pageable) {
+            @RequestParam(required = false) String sortBy,
+            @PageableDefault(size = 10) Pageable pageable) {
 
         Page<Product> results;
 
@@ -81,16 +84,23 @@ public class ProductController {
 
                 List<Product> resultList = new ArrayList<>(searchResults);
 
+                //sorting method
+                List<Product> sortedList = getSort(resultList, sortBy);
+
                 // 결과 리스트를 페이지로 변환
                 int start = (int) pageable.getOffset();
-                int end = Math.min((start + pageable.getPageSize()), resultList.size());
-                results = new PageImpl<>(resultList.subList(start, end), pageable, resultList.size());
+                int end = Math.min((start + pageable.getPageSize()), sortedList.size());
+                results = new PageImpl<>(sortedList.subList(start, end), pageable, sortedList.size());
             } else {
                 // 카테고리만 입력된 경우
                 List<Product> resultList = new ArrayList<>(productRepository.findByCategory(category));
+
+                //sorting method
+                List<Product> sortedList = getSort(resultList, sortBy);
+
                 int start = (int) pageable.getOffset();
-                int end = Math.min((start + pageable.getPageSize()), resultList.size());
-                results = new PageImpl<>(resultList.subList(start, end), pageable, resultList.size());
+                int end = Math.min((start + pageable.getPageSize()), sortedList.size());
+                results = new PageImpl<>(sortedList.subList(start, end), pageable, sortedList.size());
             }
         } else {
             if (keyword != null) {
@@ -105,21 +115,66 @@ public class ProductController {
 
                 List<Product> resultList = new ArrayList<>(searchResults);
 
+                //sorting method
+                List<Product> sortedList = getSort(resultList, sortBy);
+
                 // 결과 리스트를 페이지로 변환
                 int start = (int) pageable.getOffset();
-                int end = Math.min((start + pageable.getPageSize()), resultList.size());
-                results = new PageImpl<>(resultList.subList(start, end), pageable, resultList.size());
+                int end = Math.min((start + pageable.getPageSize()), sortedList.size());
+                results = new PageImpl<>(sortedList.subList(start, end), pageable, sortedList.size());
             } else {
                 // 아무 입력도 없는 경우
-                results = productRepository.findAll(pageable);
+                List<Product> resultList = productService.getAllProducts();
+
+                //sorting method
+                List<Product> sortedList = getSort(resultList, sortBy);
+
+                // 결과 리스트를 페이지로 변환
+                int start = (int) pageable.getOffset();
+                int end = Math.min((start + pageable.getPageSize()), sortedList.size());
+                results = new PageImpl<>(sortedList.subList(start, end), pageable, sortedList.size());
             }
         }
 
         return ResponseEntity.ok(results);
     }
 
-    // 상품 등록 post
-    @PostMapping
+    private List<Product> getSort(List<Product> productList, String sortBy) {
+        if (sortBy == null) {
+            // 기본 정렬 조건 추가
+            productList.sort(Comparator.comparing(Product::getProductStock).reversed());
+        } else {
+            // 사용자가 전달한 정렬 조건에 따라 설정
+            switch (sortBy) {
+                case "stockHighToLow": //재고 많은 순
+                    productList.sort(Comparator.comparing(Product::getProductStock).reversed());
+                    break;
+                case "stockLowToHigh": //재고 적은 순
+                    productList.sort(Comparator.comparing(Product::getProductStock));
+                    break;
+                case "priceHighToLow": //가격 높은 순
+                    productList.sort(Comparator.comparing(Product::getProductPrice).reversed());
+                    break;
+                case "priceLowToHigh": //가격 낮은 순
+                    productList.sort(Comparator.comparing(Product::getProductPrice));
+                    break;
+                case "newer": //신상품 순
+                    productList.sort(Comparator.comparing(Product::getProductTimeAdded).reversed());
+                    break;
+                case "popular":
+                    // 여기에 인기많은 순 정렬 조건 추가
+                    // productList.sort(Comparator.comparing(Product::getSomeField).reversed()); // 예시로 SomeField를 사용하셔야 합니다.
+                    break;
+                default:
+                    productList.sort(Comparator.comparing(Product::getProductStock).reversed());
+            }
+        }
+        return productList;
+    }
+    
+
+    // 상품 등록 메소드
+    @PostMapping("/create")
     public ResponseEntity<String> createProduct(@Valid @RequestBody ProductDto productDto) {
 
         try {
@@ -133,7 +188,7 @@ public class ProductController {
         return new ResponseEntity<String>(successResponse, HttpStatus.OK);
     }
 
-    // 상품 수정하는 로직(김동현 수정 요구) 그냥 다 건드릴 수 있게
+    // 상품 수정 메소드
     @PutMapping("/edit")
     public ResponseEntity<?> updateProduct(@RequestBody @Valid ProductEditDto updatedProduct) {
 
@@ -151,7 +206,17 @@ public class ProductController {
         }
     }
 
-    // 상품 삭제로직
+    //신상품 업데이트 메소드
+    @PutMapping("/updateNewProduct")
+    public ResponseEntity<?> updateNewProduct() {
+
+        productService.updateProductStatus();
+
+        return ResponseEntity.ok("신상품이 업데이트 되었습니다.");
+        
+    }
+
+    // 상품 삭제 메소드
     @Transactional
     @DeleteMapping("/{productNumber}")
     public ResponseEntity<String> deleteProduct(@PathVariable int productNumber) {
@@ -177,6 +242,27 @@ public class ProductController {
         }
     }
 
+    //신상품 조회 메소드
+    @GetMapping("/newProduct")
+    public ResponseEntity<?> newProducts() {
+        List<Product> newProducts = productRepository.findByIsNewProduct(true);
+        return ResponseEntity.ok(newProducts);
+    }
+
+    //할인상품 조회 메소드
+    @GetMapping("/discountProduct")
+    public ResponseEntity<?> discountProducts() {
+        List<Product> discountProducts = productRepository.findByIsDiscountedProduct(true);
+        return ResponseEntity.ok(discountProducts);
+    }
+
+    //인기상품 조회 메소드
+    @GetMapping("/popularProduct")
+    public ResponseEntity<?> popularProducts() {
+        List<Product> popularProducts = productRepository.findByIsPopularProduct(true);
+        return ResponseEntity.ok(popularProducts);
+    }
+    
     @GetMapping
     public ResponseEntity<List<Product>> getProducts(Pageable pageable) {
         Page<Product> productPage = productService.getAllProducts(pageable);
