@@ -83,14 +83,12 @@ public class CartService {
         Optional<Cart> ocart = cartRepository.findByMemberMemberId(memberId);
         Cart cart = ocart.orElse(null); // 현재 로그인한 회원의 장바구니 엔티티 조회
 
-        Optional<Cart> cart = cartRepository.findByMemberMemberId(memberId); // 현재 로그인한 회원의 장바구니 엔티티 조회
-        
         // 회원이 장바구니 없으면, 만들어줌
-        if (cart.isEmpty()) {
+        if (cart == null) {
             System.out.println("No Cart!");
             Member member = memberRepository.findByMemberId(memberId).orElse(null);
-            cart = Optional.ofNullable(Cart.createCart(member));
-            cartRepository.save(cart.get());
+            cart = Cart.createCart(member);
+            cartRepository.save(cart);
         }
 
         // 상품이 장바구니에 있는지 확인

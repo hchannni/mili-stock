@@ -62,7 +62,6 @@ public class CartController {
         int cartItemId;
 
         try {
-            System.out.println(productNumber);
             cartItemId = cartService.addProductToCart(memberId, productNumber); //dto -> entity
         } catch(Exception e){
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST); // 장바구니에 잘 안담겼으면 404

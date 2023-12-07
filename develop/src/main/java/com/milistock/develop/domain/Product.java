@@ -34,8 +34,6 @@ public class Product {
     private Boolean isPopularProduct;
     private int productDiscountPrice; //0
 
-    private String product_image_url;
-
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime productTimeAdded;
 }

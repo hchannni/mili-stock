@@ -43,8 +43,6 @@ public enum ErrorCode {
     // com.google.gson JSON 파싱 실패
     JSON_PARSE_ERROR(400, "G006", "JsonParseException"),
     
-    // 확장자 틀렸을 때
-    INVALID_FILE_EXTENSION(400, "G888", "Invalid File Extension"),
 
     // com.fasterxml.jackson.core Processing Error
     JACKSON_PROCESS_ERROR(400, "G007", "com.fasterxml.jackson.core Exception"),
