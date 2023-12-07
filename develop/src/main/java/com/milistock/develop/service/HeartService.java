@@ -27,7 +27,6 @@ public class HeartService {
     @Autowired 
     private ProductService productService;
 
-    @Autowired
     public HeartService(HeartRepository heartRepository, ProductRepository productRepository) {
         this.heartRepository = heartRepository;
         this.productRepository = productRepository;

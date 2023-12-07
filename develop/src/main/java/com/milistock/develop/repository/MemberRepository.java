@@ -12,5 +12,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByServiceNumber(String serviceNumber); // 군번이 존재하는지 확인
     boolean existsByMemberId(Long memberId); // 멤버id 존재하는지 확인 (태연)
     Optional<Member> findByMemberId(Long memberId);
-    
 }

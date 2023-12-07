@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -77,11 +78,6 @@ public class CartController {
         int cartItemId;
 
         cartItemId = cartService.removeProductFromCart(memberId, productNumber);
-        // try {
-        //     cartItemId = cartService.removeProductFromCart(memberId, productNumber); //dto -> entity
-        // } catch(Exception e){
-        //     return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST); // 장바구니에 잘 안담겼으면 404
-        // }
 
         return new ResponseEntity<Integer>(cartItemId, HttpStatus.OK);
 
@@ -101,4 +97,25 @@ public class CartController {
         String successResponse = "유저 " + memberId + " 카트가 삭제되었습니다";
         return new ResponseEntity<String>(successResponse, HttpStatus.OK);
     }
+
+    // 해당 cartItem의 count를 n만큼 올려줌
+    @PutMapping("/increaseCount/productNumber/{productNumber}/by/{quantity}")
+    public ResponseEntity<?> increaseCount(@PathVariable int productNumber, @PathVariable int quantity, Principal principal) {
+        Long memberId = RegexFunctions.extractMemberId(principal); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)" 
+        
+        int updatedQuantity = cartService.increaseCount(productNumber, quantity, memberId);
+
+        return new ResponseEntity<Integer>(updatedQuantity, HttpStatus.OK);
+    }
+
+    // 해당 cartItem의 count를 n만큼 줄여줌
+    @PutMapping("/decreaseCount/productNumber/{productNumber}/by/{quantity}")
+    public ResponseEntity<?> decreaseCount(@PathVariable int productNumber, @PathVariable int quantity, Principal principal) {
+        Long memberId = RegexFunctions.extractMemberId(principal); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)" 
+        
+        int updatedQuantity = cartService.decreaseCount(productNumber, quantity, memberId);
+
+        return new ResponseEntity<Integer>(updatedQuantity, HttpStatus.OK);
+    }
+
 }

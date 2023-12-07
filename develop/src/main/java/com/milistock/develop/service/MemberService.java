@@ -22,15 +22,30 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public Member findByUserId(String userid){
-        Optional<Member> memberid = memberRepository.findByUserId(userid); // 이거는 바로 jpa 데이터베이스랑 비교하는 것
-        if(memberid.isPresent()){
-            if (userid.equals(memberid.get().getUserId())) {
-                return memberid.get();
+        Optional<Member> memberFromUserId = memberRepository.findByUserId(userid); // 이거는 바로 jpa 데이터베이스랑 비교하는 것
+        if(memberFromUserId.isPresent()){
+            if (userid.equals(memberFromUserId.get().getUserId())) {
+                return memberFromUserId.get();
             } else{
-                throw new BusinessExceptionHandler("존재하지 않는 아이디 입니다.", ErrorCode.UNAUTHORIZED);
+                return null;
             }
         }else{
-            throw new BusinessExceptionHandler("존재하지 않는 아이디 입니다.", ErrorCode.UNAUTHORIZED);
+            return null;
+        }
+
+    }
+
+    @Transactional(readOnly = true)
+    public Member findByServiceNumber(String serviceNumber){
+        Optional<Member> memberFromServiceNumber = memberRepository.findByServiceNumber(serviceNumber);
+        if(memberFromServiceNumber.isPresent()){
+            if (serviceNumber.equals(memberFromServiceNumber.get().getServiceNumber())) {
+                return memberFromServiceNumber.get();
+            } else{
+                return null;
+            }
+        }else{
+            return null;
         }
 
     }
@@ -86,6 +101,25 @@ public class MemberService {
         return saveMember;
     }
 
+    @Transactional
+    public Member updateMember(Long memberId, String newAppointment, String Birth, String Discharge, String Email, String MilitaryRank, String PhoneNumber, String Gender) {
+        Member existingMember = memberRepository.findByMemberId(memberId).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
+
+
+        // 새로운 개인정보 저장
+        existingMember.setAppointment(newAppointment);
+        existingMember.setBirth(Birth);
+        existingMember.setDischarge(Discharge);
+        existingMember.setEmail(Email);
+        existingMember.setMilitaryRank(MilitaryRank);
+        existingMember.setPhoneNumber(PhoneNumber);
+        existingMember.setGender(Gender);
+
+        // 회원 정보 업데이트
+        Member saveMember = memberRepository.save(existingMember);
+        return saveMember;
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // 태연 수정!
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +131,7 @@ public class MemberService {
         if (member.isPresent()) {
             return member.get();
         } else {
-            throw new BusinessExceptionHandler("유저가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
+            throw new BusinessExceptionHandler("유저가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR);
         }
     }
 

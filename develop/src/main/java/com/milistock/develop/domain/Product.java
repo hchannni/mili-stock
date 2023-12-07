@@ -23,16 +23,16 @@ import lombok.NoArgsConstructor;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int productNumber;
-    private String productTitle;
-    private int productPrice;
-    private int productStock;
-    
-    private String category;
-    private Boolean isDiscountedProduct;
+    private int productNumber; //x
+    private String productTitle; //0
+    private int productPrice; //0
+    private int productStock; //0
+    private String productImageUrl; //0
+    private String category; //0
+    private Boolean isDiscountedProduct; //0
     private Boolean isNewProduct;
     private Boolean isPopularProduct;
-    private int productDiscountPrice;
+    private int productDiscountPrice; //0
 
     private String product_image_url;
 

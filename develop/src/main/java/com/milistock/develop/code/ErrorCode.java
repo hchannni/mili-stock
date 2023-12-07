@@ -99,6 +99,35 @@ public enum ErrorCode {
 
     UNSUPPORTED_TOKEN(401, "1004", "지원하지 않는 토큰"),
 
+    //본인인증 관련 에러 코드
+
+    AFFILIATION_ERROR(401, "affiliation", ""),
+    
+    NAME_ERROR(401, "name", ""),
+
+    JOB_ERROR(401, "job", ""),
+
+    SERVICENUMBER_ERROR(401, "serviceNumber", ""),
+
+    ID_ERROR(401, "userId", ""),
+
+
+    //중복확인 관련 에러코드
+
+    ID_CONFLICT(409,"userId","Conflict(중복된 정보로 충돌이 일어남)"),
+
+    SERVICENUMBER_CONFLICT(409,"serviceNumber","Conflict(중복된 정보로 충돌이 일어남)"),
+
+    //ID 에러
+
+
+
+    
+
+
+    BOARD_VIEW_ERROR(404,"","게시물을 찾을 수 없습니다."),
+
+    BOARD_DELETE_ERROR(404,"","이미 삭제된 게시물 입니다."),
 
 
 
