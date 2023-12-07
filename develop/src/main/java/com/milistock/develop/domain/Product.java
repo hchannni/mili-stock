@@ -23,19 +23,21 @@ import lombok.NoArgsConstructor;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int productNumber;
-    private String productTitle;
-    private int productPrice;
-    private int productStock;
-    private String productImageUrl;
-    private String category;
-    private Boolean isDiscountedProduct;
+    private int productNumber; //x
+    private String productTitle; //0
+    private int productPrice; //0
+    private int productStock; //0
+    private String productImageUrl; //0
+    private String category; //0
+    private Boolean isDiscountedProduct; //0
     private Boolean isNewProduct;
     private Boolean isPopularProduct;
-    private int productDiscountPrice;
+
     //처음 하트개수 0개로 초기화
     @Builder.Default
     private int productHeartCount=0;
+
+    private int productDiscountPrice; //0
 
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime productTimeAdded;
