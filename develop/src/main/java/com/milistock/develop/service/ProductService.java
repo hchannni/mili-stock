@@ -9,6 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+
 import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.dto.ProductDto;
@@ -25,6 +30,7 @@ public class ProductService {
 
     // Constructor or method to initialize products
 
+
     // 새 상품 생성
     @Transactional
     public int createProduct(ProductDto productDto) {
@@ -34,11 +40,12 @@ public class ProductService {
         }
 
         // 상품 추가
-        Product product = productDto.createItem();
+        Product product = productDto.createItem(uploadedUrl);
         productRepository.save(product);
 
         return product.getProductNumber();
     }
+
 
     //전체 상품 찾기
     public List<Product> getAllProducts() {
@@ -63,6 +70,33 @@ public class ProductService {
         Product saveProduct = productRepository.save(existingProduct);
         return saveProduct;
     }
+
+    
+    //하트 개수 증가
+    @Transactional
+    public Product productHeartPlus(int productNumber){
+        Product existingProduct = productRepository.findByproductNumber(productNumber).orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+
+        existingProduct.setProductHeartCount(existingProduct.getProductHeartCount()+1);
+        
+        Product saveProduct = productRepository.save(existingProduct);
+        return saveProduct;
+    }
+
+    //하트 개수 감소
+    @Transactional
+    public Product productHeartMinus(int productNumber){
+        Product existingProduct = productRepository.findByproductNumber(productNumber).orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+ 
+        existingProduct.setProductHeartCount(existingProduct.getProductHeartCount()-1);
+        
+        Product saveProduct = productRepository.save(existingProduct);
+        return saveProduct;
+    }
+    
+    @Transactional(readOnly = true)
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
 
     //신상품 업데이트
     @Transactional

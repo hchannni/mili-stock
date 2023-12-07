@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,6 +57,7 @@ public class CartController {
 
     // 카트에 상품 추가
     // +유저가 카트 없을 시, 카트 최초 생성!
+    @Transactional
     @PostMapping("/productNumber/{productNumber}")
     public ResponseEntity<?> addProductToCart(@PathVariable int productNumber, Principal principal) {        
         Long memberId = RegexFunctions.extractMemberId(principal); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"        
@@ -71,6 +73,7 @@ public class CartController {
     }
 
     // 카트에 상품 제거
+    @Transactional
     @DeleteMapping("/productNumber/{productNumber}")
     public ResponseEntity<?> deleteProductFromCart(@PathVariable int productNumber, Principal principal) {
         Long memberId = RegexFunctions.extractMemberId(principal); // "LoginInfoDto(memberId=6, serviceNumber=22-70014661, name=김동현)"        

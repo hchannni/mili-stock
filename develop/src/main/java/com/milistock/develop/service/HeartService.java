@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.milistock.develop.repository.HeartRepository;
 import com.milistock.develop.repository.ProductRepository;
@@ -19,7 +20,6 @@ import com.milistock.develop.exception.BusinessExceptionHandler;
 @Service
 public class HeartService {
     private final HeartRepository heartRepository;
-    private final ProductRepository productRepository;
 
     @Autowired
     private MemberService memberService;
@@ -27,12 +27,15 @@ public class HeartService {
     @Autowired 
     private ProductService productService;
 
+    @Autowired
+    private CartService cartService;
+
     public HeartService(HeartRepository heartRepository, ProductRepository productRepository) {
         this.heartRepository = heartRepository;
-        this.productRepository = productRepository;
     }
 
     // not done -> product 예외방지 필요
+    @Transactional
     public Heart saveHeart(Principal principal, int productNumber) {
         Long memberId = RegexFunctions.extractMemberId(principal);
 
@@ -48,6 +51,9 @@ public class HeartService {
         Heart heart = new Heart();
         heart.setMember(member);
         heart.setProduct(product);
+
+        // 해당 상품이 cartItem에 있다면, cartItem.setHeart(heart)
+        cartService.addHeart(product.getProductNumber(), heart, memberId);
 
         return heartRepository.save(heart);
     }
@@ -83,23 +89,30 @@ public class HeartService {
         }
     }
 
+    @Transactional
     public void deleteHeart(Principal principal, int productNumber){
         Long memberId = RegexFunctions.extractMemberId(principal);
 
         Optional<Heart> heart = heartRepository.findByMemberMemberIdAndProductProductNumber(memberId,productNumber);
 
         if (heart.isPresent()){
+            // 이 하트를 참조하는 cartItem 찾은 후 heart=null 처리, 없으면 아무 일 없음
+            cartService.removeHeart_productNumber(productNumber, memberId);
+
             heartRepository.delete(heart.get());
         } else {
             throw new BusinessExceptionHandler("해당 상품의 하트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR); 
         }
-
     }
 
     // done
+    @Transactional
     public void deleteHeartById(int heartId) {
         Optional<Heart> heart = heartRepository.findById(heartId);
         if(heart.isPresent()){
+            // 이 하트를 참조하는 cartItem 찾은 후 heart=null 처리, 없으면 아무 일 없음
+            cartService.removeHeart_heartId(heartId);
+
             heartRepository.deleteById(heartId);
         } else{
             throw new BusinessExceptionHandler("해당 id의 하트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR);

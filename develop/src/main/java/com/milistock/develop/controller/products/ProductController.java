@@ -1,5 +1,6 @@
 package com.milistock.develop.controller.products;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,13 +30,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.dto.ProductDto;
+
 import com.milistock.develop.dto.ProductEditDto;
+
 import com.milistock.develop.repository.CartItemRepository;
 import com.milistock.develop.repository.HeartRepository;
 import com.milistock.develop.repository.ProductRepository;
 import com.milistock.develop.service.ProductService;
 
+
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.milistock.develop.response.ValidationResponse;
+import com.milistock.develop.service.S3UploadService;
 import java.util.Comparator;
+
 
 @RestController
 @RequestMapping("/products")
@@ -49,6 +61,9 @@ public class ProductController {
 
     @Autowired
     private CartItemRepository cartItemRepository;
+
+    @Autowired
+    private S3UploadService s3UploadService;
 
     @Autowired
     private HeartRepository heartRepository;
@@ -139,6 +154,33 @@ public class ProductController {
         return ResponseEntity.ok(results);
     }
 
+    // 상품 생성
+    @PostMapping("/create")
+    public ResponseEntity<?> createProduct(@Valid @ModelAttribute ProductDto productDto, BindingResult bindingResult)
+            throws IOException {
+        
+        System.out.println(productDto.getProductTitle());
+        
+        if (bindingResult.hasErrors()) {
+
+            // 유저가 뭘 잘못 입력했는지 출력
+            ValidationResponse errors = new ValidationResponse();
+            for (FieldError fieldError : bindingResult.getFieldErrors()) {
+                errors.addFieldError(fieldError.getField(), fieldError.getDefaultMessage());
+            }
+            return ResponseEntity.badRequest().body(errors);
+            // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body('d');
+        }
+
+        MultipartFile image = productDto.getImage();
+        String uploadedUrl = null;
+
+        // image 없어도 됨
+        if (image != null){            
+            uploadedUrl = s3UploadService.upload(image);
+        }
+      
+      
     private List<Product> getSort(List<Product> productList, String sortBy) {
         if (sortBy == null) {
             // 기본 정렬 조건 추가
@@ -171,22 +213,12 @@ public class ProductController {
         }
         return productList;
     }
-    
 
-    // 상품 등록 메소드
-    @PostMapping("/create")
-    public ResponseEntity<String> createProduct(@Valid @RequestBody ProductDto productDto) {
-
-        try {
-            productService.createProduct(productDto); // 상품 중복 확인 후 추가
-        } catch (Exception e) {
-            // String errorResponse = "상품 추가 중 에러가 발생했습니다";
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        String successResponse = "상품" + productDto.getProductTitle() + "가 추가되었습니다";
-        return new ResponseEntity<String>(successResponse, HttpStatus.OK);
+    @GetMapping("/all")
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
+
 
     // 상품 수정 메소드
     @PutMapping("/edit")
@@ -216,6 +248,7 @@ public class ProductController {
         
     }
 
+
     // 상품 삭제 메소드
     @Transactional
     @DeleteMapping("/{productNumber}")
@@ -223,21 +256,21 @@ public class ProductController {
         System.out.println("before getProductById");
         Product product = productService.getProductById(productNumber); // exception 처리 함
 
-        try {
-            System.out.println("before existsByProduct");
-            if (cartItemRepository.existsByProduct(product)) {
+
+        try{            
+            if(cartItemRepository.existsByProduct(product)){
                 cartItemRepository.deleteByProduct(product);
             }
-            System.out.println("before deleting product from heartRepo");
-            if (heartRepository.existsByProduct(product)) {
+            if(heartRepository.existsByProduct(product)){
                 heartRepository.deleteByProduct(product);
             }
-            System.out.println("before deleting product from productRepo");
+
             productRepository.delete(product);
 
             String successResponse = "상품id= " + productNumber + "가 삭제되었습니다";
             return new ResponseEntity<String>(successResponse, HttpStatus.OK);
-        } catch (Exception e) {
+        }
+        catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

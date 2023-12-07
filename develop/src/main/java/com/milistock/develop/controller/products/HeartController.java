@@ -35,6 +35,7 @@ public class HeartController {
 
     @PostMapping("/product/{productNumber}")
     public Heart saveHeart(Principal principal, @PathVariable int productNumber) {
+        productService.productHeartPlus(productNumber);
         return heartService.saveHeart(principal, productNumber);
     }
 
@@ -73,15 +74,20 @@ public class HeartController {
         return ResponseEntity.ok(heartCount);
     }
     
-    // productId로 해당 유저의 좋아요 취소하기
+    // productId로 해당 유저의 좋아요 취소하기 (main page에 하트 취소 누를때)
     @DeleteMapping("/product/{productNumber}")
     public void deleteHeart(Principal principal, @PathVariable int productNumber) {
+        productService.productHeartMinus(productNumber);
         heartService.deleteHeart(principal, productNumber);
     }
 
-    // heartId로 삭제하기
+    // heartId로 삭제하기 (카트 페이지에서 하트 취소 누를때)
     @DeleteMapping("/{heartId}")
     public void deleteHeart(@PathVariable int heartId) {
+        //하트아이디로 product id 구하는 방법 알려주세요.
+        Optional<Heart> heart = heartService.getHeartById(heartId);
+        int productNumber = heart.get().getProduct().getProductNumber();
+        productService.productHeartMinus(productNumber);
         heartService.deleteHeartById(heartId);
     }
 

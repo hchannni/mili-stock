@@ -32,6 +32,11 @@ public class Product {
     private Boolean isDiscountedProduct; //0
     private Boolean isNewProduct;
     private Boolean isPopularProduct;
+
+    //처음 하트개수 0개로 초기화
+    @Builder.Default
+    private int productHeartCount=0;
+
     private int productDiscountPrice; //0
 
     @Column(columnDefinition = "TIMESTAMP")

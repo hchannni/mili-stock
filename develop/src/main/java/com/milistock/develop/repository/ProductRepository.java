@@ -24,6 +24,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findByProductTitleContaining(String keyword);
 
     List<Product> findByCategoryContaining(String category);
+    List<Product> findByProductTitleContainingAndCategory(String keyword, String category);
+    Optional<Product> findByproductNumber(int productNumber);
 
     Optional<Product> findByproductNumber(int productNumber);
 
@@ -32,3 +34,4 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findByProductTimeAddedAfterAndIsNewProductIsFalse(LocalDateTime date);
 
 }
+

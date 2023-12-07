@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -35,9 +36,23 @@ public class CartItem {
     private Cart cart;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_number")
     private Product product;
 
     @Column(name = "quantity")
     private int quantity;
+
+    @OneToOne
+    @JoinColumn(name = "heart_id")
+    private Heart heart;
+
+    public boolean isLiked(){
+        if(heart==null){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
 }
