@@ -15,14 +15,15 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-public class FileUploadController {
-    private final S3UploadService s3Upload;
+public class S3UploadController {
+    private final S3UploadService s3UploadService;
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("images") MultipartFile multipartFile) throws IOException {
-        String uploadedUrl = s3Upload.upload(multipartFile);
+        String uploadedUrl = s3UploadService.upload(multipartFile);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                              .body(uploadedUrl);
     }
 }
+
