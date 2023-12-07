@@ -6,6 +6,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.milistock.develop.domain.Product;
 
@@ -13,7 +14,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
 @Getter
 @Builder
 @NoArgsConstructor
@@ -28,7 +31,7 @@ public class ProductDto {
     @Min(value = 1, message = "재고는 최소 1 이상이어야 합니다.")
     private int productStock;
 
-    private String productImageUrl;
+    private MultipartFile image;
     private String category;
     private Boolean isDiscountedProduct;
     private Boolean isNewProduct;
@@ -42,11 +45,12 @@ public class ProductDto {
     private static ModelMapper modelMapper = new ModelMapper();
 
     // dto -> Product
-    public Product createItem(){
+    public Product createItem(String productImageUrl){
         Product product = modelMapper.map(this, Product.class);
 
         // Set the productAddedTime to the current timestamp
         product.setProductTimeAdded(LocalDateTime.now());
+        product.setProductImageUrl(productImageUrl);
 
         return product;
     }

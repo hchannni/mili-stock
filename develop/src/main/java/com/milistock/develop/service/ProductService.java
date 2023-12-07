@@ -29,20 +29,33 @@ public class ProductService {
 
     // Constructor or method to initialize products
 
-    // 새 상품 생성
-    @Transactional
-    public int createProduct(ProductDto productDto){
+    public int createProduct(ProductDto productDto, String uploadedUrl){
         // 중복 확인
-        if(productRepository.existsByProductTitle( productDto.getProductTitle() )){
-            throw new BusinessExceptionHandler("같은 이름의 상품이 이미 추가 돼 있습니다", ErrorCode.CONFLICT); 
+        if (productRepository.existsByProductTitle(productDto.getProductTitle())) {
+            throw new BusinessExceptionHandler("같은 이름의 상품이 이미 추가 돼 있습니다", ErrorCode.CONFLICT);
         }
 
         // 상품 추가
-        Product product = productDto.createItem();
+        Product product = productDto.createItem(uploadedUrl);
         productRepository.save(product);
 
         return product.getProductNumber();
     }
+    
+    // // 새 상품 생성
+    // @Transactional
+    // public int createProduct(ProductDto productDto){
+    //     // 중복 확인
+    //     if(productRepository.existsByProductTitle( productDto.getProductTitle() )){
+    //         throw new BusinessExceptionHandler("같은 이름의 상품이 이미 추가 돼 있습니다", ErrorCode.CONFLICT); 
+    //     }
+
+    //     // 상품 추가
+    //     Product product = productDto.createItem();
+    //     productRepository.save(product);
+
+    //     return product.getProductNumber();
+    // }
 
     @Transactional(readOnly = true)
     public List<Product> searchProducts(String keyword) {
