@@ -9,11 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
-
 import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.dto.ProductDto;
@@ -32,8 +27,7 @@ public class ProductService {
 
 
     // 새 상품 생성
-    @Transactional
-    public int createProduct(ProductDto productDto) {
+    public int createProduct(ProductDto productDto, String uploadedUrl){
         // 중복 확인
         if (productRepository.existsByProductTitle(productDto.getProductTitle())) {
             throw new BusinessExceptionHandler("같은 이름의 상품이 이미 추가 돼 있습니다", ErrorCode.CONFLICT);
@@ -94,9 +88,6 @@ public class ProductService {
         return saveProduct;
     }
     
-    @Transactional(readOnly = true)
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
 
     //신상품 업데이트
     @Transactional

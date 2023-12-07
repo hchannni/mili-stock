@@ -159,8 +159,6 @@ public class ProductController {
     public ResponseEntity<?> createProduct(@Valid @ModelAttribute ProductDto productDto, BindingResult bindingResult)
             throws IOException {
         
-        System.out.println(productDto.getProductTitle());
-        
         if (bindingResult.hasErrors()) {
 
             // 유저가 뭘 잘못 입력했는지 출력
@@ -179,6 +177,16 @@ public class ProductController {
         if (image != null){            
             uploadedUrl = s3UploadService.upload(image);
         }
+
+        try {
+            productService.createProduct(productDto, uploadedUrl); // 상품 중복 확인 후 추가
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
+        return ResponseEntity.ok("Success");
+
+    }
       
       
     private List<Product> getSort(List<Product> productList, String sortBy) {
