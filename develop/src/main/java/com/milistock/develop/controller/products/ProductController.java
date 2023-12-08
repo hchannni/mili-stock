@@ -192,7 +192,7 @@ public class ProductController {
     private List<Product> getSort(List<Product> productList, String sortBy) {
         if (sortBy == null) {
             // 기본 정렬 조건 추가
-            productList.sort(Comparator.comparing(Product::getProductStock).reversed());
+            productList.sort(Comparator.comparing(Product::getProductHeartCount).reversed());
         } else {
             // 사용자가 전달한 정렬 조건에 따라 설정
             switch (sortBy) {
@@ -213,10 +213,10 @@ public class ProductController {
                     break;
                 case "popular":
                     // 여기에 인기많은 순 정렬 조건 추가
-                    // productList.sort(Comparator.comparing(Product::getSomeField).reversed()); // 예시로 SomeField를 사용하셔야 합니다.
+                    productList.sort(Comparator.comparing(Product::getProductHeartCount).reversed());
                     break;
                 default:
-                    productList.sort(Comparator.comparing(Product::getProductStock).reversed());
+                productList.sort(Comparator.comparing(Product::getProductHeartCount).reversed());
             }
         }
         return productList;
@@ -265,7 +265,7 @@ public class ProductController {
         Product product = productService.getProductById(productNumber); // exception 처리 함
 
 
-        try{            
+        try{
             if(cartItemRepository.existsByProduct(product)){
                 cartItemRepository.deleteByProduct(product);
             }
