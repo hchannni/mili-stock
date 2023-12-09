@@ -1,9 +1,11 @@
 package com.milistock.develop.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,12 +14,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.milistock.develop.code.ErrorCode;
 import com.milistock.develop.domain.Product;
 import com.milistock.develop.dto.ProductDto;
+import com.milistock.develop.dto.ProductResponseDto;
 import com.milistock.develop.exception.BusinessExceptionHandler;
+import com.milistock.develop.repository.HeartRepository;
 import com.milistock.develop.repository.ProductRepository;
 
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+
+    @Autowired
+    private HeartRepository heartRepository;
 
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
@@ -128,4 +135,29 @@ public class ProductService {
         return productRepository.findAll(pageable);
     }
 
+    //해당 유저가 상품에 하트를 눌렀는지 안눌렀는지 확인
+    public boolean hasUserLikedProduct(Long memberId, Product product) {
+        int productNumber = product.getProductNumber();
+        return heartRepository.existsByMemberMemberIdAndProductProductNumber(memberId, productNumber);
+    }
+
+    //Product -> ProductResponseDto 변경 메소드
+    public ProductResponseDto convertToDto(Product product) {
+        return ProductResponseDto.builder()
+                .productNumber(product.getProductNumber())
+                .productTitle(product.getProductTitle())
+                .productPrice(product.getProductPrice())
+                .productStock(product.getProductStock())
+                .productImageUrl(product.getProductImageUrl())
+                .category(product.getCategory())
+                .isDiscountedProduct(product.getIsDiscountedProduct())
+                .isNewProduct(product.getIsNewProduct())
+                .isPopularProduct(product.getIsPopularProduct())
+                .productDiscountPrice(product.getProductDiscountPrice())
+                .productHeartCount(product.getProductHeartCount())
+                .productTimeAdde(product.getProductTimeAdded())
+                .isHeart(false)
+                .build();
+    }
+    
 }
