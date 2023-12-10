@@ -3,8 +3,10 @@ package com.milistock.develop.controller.products;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -282,24 +284,69 @@ public class ProductController {
 
     // 신상품 조회 메소드
     @GetMapping("/newProduct")
-    public ResponseEntity<?> newProducts() {
-        List<Product> newProducts = productRepository.findByIsNewProduct(true);
-        return ResponseEntity.ok(newProducts);
+    public ResponseEntity<Page<ProductResponseDto>> newProducts(
+        @IfLogin LoginUserDto loginUserDto,
+        @RequestParam(required = false) String sortBy,
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
+        Page<ProductResponseDto> results;
+        List<Product> resultList = productRepository.findByIsNewProduct(true);
+        results = getHeartAndConverPage(resultList, sortBy, loginUserDto, pageable);
+        return ResponseEntity.ok(results);
     }
 
     // 할인상품 조회 메소드
     @GetMapping("/discountProduct")
-    public ResponseEntity<?> discountProducts() {
-        List<Product> discountProducts = productRepository.findByIsDiscountedProduct(true);
-        return ResponseEntity.ok(discountProducts);
+    public ResponseEntity<Page<ProductResponseDto>> discountProducts(
+        @IfLogin LoginUserDto loginUserDto,
+        @RequestParam(required = false) String sortBy,
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
+        Page<ProductResponseDto> results;
+        List<Product> resultList = productRepository.findByIsDiscountedProduct(true);
+        results = getHeartAndConverPage(resultList, sortBy, loginUserDto, pageable);
+        return ResponseEntity.ok(results);
     }
 
     // 인기상품 조회 메소드
     @GetMapping("/popularProduct")
-    public ResponseEntity<?> popularProducts() {
-        List<Product> popularProducts = productRepository.findByIsPopularProduct(true);
-        return ResponseEntity.ok(popularProducts);
+    public ResponseEntity<Page<ProductResponseDto>> popularProducts(
+        @IfLogin LoginUserDto loginUserDto,
+        @RequestParam(required = false) String sortBy,
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
+        Page<ProductResponseDto> results;
+        List<Product> resultList = productRepository.findByIsPopularProduct(true);
+        results = getHeartAndConverPage(resultList, sortBy, loginUserDto, pageable);
+        return ResponseEntity.ok(results);
     }
+
+    @GetMapping("/mainPage")
+    public ResponseEntity<Map<String, List<ProductResponseDto>>> mainPage(
+        @IfLogin LoginUserDto loginUserDto,
+        @RequestParam(required = false) String sortBy,
+        @PageableDefault(size = 4) Pageable pageable
+) {
+    Map<String, List<ProductResponseDto>> mainPageData = new HashMap<>();
+
+    // Get new products
+    List<Product> newProducts = productRepository.findByIsNewProduct(true);
+    List<ProductResponseDto> newProductsDto = getHeartAndConverPage(newProducts, sortBy, loginUserDto, pageable).getContent();
+    mainPageData.put("newProducts", newProductsDto);
+
+    // Get discount products
+    List<Product> discountProducts = productRepository.findByIsDiscountedProduct(true);
+    List<ProductResponseDto> discountProductsDto = getHeartAndConverPage(discountProducts, sortBy, loginUserDto, pageable).getContent();
+    mainPageData.put("discountProducts", discountProductsDto);
+
+    // Get popular products
+    List<Product> popularProducts = productRepository.findByIsPopularProduct(true);
+    List<ProductResponseDto> popularProductsDto = getHeartAndConverPage(popularProducts, sortBy, loginUserDto, pageable).getContent();
+    mainPageData.put("popularProducts", popularProductsDto);
+
+    return ResponseEntity.ok(mainPageData);
+}
+
 
     @GetMapping
     public ResponseEntity<List<Product>> getProducts(Pageable pageable) {
