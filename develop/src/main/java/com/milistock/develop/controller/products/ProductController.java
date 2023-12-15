@@ -258,6 +258,17 @@ public class ProductController {
 
     }
 
+    // 신상품 업데이트 메소드
+    @PutMapping("/updatePopularProduct")
+    public ResponseEntity<?> updatePopularProduct() {
+
+        productService.updateAllIsPopularProduct();
+
+        return ResponseEntity.ok("인기상품이 업데이트 되었습니다.");
+
+    }
+
+
     // 상품 삭제 메소드
     @Transactional
     @DeleteMapping("/{productNumber}")

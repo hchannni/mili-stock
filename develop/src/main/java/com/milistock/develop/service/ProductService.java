@@ -1,7 +1,6 @@
 package com.milistock.develop.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,7 +87,7 @@ public class ProductService {
     @Transactional
     public Product productHeartMinus(int productNumber){
         Product existingProduct = productRepository.findByproductNumber(productNumber).orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
- 
+
         existingProduct.setProductHeartCount(existingProduct.getProductHeartCount()-1);
         
         Product saveProduct = productRepository.save(existingProduct);
@@ -117,6 +116,28 @@ public class ProductService {
         productRepository.saveAll(errorProducts);
     }
 
+    @Transactional
+    public void updateAllIsPopularProductToFalse() {
+        List<Product> allProducts = productRepository.findAll();
+        allProducts.forEach(product -> product.setIsPopularProduct(false));
+        productRepository.saveAll(allProducts);
+    }
+
+    // 상위 10개의 상품을 조회하여 isPopularProduct을 true로 설정하는 메서드
+    @Transactional
+    public void updateTopProductsStatus() {
+        List<Product> topProducts = productRepository.findTop10ByOrderByProductHeartCountDesc();
+        topProducts.forEach(product -> product.setIsPopularProduct(true));
+        productRepository.saveAll(topProducts);
+    }
+
+    // 인기 상품 업데이트
+    @Transactional
+    public void updateAllIsPopularProduct() {
+        updateAllIsPopularProductToFalse();
+        updateTopProductsStatus();
+    }
+    
     @Transactional(readOnly = true)
     public Product getProductById(int productId) {
         Optional<Product> product = productRepository.findById(productId); // 현재 로그인한 회원의 장바구니 엔티티 조회
