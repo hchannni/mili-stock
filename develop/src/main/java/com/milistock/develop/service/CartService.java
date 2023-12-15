@@ -108,7 +108,7 @@ public class CartService {
         // 하트 있는지 확인
         Heart heart = null;
         if(heartRepository.existsByProduct(product)){
-            heart = heartRepository.findByProduct(product);
+            heart = heartRepository.findByProductAndMemberMemberId(product, memberId);
         }
 
         // 카트에 상품 저장
@@ -242,7 +242,10 @@ public class CartService {
         if (cart.isPresent()) {
             return cart.get();
         } else {
-            throw new BusinessExceptionHandler("카트가 존재 안 합니다", ErrorCode.NOT_FOUND_ERROR);
+            Member member = memberRepository.findByMemberId(memberId).orElse(null);
+            Cart ocart = Cart.createCart(member);
+            cartRepository.save(ocart);
+            return ocart;
         }
     }
 
