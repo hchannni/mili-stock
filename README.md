@@ -32,16 +32,6 @@ Log-it은 SSAFY 퇴실 5분 전, 우리들의 성장 여정을 기록하는 서�
 
 **CI/CD** `AWS` `EC2` `RDS` `Docker` `Jenkins` `Nginx`
 
-## ****👥****팀원 구성
-![Untitled](https://user-images.githubusercontent.com/93465128/169990164-006f624b-b30f-461a-be52-e99e083c106d.png)
-| 이름 | 윤성일 | 양정민 | 이강산 | 전해연 |
-| --- | --- | --- | --- | --- |
-| 역할 | 팀장 | 팀원 | 팀원 | 팀원 |
-| 상세 | AWS EC2 서버 구축 <br/> 메인 페이지 <br/>상품 CRUD <br/>상품 무한 스크롤 <br/>음성 인식(STT) 상품 검색 <br/>파일 다중 업로드 <br/>거래 관련 메일 발송 <br/>관리자 페이지 - 상품 <br/>HTTPS/SSL <br/>HTTP 예외처리 | SNS 로그인/회원가입(OAuth2.0) <br/>동네 설정(카카오 API) <br/>회원 정보 수정 <br/>회원 탈퇴 <br/>Spring Security를 활용한 권한 인가 <br/>관리자 페이지 - 회원 목록 조회, 회원 통계, 회원 강제 탈퇴 <br/>테스트 코드 작성(JUnit5) <br/>로그인 페이지 CSS 구현 <br/>PPT 제작 | 마이페이지(백엔드) <br/>거래프로세스(관심/예약/거래/평가) <br/>웹소켓을 이용한 채팅/알림 <br/>JSP to Thymeleaf 이전 작업 수행 | 마이페이지(프론트엔드) <br/>팀 소개 페이지(리액트) <br/>사이트 공통 디자인 <br/>협업용 Notion 페이지 제작 |
-
-
----
-
 <br>
 <br>
 <br>
@@ -78,3 +68,17 @@ Log-it은 SSAFY 퇴실 5분 전, 우리들의 성장 여정을 기록하는 서�
 <br>
 <br>
 <br>
+
+<br>
+<br>
+<br>
+
+## ****👥****팀원 구성
+![Untitled](https://user-images.githubusercontent.com/93465128/169990164-006f624b-b30f-461a-be52-e99e083c106d.png)
+| 이름 | 윤성일 | 양정민 | 이강산 | 전해연 |
+| --- | --- | --- | --- | --- |
+| 역할 | 팀장 | 팀원 | 팀원 | 팀원 |
+| 상세 | AWS EC2 서버 구축 <br/> 메인 페이지 <br/>상품 CRUD <br/>상품 무한 스크롤 <br/>음성 인식(STT) 상품 검색 <br/>파일 다중 업로드 <br/>거래 관련 메일 발송 <br/>관리자 페이지 - 상품 <br/>HTTPS/SSL <br/>HTTP 예외처리 | SNS 로그인/회원가입(OAuth2.0) <br/>동네 설정(카카오 API) <br/>회원 정보 수정 <br/>회원 탈퇴 <br/>Spring Security를 활용한 권한 인가 <br/>관리자 페이지 - 회원 목록 조회, 회원 통계, 회원 강제 탈퇴 <br/>테스트 코드 작성(JUnit5) <br/>로그인 페이지 CSS 구현 <br/>PPT 제작 | 마이페이지(백엔드) <br/>거래프로세스(관심/예약/거래/평가) <br/>웹소켓을 이용한 채팅/알림 <br/>JSP to Thymeleaf 이전 작업 수행 | 마이페이지(프론트엔드) <br/>팀 소개 페이지(리액트) <br/>사이트 공통 디자인 <br/>협업용 Notion 페이지 제작 |
+
+
+---
