@@ -4,7 +4,7 @@
 
 <img width="15%" src="https://user-images.githubusercontent.com/59721896/219297447-a86eb1b0-1934-4ace-b4b9-3c19c1591a8e.png"/>
 
-### 당신의 새로운 여정을 매일 기록해보세요.
+### 군마트의 재고를 확인해보세요.
 
 <br>
 <br>
