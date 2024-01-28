@@ -26,11 +26,13 @@ Log-it은 SSAFY 퇴실 5분 전, 우리들의 성장 여정을 기록하는 서�
 
 # 개발 환경
 
-**FE** `Vue3.0`
+**DESIGN** `Figma` 
 
-**BE** `Java 8` `Spring 2.7.7` `JPA` `S3` `MySQL` `Swagger` `Postman`
+**FE** `React 18.2.0` `TypeScript` 
 
-**CI/CD** `AWS` `EC2` `RDS` `Docker` `Jenkins` `Nginx`
+**BE** `Java 11` `Spring Boot 2.7.14` `JPA` `JWT` `S3` `MySQL` `Postman`
+
+**CI/CD** `AWS` `EC2` `RDS` 
 
 <br>
 <br>
