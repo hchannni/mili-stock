@@ -2,7 +2,7 @@
 
 <div align=center>
 
-<img width="15%" src="https://user-images.githubusercontent.com/59721896/219297447-a86eb1b0-1934-4ace-b4b9-3c19c1591a8e.png"/>
+<img width="15%" src="https://github.com/chnh506/mili-stock/assets/81892744/711e985c-9bfb-4ec4-a1f3-65caa0e330be"/>
 
 ### 군마트의 재고를 확인해보세요.
 
