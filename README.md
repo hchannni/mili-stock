@@ -16,10 +16,6 @@ Mili-Stock은 군마트의 재고를 확인하는 서비스입니다.
 
 군장병 여러분들의 건강한 군생활을 응원합니다!
 
-[Log-it 바로가기](https://i8a609.p.ssafy.io/)
-
-[Log-it 홍보영상](https://youtu.be/kjlL84gRi8c)
-
 <br>
 <br>
 <br>
