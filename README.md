@@ -38,7 +38,7 @@ Mili-Stock은 군마트의 재고를 확인하는 서비스입니다.
 
 |        |        |
 | ------ | ------ |
-|    <img src="https://user-images.githubusercontent.com/59721896/220111432-dd13f339-0940-4611-9390-e1173c9ad521.png">     |    <img src="https://user-images.githubusercontent.com/59721896/220107195-65eb367a-7972-4020-b663-02f505731362.png">     |
+|    <img src="[https://user-images.githubusercontent.com/59721896/220111432-dd13f339-0940-4611-9390-e1173c9ad521.png](https://github.com/chnh506/mili-stock/blob/main/images/%EB%AF%B8%EB%A6%AC%EC%8A%A4%ED%86%A1%20%EA%B8%B0%ED%9A%8D%EC%84%9C%20(1).jpg)">     |    <img src="https://user-images.githubusercontent.com/59721896/220107195-65eb367a-7972-4020-b663-02f505731362.png">     |
 |    <div align=center> `메인 화면` </div>    |    <div align=center> `타임라인` </div>    |
 |    <img src="https://user-images.githubusercontent.com/59721896/220107977-1375385a-36f4-4d89-b31d-33c5348c5e3e.png">    |    <img src="https://user-images.githubusercontent.com/59721896/220108925-7f1437be-b2be-42db-8971-472f47f3aa20.png">    |
 |    <div align=center> `성장 여정 이벤트` </div>    |    <div align=center> `취업 여정 이벤트` </div>    |
