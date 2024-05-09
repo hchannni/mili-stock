@@ -38,14 +38,11 @@ Mili-Stock은 군마트의 재고를 확인하는 서비스입니다.
 
 |        |        |
 | ------ | ------ |
-|    <img src="https://github.com/chnh506/mili-stock/blob/main/images/%EB%AF%B8%EB%A6%AC%EC%8A%A4%ED%86%A1%20%EA%B8%B0%ED%9A%8D%EC%84%9C%20(1).jpg">     |    <img src="https://user-images.githubusercontent.com/59721896/220107195-65eb367a-7972-4020-b663-02f505731362.png">     |
+|    <img src="https://github.com/chnh506/mili-stock/blob/main/images/%EB%AF%B8%EB%A6%AC%EC%8A%A4%ED%86%A1%20%EA%B8%B0%ED%9A%8D%EC%84%9C%20(1).jpg">     |    <img src="https://github.com/chnh506/mili-stock/blob/main/images/%EB%AF%B8%EB%A6%AC%EC%8A%A4%ED%86%A1%20%EA%B8%B0%ED%9A%8D%EC%84%9C%20(2).jpg">     |
 |    <div align=center> `메인 화면` </div>    |    <div align=center> `타임라인` </div>    |
-|    <img src="https://user-images.githubusercontent.com/59721896/220107977-1375385a-36f4-4d89-b31d-33c5348c5e3e.png">    |    <img src="https://user-images.githubusercontent.com/59721896/220108925-7f1437be-b2be-42db-8971-472f47f3aa20.png">    |
+|    <img src="https://github.com/chnh506/mili-stock/blob/main/images/%EB%AF%B8%EB%A6%AC%EC%8A%A4%ED%86%A1%20%EA%B8%B0%ED%9A%8D%EC%84%9C%20(3).jpg">    |    <img src="https://github.com/chnh506/mili-stock/blob/main/images/%EB%AF%B8%EB%A6%AC%EC%8A%A4%ED%86%A1%20%EA%B8%B0%ED%9A%8D%EC%84%9C%20(4).jpg">    |
 |    <div align=center> `성장 여정 이벤트` </div>    |    <div align=center> `취업 여정 이벤트` </div>    |
-|    <img src="https://user-images.githubusercontent.com/59721896/220112349-0e0f9b2b-3c39-46e1-ba71-6366bd30c7bc.png">    |    <img src="https://user-images.githubusercontent.com/59721896/220109116-c9199710-99b1-48a8-b807-ea1d2516ded6.png">    |
-|    <div align=center> `취업 여정 통계 1` </div>    |    <div align=center> `취업 여정 통계 2` </div>    |
-|    <img src="https://user-images.githubusercontent.com/59721896/220109650-545b0608-0a1b-42cb-84d6-910361531461.png">    |    <img src="https://user-images.githubusercontent.com/59721896/220109690-7302aec9-dd97-48c4-969c-da3a8fa3317e.png">    |
-|    <div align=center> `통합 검색` </div>    |    <div align=center> `개발자(오픈소스) 페이지` </div>    |
+|    <img src="https://github.com/chnh506/mili-stock/blob/main/images/%EB%AF%B8%EB%A6%AC%EC%8A%A4%ED%86%A1%20%EA%B8%B0%ED%9A%8D%EC%84%9C%20(5).jpg">    |    <img src="https://github.com/chnh506/mili-stock/blob/main/images/%EB%AF%B8%EB%A6%AC%EC%8A%A4%ED%86%A1%20%EA%B8%B0%ED%9A%8D%EC%84%9C%20(6).jpg">    |
 
 <br>
 <br>
