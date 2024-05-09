@@ -14,7 +14,13 @@
 
 Mili-Stock은 군마트의 재고를 확인하는 서비스입니다.
 
-군장병 여러분들의 건강한 군생활을 응원합니다!
+다음과 같은 문제들을 해결하기 위해 개발했습니다:
+
+|        |        |
+| ------ | ------ |
+|    <img src="https://github.com/chnh506/mili-stock/blob/main/images/%EB%AF%B8%EB%A6%AC%EC%8A%A4%ED%86%A1%20%EA%B8%B0%ED%9A%8D%EC%84%9C%20(1).jpg">     |    <img src="https://github.com/chnh506/mili-stock/blob/main/images/%EB%AF%B8%EB%A6%AC%EC%8A%A4%ED%86%A1%20%EA%B8%B0%ED%9A%8D%EC%84%9C%20(2).jpg">     |
+|    <div align=center> `군장병들의 불편함` </div>    |    <div align=center> `군마트 관리자들의 불편함` </div>    |
+
 
 <br>
 <br>
@@ -72,7 +78,7 @@ Mili-Stock은 군마트의 재고를 확인하는 서비스입니다.
 ## ****👥****팀원 구성
 | 이름 | 김동현 | 김태연 | 조윤재 | 허찬 |
 | --- | --- | --- | --- | --- |
-| 역할 | BACKEND | BACKEND | FRONTEND | FRONTEND |
+| 역할 | BACK-END | BACK-END | FRONT-END | FRONT-END |
 | 상세 | 로그인/회원가입 API <br/>회원 정보 수정 API <br/>Spring Security를 활용한 권한 인가 <br/>검색 및 정렬 API <br/>HTTP 예외처리 | 상품/관심상품/카트 API <br/>검색 및 정렬 API <br/>AWS EC2 서버 구축 <br/>상품/관심상품/카트 페이지 FE 보조 <br/>HTTP 예외처리 | 피그마 디자인 <br/>메인 페이지 <br/>현장 예약 페이지 <br/>관계자 인터뷰 및 국군 복지단에 컨택 | 피그마 디자인 <br/> 로그인/회원가입 페이지 <br/>상품/관심상품/카트 페이지 <br/> 마이 페이지 <br/>협업용 Notion 페이지 제작 |
 
 
