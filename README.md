@@ -57,7 +57,8 @@ Mili-Stock은 군마트의 재고를 확인하는 서비스입니다.
 
 # 아키텍처
 
-<img width="70%" src="https://user-images.githubusercontent.com/59721896/220850414-f9043b4f-a7df-46a3-a679-65335c8bd88b.png">
+![Image Description](mili-stock/images/Architecture.png)
+<img width="70%" src="https://github.com/chnh506/mili-stock/blob/main/images/Architecture.png">
 
 <br>
 <br>
