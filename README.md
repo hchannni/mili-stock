@@ -13,12 +13,12 @@
 # 서비스 소개
 
 Mili-Stock은 군마트의 재고를 확인하는 서비스입니다.
-
+<br>
 다음과 같은 문제들을 해결하기 위해 개발했습니다:
 
 |        |        |
 | ------ | ------ |
-|    <img src="https://github.com/chnh506/mili-stock/blob/main/images/%EB%AF%B8%EB%A6%AC%EC%8A%A4%ED%86%A1%20%EA%B8%B0%ED%9A%8D%EC%84%9C%20(1).jpg">     |    <img src="https://github.com/chnh506/mili-stock/blob/main/images/%EB%AF%B8%EB%A6%AC%EC%8A%A4%ED%86%A1%20%EA%B8%B0%ED%9A%8D%EC%84%9C%20(2).jpg">     |
+|    <img src="https://github.com/chnh506/mili-stock/blob/main/images/%EB%AF%B8%EB%A6%AC%EC%8A%A4%ED%86%A1%20%EA%B8%B0%ED%9A%8D%EC%84%9C%20(7).jpg">     |    <img src="https://github.com/chnh506/mili-stock/blob/main/images/%EB%AF%B8%EB%A6%AC%EC%8A%A4%ED%86%A1%20%EA%B8%B0%ED%9A%8D%EC%84%9C%20(8).jpg">     |
 |    <div align=center> `군장병들의 불편함` </div>    |    <div align=center> `군마트 관리자들의 불편함` </div>    |
 
 
